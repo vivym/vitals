@@ -6,6 +6,7 @@ import '../../features/auth/presentation/pages/login_screen.dart' as auth_pages;
 import '../../features/auth/presentation/pages/create_patient_screen.dart' as auth_pages;
 import '../../features/auth/presentation/pages/success_screen.dart' as auth_pages;
 import '../../features/auth/presentation/providers/auth_provider.dart';
+import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
 
 /// 路由路径常量
 class AppRoutes {
@@ -120,18 +121,7 @@ class SplashScreen extends StatelessWidget {
   }
 }
 
-class DashboardScreen extends StatelessWidget {
-  const DashboardScreen({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text('首页'),
-      ),
-    );
-  }
-}
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});

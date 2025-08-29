@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'router/app_router.dart';
 import 'themes/app_theme.dart';
 import '../core/constants/app_constants.dart';
@@ -22,6 +23,11 @@ class VitalsApp extends ConsumerWidget {
       supportedLocales: const [
         Locale('zh', 'CN'),
         Locale('en', 'US'),
+      ],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
       ],
 
       // 错误处理
