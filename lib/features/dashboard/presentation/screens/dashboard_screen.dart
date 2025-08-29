@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vitals/shared/widgets/app_scaffold.dart';
+import 'package:vitals/core/constants/navigation_constants.dart';
 import '../providers/dashboard_notifier.dart';
 import '../../data/models/dashboard_models.dart';
 import '../widgets/health_score_card.dart';
@@ -11,7 +13,6 @@ import '../widgets/quick_actions_section.dart';
 import '../widgets/loading_view.dart';
 import '../widgets/error_view.dart';
 import '../widgets/empty_state_view.dart';
-import '../widgets/bottom_navigation_bar.dart';
 
 /// 首页主屏幕
 class DashboardScreen extends ConsumerWidget {
@@ -21,8 +22,8 @@ class DashboardScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final dashboardState = ref.watch(dashboardNotifierProvider);
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5), // 浅灰色背景
+    return AppPage(
+      currentIndex: NavigationIndices.dashboard,
       appBar: AppBar(
         title: const Text('王高南'),
         centerTitle: true, // 标题居中
@@ -54,7 +55,6 @@ class DashboardScreen extends ConsumerWidget {
           data: (state) => DashboardContent(state: state),
         ),
       ),
-      bottomNavigationBar: const DashboardBottomNavigationBar(currentIndex: 0),
     );
   }
 }

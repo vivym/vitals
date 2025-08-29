@@ -61,7 +61,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     // 如果已认证，直接导航到主页
     if (authState.isAuthenticated) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) context.go('/home');
+        if (mounted) context.go('/dashboard');
       });
     }
 

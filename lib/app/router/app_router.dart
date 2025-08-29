@@ -7,6 +7,7 @@ import '../../features/auth/presentation/pages/create_patient_screen.dart' as au
 import '../../features/auth/presentation/pages/success_screen.dart' as auth_pages;
 import '../../features/auth/presentation/providers/auth_provider.dart';
 import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
+import '../../features/profile/presentation/screens/profile_screen.dart';
 
 /// 路由路径常量
 class AppRoutes {
@@ -29,23 +30,11 @@ class AppRoutes {
 class AppRouter {
   static GoRouter createRouter() {
     return GoRouter(
-      initialLocation: AppRoutes.splash,
+      initialLocation: AppRoutes.dashboard,
       debugLogDiagnostics: true,
       redirect: (context, state) {
-        // 获取认证状态
-        final container = ProviderScope.containerOf(context);
-        final authState = container.read(authNotifierProvider);
-
-        // 如果已认证，重定向到首页
-        if (authState.isAuthenticated) {
-          return AppRoutes.dashboard;
-        }
-
-        // 如果未认证且不在登录页，重定向到登录页
-        if (!authState.isAuthenticated && state.matchedLocation != AppRoutes.login) {
-          return AppRoutes.login;
-        }
-
+        // 临时禁用重定向以调试路由问题
+        // TODO: 重新启用认证重定向
         return null;
       },
       routes: [
@@ -116,21 +105,6 @@ class SplashScreen extends StatelessWidget {
     return const Scaffold(
       body: Center(
         child: Text('启动页'),
-      ),
-    );
-  }
-}
-
-
-
-class ProfileScreen extends StatelessWidget {
-  const ProfileScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text('个人中心'),
       ),
     );
   }

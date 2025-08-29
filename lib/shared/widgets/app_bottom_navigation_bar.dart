@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/constants/navigation_constants.dart';
 
-/// 首页底部导航栏
-class DashboardBottomNavigationBar extends StatelessWidget {
-  const DashboardBottomNavigationBar({
+/// 应用底部导航栏
+class AppBottomNavigationBar extends StatelessWidget {
+  const AppBottomNavigationBar({
     super.key,
     required this.currentIndex,
   });
@@ -19,36 +20,36 @@ class DashboardBottomNavigationBar extends StatelessWidget {
       unselectedItemColor: Colors.grey,
       onTap: (index) {
         switch (index) {
-          case 0:
+          case NavigationIndices.dashboard:
             context.go('/dashboard');
             break;
-          case 1:
-            context.go('/follow-up');
+          case NavigationIndices.healthData:
+            context.go('/health-data');
             break;
-          case 2:
-            context.go('/consultation');
+          case NavigationIndices.reports:
+            context.go('/reports');
             break;
-          case 3:
+          case NavigationIndices.profile:
             context.go('/profile');
             break;
         }
       },
-      items: const [
+      items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: '首页',
+          icon: Icon(NavigationIcons.dashboard),
+          label: NavigationLabels.dashboard,
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.calendar_today),
-          label: '随访',
+          icon: Icon(NavigationIcons.healthData),
+          label: NavigationLabels.healthData,
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.chat_bubble_outline),
-          label: '问诊',
+          icon: Icon(NavigationIcons.reports),
+          label: NavigationLabels.reports,
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: '我的',
+          icon: Icon(NavigationIcons.profile),
+          label: NavigationLabels.profile,
         ),
       ],
     );
