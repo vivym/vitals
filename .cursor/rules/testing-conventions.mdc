@@ -1,0 +1,59 @@
+---
+globs: "test/**/*.dart"
+description: "测试约定和TDD指南"
+---
+
+# 测试约定
+
+## 测试组织结构
+- `test/unit/` - 单元测试
+- `test/widget/` - Widget测试
+- `test/integration/` - 集成测试
+- 测试文件命名：`[功能名]_test.dart`
+
+## TDD开发流程
+1. **Red** - 编写失败的测试
+2. **Green** - 编写最简代码使测试通过
+3. **Refactor** - 重构代码保持测试通过
+
+## 测试模式
+```dart
+void main() {
+  group('功能描述', () {
+    late MockDependency mockDep;
+
+    setUp(() {
+      mockDep = MockDependency();
+    });
+
+    test('应该返回预期结果当条件满足时', () async {
+      // arrange
+      when(mockDep.method()).thenAnswer((_) async => expectedResult);
+
+      // act
+      final result = await sut.perform();
+
+      // assert
+      expect(result, equals(expectedResult));
+      verify(mockDep.method()).called(1);
+    });
+  });
+}
+```
+
+## Mock约定
+- 使用Mockito生成mock类
+- 在`setUp()`中初始化mock对象
+- 使用`when()`设置mock行为
+- 使用`verify()`验证交互
+
+## 集成测试
+- 使用真实的网络客户端和数据源
+- 测试完整的用户流程
+- 包含认证流程测试
+- 验证状态持久化
+
+## 测试命名
+- 中文描述测试场景
+- 格式：`应该[期望结果]当[条件]时`
+- 例如：`应该返回用户信息当登录成功时`

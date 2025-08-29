@@ -1,0 +1,55 @@
+---
+globs: "lib/features/auth/**/*.dart,test/features/auth/**/*.dart,test/integration/*auth*.dart"
+description: "认证功能开发模式"
+---
+
+# 认证功能开发模式
+
+## 认证流程架构
+参考文件：
+- [auth_provider.dart](mdc:lib/features/auth/presentation/providers/auth_provider.dart) - 认证状态管理
+- [auth_repository_impl.dart](mdc:lib/features/auth/data/repositories/auth_repository_impl.dart) - 认证仓库实现
+- [auth_remote_datasource_impl.dart](mdc:lib/features/auth/data/datasources/auth_remote_datasource_impl.dart) - 远程数据源
+- [auth_models.dart](mdc:lib/features/auth/data/models/auth_models.dart) - 认证模型
+
+## 关键组件
+1. **AuthProvider** - 管理认证状态和用户会话
+2. **AuthRepository** - 认证业务逻辑接口
+3. **AuthRemoteDataSource** - 处理API调用
+4. **Token管理** - 自动刷新和存储
+
+## 状态管理模式
+```dart
+@riverpod
+class AuthNotifier extends _$AuthNotifier {
+  @override
+  Future<AuthState> build() async {
+    // 初始化认证状态
+  }
+
+  Future<void> login(String email, String password) async {
+    // 登录逻辑
+  }
+
+  Future<void> logout() async {
+    // 登出逻辑
+  }
+}
+```
+
+## 错误处理
+- 使用`AuthFailure`类处理认证错误
+- 网络错误、验证错误、服务器错误分别处理
+- 在UI中使用`SelectableText.rich`显示错误信息
+
+## 测试策略
+- 单元测试：Provider、Repository、DataSource
+- 集成测试：完整登录流程、自动登录、Token刷新
+- Mock网络请求进行测试
+- 验证状态持久化和恢复
+
+## 安全考虑
+- Token安全存储
+- 自动登录验证
+- 会话过期处理
+- 敏感信息不记录日志

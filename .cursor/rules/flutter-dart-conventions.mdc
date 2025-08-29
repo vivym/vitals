@@ -1,0 +1,39 @@
+---
+globs: "*.dart"
+description: "Flutter和Dart代码约定"
+---
+
+# Flutter/Dart代码约定
+
+## 代码风格
+- 使用const构造函数创建不可变组件
+- 箭头语法用于简单函数和方法
+- 单行getter/setter使用表达式主体
+- 使用尾随逗号改善格式化和diff
+- 行长度不超过80字符
+
+## Riverpod模式
+- 使用`@riverpod`注解生成提供者
+- 优先使用`AsyncNotifierProvider`和`NotifierProvider`
+- 避免使用`StateProvider`、`StateNotifierProvider`、`ChangeNotifierProvider`
+- 使用`ref.invalidate()`手动触发提供者更新
+- 正确处理异步操作的取消
+
+## Widget约定
+- 优先使用无状态组件
+- 状态依赖组件使用`ConsumerWidget`
+- 结合Riverpod和Flutter Hooks时使用`HookConsumerWidget`
+- 创建小的私有widget类而不是方法
+- 使用`Theme.of(context).textTheme.titleLarge`而不是`headline6`
+
+## 错误处理
+- 在视图中使用`SelectableText.rich`显示错误，不使用SnackBars
+- 使用红色文字显示错误信息
+- 在显示页面内处理空状态
+- 使用`AsyncValue`进行错误处理和加载状态
+
+## 模型约定
+- 使用`@JsonSerializable(fieldRename: FieldRename.snake)`
+- 数据库表包含`createdAt`、`updatedAt`、`isDeleted`字段
+- 只读字段使用`@JsonKey(includeFromJson: true, includeToJson: false)`
+- 数据库枚举使用`@JsonValue(int)`

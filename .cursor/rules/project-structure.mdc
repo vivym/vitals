@@ -1,0 +1,38 @@
+---
+alwaysApply: true
+description: "Flutter项目结构和架构指南"
+---
+
+# Vitals项目结构指南
+
+## 主要目录结构
+- `lib/app/` - 应用配置，路由和主题
+- `lib/core/` - 核心功能：网络、存储、工具类、错误处理
+- `lib/features/` - 功能模块，按Clean Architecture组织
+- `lib/shared/` - 共享组件、模型、提供者
+- `test/` - 测试文件，按类型组织（unit、integration、widget）
+
+## 功能模块结构
+每个feature按以下结构组织：
+```
+features/[feature_name]/
+├── data/
+│   ├── datasources/     # 数据源（远程/本地）
+│   ├── models/          # 数据模型
+│   └── repositories/    # 仓库实现
+├── domain/
+│   ├── entities/        # 领域实体
+│   ├── repositories/    # 仓库接口
+│   └── usecases/        # 用例
+└── presentation/
+    ├── pages/           # 页面
+    ├── providers/       # Riverpod提供者
+    └── widgets/         # UI组件
+```
+
+## 核心约定
+- 使用Riverpod进行状态管理
+- 使用Freezed创建不可变模型
+- 遵循TDD开发方式
+- 使用GoRouter进行路由管理
+- 错误处理通过SelectableText.rich显示，不使用SnackBars
