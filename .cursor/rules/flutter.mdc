@@ -76,3 +76,5 @@ Documentation
 - Follow official Flutter, Riverpod documentation for best practices.
 
 Refer to Flutter, Riverpod and dio documentation for Widgets, State Management, and Backend Integration best practices.
+
+导入app_error.dart才能使用result.when和result.map

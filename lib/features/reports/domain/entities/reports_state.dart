@@ -8,7 +8,7 @@ part 'reports_state.freezed.dart';
 abstract class ReportsState with _$ReportsState {
   const factory ReportsState({
     @Default([]) List<HealthReport> reports,
-    @Default(ReportType.recoveryMonthly) ReportType selectedType,
+    ReportType? selectedType,
     @Default(false) bool isLoading,
     @Default(false) bool isRefreshing,
     String? error,
@@ -18,7 +18,9 @@ abstract class ReportsState with _$ReportsState {
   const ReportsState._();
 
   List<HealthReport> get filteredReports =>
-      reports.where((report) => report.type == selectedType).toList();
+      selectedType == null
+          ? reports
+          : reports.where((report) => report.type == selectedType).toList();
 
   List<HealthReport> get readyReports =>
       reports.where((report) => report.status == ReportStatus.ready).toList();

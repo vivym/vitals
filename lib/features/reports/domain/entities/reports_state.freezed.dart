@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ReportsState {
 
- List<HealthReport> get reports; ReportType get selectedType; bool get isLoading; bool get isRefreshing; String? get error;@JsonKey(name: 'last_updated') DateTime? get lastUpdated;
+ List<HealthReport> get reports; ReportType? get selectedType; bool get isLoading; bool get isRefreshing; String? get error;@JsonKey(name: 'last_updated') DateTime? get lastUpdated;
 /// Create a copy of ReportsState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -45,7 +45,7 @@ abstract mixin class $ReportsStateCopyWith<$Res>  {
   factory $ReportsStateCopyWith(ReportsState value, $Res Function(ReportsState) _then) = _$ReportsStateCopyWithImpl;
 @useResult
 $Res call({
- List<HealthReport> reports, ReportType selectedType, bool isLoading, bool isRefreshing, String? error,@JsonKey(name: 'last_updated') DateTime? lastUpdated
+ List<HealthReport> reports, ReportType? selectedType, bool isLoading, bool isRefreshing, String? error,@JsonKey(name: 'last_updated') DateTime? lastUpdated
 });
 
 
@@ -62,11 +62,11 @@ class _$ReportsStateCopyWithImpl<$Res>
 
 /// Create a copy of ReportsState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? reports = null,Object? selectedType = null,Object? isLoading = null,Object? isRefreshing = null,Object? error = freezed,Object? lastUpdated = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? reports = null,Object? selectedType = freezed,Object? isLoading = null,Object? isRefreshing = null,Object? error = freezed,Object? lastUpdated = freezed,}) {
   return _then(_self.copyWith(
 reports: null == reports ? _self.reports : reports // ignore: cast_nullable_to_non_nullable
-as List<HealthReport>,selectedType: null == selectedType ? _self.selectedType : selectedType // ignore: cast_nullable_to_non_nullable
-as ReportType,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as List<HealthReport>,selectedType: freezed == selectedType ? _self.selectedType : selectedType // ignore: cast_nullable_to_non_nullable
+as ReportType?,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,isRefreshing: null == isRefreshing ? _self.isRefreshing : isRefreshing // ignore: cast_nullable_to_non_nullable
 as bool,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
 as String?,lastUpdated: freezed == lastUpdated ? _self.lastUpdated : lastUpdated // ignore: cast_nullable_to_non_nullable
@@ -155,7 +155,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<HealthReport> reports,  ReportType selectedType,  bool isLoading,  bool isRefreshing,  String? error, @JsonKey(name: 'last_updated')  DateTime? lastUpdated)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<HealthReport> reports,  ReportType? selectedType,  bool isLoading,  bool isRefreshing,  String? error, @JsonKey(name: 'last_updated')  DateTime? lastUpdated)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ReportsState() when $default != null:
 return $default(_that.reports,_that.selectedType,_that.isLoading,_that.isRefreshing,_that.error,_that.lastUpdated);case _:
@@ -176,7 +176,7 @@ return $default(_that.reports,_that.selectedType,_that.isLoading,_that.isRefresh
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<HealthReport> reports,  ReportType selectedType,  bool isLoading,  bool isRefreshing,  String? error, @JsonKey(name: 'last_updated')  DateTime? lastUpdated)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<HealthReport> reports,  ReportType? selectedType,  bool isLoading,  bool isRefreshing,  String? error, @JsonKey(name: 'last_updated')  DateTime? lastUpdated)  $default,) {final _that = this;
 switch (_that) {
 case _ReportsState():
 return $default(_that.reports,_that.selectedType,_that.isLoading,_that.isRefreshing,_that.error,_that.lastUpdated);case _:
@@ -196,7 +196,7 @@ return $default(_that.reports,_that.selectedType,_that.isLoading,_that.isRefresh
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<HealthReport> reports,  ReportType selectedType,  bool isLoading,  bool isRefreshing,  String? error, @JsonKey(name: 'last_updated')  DateTime? lastUpdated)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<HealthReport> reports,  ReportType? selectedType,  bool isLoading,  bool isRefreshing,  String? error, @JsonKey(name: 'last_updated')  DateTime? lastUpdated)?  $default,) {final _that = this;
 switch (_that) {
 case _ReportsState() when $default != null:
 return $default(_that.reports,_that.selectedType,_that.isLoading,_that.isRefreshing,_that.error,_that.lastUpdated);case _:
@@ -211,7 +211,7 @@ return $default(_that.reports,_that.selectedType,_that.isLoading,_that.isRefresh
 
 
 class _ReportsState extends ReportsState {
-  const _ReportsState({final  List<HealthReport> reports = const [], this.selectedType = ReportType.recoveryMonthly, this.isLoading = false, this.isRefreshing = false, this.error, @JsonKey(name: 'last_updated') this.lastUpdated}): _reports = reports,super._();
+  const _ReportsState({final  List<HealthReport> reports = const [], this.selectedType, this.isLoading = false, this.isRefreshing = false, this.error, @JsonKey(name: 'last_updated') this.lastUpdated}): _reports = reports,super._();
   
 
  final  List<HealthReport> _reports;
@@ -221,7 +221,7 @@ class _ReportsState extends ReportsState {
   return EqualUnmodifiableListView(_reports);
 }
 
-@override@JsonKey() final  ReportType selectedType;
+@override final  ReportType? selectedType;
 @override@JsonKey() final  bool isLoading;
 @override@JsonKey() final  bool isRefreshing;
 @override final  String? error;
@@ -257,7 +257,7 @@ abstract mixin class _$ReportsStateCopyWith<$Res> implements $ReportsStateCopyWi
   factory _$ReportsStateCopyWith(_ReportsState value, $Res Function(_ReportsState) _then) = __$ReportsStateCopyWithImpl;
 @override @useResult
 $Res call({
- List<HealthReport> reports, ReportType selectedType, bool isLoading, bool isRefreshing, String? error,@JsonKey(name: 'last_updated') DateTime? lastUpdated
+ List<HealthReport> reports, ReportType? selectedType, bool isLoading, bool isRefreshing, String? error,@JsonKey(name: 'last_updated') DateTime? lastUpdated
 });
 
 
@@ -274,11 +274,11 @@ class __$ReportsStateCopyWithImpl<$Res>
 
 /// Create a copy of ReportsState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? reports = null,Object? selectedType = null,Object? isLoading = null,Object? isRefreshing = null,Object? error = freezed,Object? lastUpdated = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? reports = null,Object? selectedType = freezed,Object? isLoading = null,Object? isRefreshing = null,Object? error = freezed,Object? lastUpdated = freezed,}) {
   return _then(_ReportsState(
 reports: null == reports ? _self._reports : reports // ignore: cast_nullable_to_non_nullable
-as List<HealthReport>,selectedType: null == selectedType ? _self.selectedType : selectedType // ignore: cast_nullable_to_non_nullable
-as ReportType,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as List<HealthReport>,selectedType: freezed == selectedType ? _self.selectedType : selectedType // ignore: cast_nullable_to_non_nullable
+as ReportType?,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,isRefreshing: null == isRefreshing ? _self.isRefreshing : isRefreshing // ignore: cast_nullable_to_non_nullable
 as bool,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
 as String?,lastUpdated: freezed == lastUpdated ? _self.lastUpdated : lastUpdated // ignore: cast_nullable_to_non_nullable
