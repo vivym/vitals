@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import '../models/user_profile.dart';
 import '../models/connected_device.dart';
+import '../models/app_settings.dart';
 import '../models/my_service.dart';
 import '../models/medication_reminder.dart';
 import '../models/favorite_item.dart';
@@ -66,13 +67,11 @@ class ProfileRemoteDataSourceMock implements ProfileRemoteDataSource {
   }
 
   @override
-  Future<ConnectedDevice> connectDevice(DeviceType type, Map<String, dynamic> config) async {
+  Future<ConnectedDevice> connectDevice(ConnectedDevice device) async {
     await Future.delayed(const Duration(milliseconds: 1000));
 
-    return ConnectedDevice(
+    return device.copyWith(
       id: 'device_${DateTime.now().millisecondsSinceEpoch}',
-      name: type.label,
-      type: type,
       status: DeviceStatus.connected,
       connectedAt: DateTime.now(),
     );
@@ -81,6 +80,52 @@ class ProfileRemoteDataSourceMock implements ProfileRemoteDataSource {
   @override
   Future<void> disconnectDevice(String deviceId) async {
     await Future.delayed(const Duration(milliseconds: 300));
+  }
+
+  @override
+  Future<void> syncDeviceData(String deviceId) async {
+    await Future.delayed(const Duration(milliseconds: 800));
+    // Mock sync operation
+  }
+
+  @override
+  Future<AppSettings> getAppSettings() async {
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    return const AppSettings(
+      notificationsEnabled: true,
+      medicationReminders: true,
+      healthDataReminders: true,
+      themeMode: ThemeMode.system,
+      autoSyncDevices: true,
+    );
+  }
+
+  @override
+  Future<AppSettings> updateAppSettings(AppSettings settings) async {
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    return settings.copyWith(
+      // Mock update timestamp if needed
+    );
+  }
+
+  @override
+  Future<void> backupUserData(String userId) async {
+    await Future.delayed(const Duration(milliseconds: 2000));
+    // Mock backup operation
+  }
+
+  @override
+  Future<void> restoreUserData(String userId, String backupId) async {
+    await Future.delayed(const Duration(milliseconds: 3000));
+    // Mock restore operation
+  }
+
+  @override
+  Future<void> deleteUserAccount(String userId) async {
+    await Future.delayed(const Duration(milliseconds: 1000));
+    // Mock account deletion
   }
 
   @override

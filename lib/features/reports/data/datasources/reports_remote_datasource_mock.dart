@@ -1,21 +1,22 @@
 import 'package:vitals/features/reports/data/datasources/reports_remote_datasource.dart';
+import 'package:vitals/features/reports/data/models/health_report_model.dart';
 import 'package:vitals/features/reports/domain/entities/health_report.dart';
 
 /// Mock 实现
 class ReportsRemoteDataSourceMock implements ReportsRemoteDataSource {
   @override
-  Future<List<HealthReport>> getReports(String patientId) async {
+  Future<List<HealthReportModel>> getReports(String patientId) async {
     await Future.delayed(const Duration(milliseconds: 800));
 
     return [
-      HealthReport(
+      HealthReportModel(
         id: 'report_1',
         patientId: patientId,
         title: 'PCI术后康复月报',
         description: '2024年1月康复进展分析报告',
-        type: ReportType.recoveryMonthly,
+        type: ReportType.recoveryMonthly.value,
         reportUrl: 'https://vitals.example.com/reports/recovery-202401',
-        status: ReportStatus.ready,
+        status: ReportStatus.ready.value,
         generatedAt: DateTime.now().subtract(const Duration(days: 5)),
         periodStart: DateTime(2024, 1, 1),
         periodEnd: DateTime(2024, 1, 31),
@@ -23,44 +24,44 @@ class ReportsRemoteDataSourceMock implements ReportsRemoteDataSource {
         isShared: false,
         createdAt: DateTime.now().subtract(const Duration(days: 5)),
       ),
-      HealthReport(
+      HealthReportModel(
         id: 'report_2',
         patientId: patientId,
         title: '健康评估报告',
         description: '综合健康状况评估与建议',
-        type: ReportType.healthAssessment,
+        type: ReportType.healthAssessment.value,
         reportUrl: 'https://vitals.example.com/reports/assessment-202401',
-        status: ReportStatus.ready,
+        status: ReportStatus.ready.value,
         generatedAt: DateTime.now().subtract(const Duration(days: 10)),
         isRead: true,
         isShared: true,
         createdAt: DateTime.now().subtract(const Duration(days: 10)),
       ),
-      HealthReport(
+      HealthReportModel(
         id: 'report_3',
         patientId: patientId,
         title: '2月份康复月报',
         description: '生成中，预计5分钟后完成',
-        type: ReportType.recoveryMonthly,
+        type: ReportType.recoveryMonthly.value,
         reportUrl: '',
-        status: ReportStatus.generating,
+        status: ReportStatus.generating.value,
         createdAt: DateTime.now().subtract(const Duration(minutes: 2)),
       ),
     ];
   }
 
   @override
-  Future<HealthReport> getReportById(String reportId) async {
+  Future<HealthReportModel> getReportById(String reportId) async {
     await Future.delayed(const Duration(milliseconds: 500));
 
-    return HealthReport(
+    return HealthReportModel(
       id: reportId,
       patientId: 'patient_1',
       title: 'PCI术后康复月报',
       description: '2024年1月康复进展分析报告',
-      type: ReportType.recoveryMonthly,
+      type: ReportType.recoveryMonthly.value,
       reportUrl: 'https://vitals.example.com/reports/$reportId',
-      status: ReportStatus.ready,
+      status: ReportStatus.ready.value,
       generatedAt: DateTime.now().subtract(const Duration(days: 5)),
       isRead: false,
       isShared: false,

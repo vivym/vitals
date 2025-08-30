@@ -1,6 +1,7 @@
 import 'package:vitals/core/errors/app_error.dart';
 import 'package:vitals/features/reports/data/datasources/reports_local_datasource.dart';
 import 'package:vitals/features/reports/data/datasources/reports_remote_datasource.dart';
+import 'package:vitals/features/reports/data/mappers/health_report_mapper.dart';
 import 'package:vitals/features/reports/domain/entities/health_report.dart';
 import 'package:vitals/features/reports/domain/repositories/reports_repository.dart';
 
@@ -18,38 +19,41 @@ class ReportsRepositoryImpl implements ReportsRepository {
   }) async {
     try {
       // 尝试从本地缓存获取
-      final cachedReports = await _localDataSource.getCachedReports(patientId);
+      final cachedReportModels = await _localDataSource.getCachedReports(patientId);
 
-      if (!forceRefresh && cachedReports != null) {
-        // 合并已读状态
+      if (!forceRefresh && cachedReportModels != null) {
+        // 转换为领域实体并合并已读状态
         final readIds = await _localDataSource.getReadReportIds();
-        final reportsWithReadStatus = cachedReports.map((report) {
-          return report.copyWith(isRead: readIds.contains(report.id));
+        final reportsWithReadStatus = cachedReportModels.map((model) {
+          final entity = HealthReportMapper.toEntity(model);
+          return entity.copyWith(isRead: readIds.contains(entity.id));
         }).toList();
 
         return Result.success(reportsWithReadStatus);
       }
 
       // 从远程获取数据
-      final remoteReports = await _remoteDataSource.getReports(patientId);
+      final remoteReportModels = await _remoteDataSource.getReports(patientId);
 
       // 缓存到本地
-      await _localDataSource.cacheReports(patientId, remoteReports);
+      await _localDataSource.cacheReports(patientId, remoteReportModels);
 
-      // 合并已读状态
+      // 转换为领域实体并合并已读状态
       final readIds = await _localDataSource.getReadReportIds();
-      final reportsWithReadStatus = remoteReports.map((report) {
-        return report.copyWith(isRead: readIds.contains(report.id));
+      final reportsWithReadStatus = remoteReportModels.map((model) {
+        final entity = HealthReportMapper.toEntity(model);
+        return entity.copyWith(isRead: readIds.contains(entity.id));
       }).toList();
 
       return Result.success(reportsWithReadStatus);
     } catch (e) {
       // 如果远程获取失败，尝试返回缓存数据
-      final cachedReports = await _localDataSource.getCachedReports(patientId);
-      if (cachedReports != null) {
+      final cachedReportModels = await _localDataSource.getCachedReports(patientId);
+      if (cachedReportModels != null) {
         final readIds = await _localDataSource.getReadReportIds();
-        final reportsWithReadStatus = cachedReports.map((report) {
-          return report.copyWith(isRead: readIds.contains(report.id));
+        final reportsWithReadStatus = cachedReportModels.map((model) {
+          final entity = HealthReportMapper.toEntity(model);
+          return entity.copyWith(isRead: readIds.contains(entity.id));
         }).toList();
 
         return Result.success(reportsWithReadStatus);
@@ -62,8 +66,9 @@ class ReportsRepositoryImpl implements ReportsRepository {
   @override
   Future<Result<HealthReport, AppError>> getReportById(String reportId) async {
     try {
-      final report = await _remoteDataSource.getReportById(reportId);
-      return Result.success(report);
+      final reportModel = await _remoteDataSource.getReportById(reportId);
+      final reportEntity = HealthReportMapper.toEntity(reportModel);
+      return Result.success(reportEntity);
     } catch (e) {
       return Result.failure(AppError.network(message: '获取报告详情失败: $e'));
     }

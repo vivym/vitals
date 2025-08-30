@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import '../../data/models/user_profile.dart';
+import '../../domain/entities/user_profile_entity.dart';
 
 /// 用户信息区域
 class UserInfoSection extends StatelessWidget {
-  const UserInfoSection({super.key, this.userProfile});
+  const UserInfoSection({
+    super.key,
+    this.userProfile,
+    this.onEditProfile,
+  });
 
-  final UserProfile? userProfile;
+  final UserProfileEntity? userProfile;
+  final VoidCallback? onEditProfile;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +28,7 @@ class UserInfoSection extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            Colors.blue.shade100,
+            Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
             Colors.white,
           ],
         ),
@@ -50,41 +54,47 @@ class UserInfoSection extends StatelessWidget {
                   : null,
             ),
 
-            const SizedBox(width: 20),
+            const SizedBox(width: 16),
 
             // 用户信息
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // 姓名
                   Text(
-                    userProfile!.name,
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    userProfile!.displayName,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Colors.grey.shade800,
                     ),
                   ),
-                  const SizedBox(height: 8),
+
+                  const SizedBox(height: 4),
+
+                  // 手机号
                   Text(
-                    '暂时无法查看',
+                    userProfile!.phone,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: Colors.grey.shade600,
                     ),
                   ),
+
+                  const SizedBox(height: 8),
+
+                  // 用户状态信息
+                  _buildUserStatusInfo(context),
                 ],
               ),
             ),
 
-            // 更多选项按钮
+            // 编辑按钮
             IconButton(
-              icon: Icon(
-                Icons.more_horiz,
-                color: Colors.grey.shade600,
+              onPressed: onEditProfile,
+              icon: const Icon(Icons.edit_outlined),
+              style: IconButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.surface,
+                foregroundColor: Theme.of(context).colorScheme.primary,
               ),
-              onPressed: () {
-                // 显示更多选项
-                _showMoreOptions(context);
-              },
             ),
           ],
         ),
@@ -92,40 +102,102 @@ class UserInfoSection extends StatelessWidget {
     );
   }
 
-  void _showMoreOptions(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.edit),
-              title: const Text('编辑资料'),
-              onTap: () {
-                Navigator.pop(context);
-                context.go('/profile/edit');
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.photo_camera),
-              title: const Text('更换头像'),
-              onTap: () {
-                Navigator.pop(context);
-                // 处理头像更换
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout),
-              title: const Text('退出登录'),
-              onTap: () {
-                Navigator.pop(context);
-                // 处理退出登录
-              },
-            ),
-          ],
+  Widget _buildUserStatusInfo(BuildContext context) {
+    final info = <Widget>[];
+
+    // 年龄信息
+    if (userProfile!.age != null) {
+      info.add(
+        _buildInfoChip(
+          context,
+          '${userProfile!.age}岁',
+          Icons.cake_outlined,
         ),
+      );
+    }
+
+    // 性别信息
+    if (userProfile!.gender != null) {
+      info.add(
+        _buildInfoChip(
+          context,
+          userProfile!.gender!.label,
+          userProfile!.gender == Gender.male ? Icons.male : Icons.female,
+        ),
+      );
+    }
+
+    // 完善度提示
+    if (!userProfile!.isProfileComplete) {
+      info.add(
+        _buildWarningChip(context, '资料待完善'),
+      );
+    }
+
+    if (info.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Wrap(
+      spacing: 8,
+      runSpacing: 4,
+      children: info,
+    );
+  }
+
+  Widget _buildInfoChip(BuildContext context, String text, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withOpacity(0.3),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            size: 16,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            text,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.primary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildWarningChip(BuildContext context, String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.errorContainer,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.warning_outlined,
+            size: 16,
+            color: Theme.of(context).colorScheme.onErrorContainer,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            text,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onErrorContainer,
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -7,7 +7,7 @@ part of 'reports_page_providers.dart';
 // **************************************************************************
 
 String _$reportsPageNotifierHash() =>
-    r'fbcaf3e3f1bab73c5d32c7308baf1ecc47f6d983';
+    r'f75dc0859a87dd506cdbf4bcad1f43db2286b769';
 
 /// 报告页面状态管理
 ///

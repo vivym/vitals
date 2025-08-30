@@ -1,12 +1,12 @@
-import 'package:vitals/features/reports/domain/entities/health_report.dart';
+import 'package:vitals/features/reports/data/models/health_report_model.dart';
 
 /// 健康报告本地数据源接口
 abstract class ReportsLocalDataSource {
   /// 获取缓存的报告列表
-  Future<List<HealthReport>?> getCachedReports(String patientId);
+  Future<List<HealthReportModel>?> getCachedReports(String patientId);
 
   /// 缓存报告列表
-  Future<void> cacheReports(String patientId, List<HealthReport> reports);
+  Future<void> cacheReports(String patientId, List<HealthReportModel> reports);
 
   /// 获取已读报告ID列表
   Future<List<String>> getReadReportIds();

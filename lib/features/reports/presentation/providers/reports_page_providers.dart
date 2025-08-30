@@ -2,10 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vitals/core/errors/app_error.dart';
 import 'package:vitals/features/reports/domain/entities/health_report.dart';
 import 'package:vitals/features/reports/domain/entities/reports_state.dart';
-import 'package:vitals/features/reports/domain/usecases/get_reports_usecase.dart';
-import 'package:vitals/features/reports/domain/usecases/mark_report_as_read_usecase.dart';
-import 'package:vitals/features/reports/domain/usecases/request_report_generation_usecase.dart';
-import 'package:vitals/features/reports/domain/usecases/share_report_usecase.dart';
+import 'package:vitals/features/reports/presentation/providers/usecase_providers.dart';
 
 part 'reports_page_providers.g.dart';
 
@@ -22,7 +19,7 @@ class ReportsPageNotifier extends _$ReportsPageNotifier {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
-      final getReportsUseCase = ref.read(getReportsUseCaseProvider.notifier);
+      final getReportsUseCase = ref.read(getReportsUseCaseProvider);
       final result = await getReportsUseCase.execute(patientId, forceRefresh: forceRefresh);
 
       result.when(
@@ -56,7 +53,7 @@ class ReportsPageNotifier extends _$ReportsPageNotifier {
   /// 标记报告为已读
   Future<void> markReportAsRead(String reportId) async {
     try {
-      final useCase = ref.read(markReportAsReadUseCaseProvider.notifier);
+      final useCase = ref.read(markReportAsReadUseCaseProvider);
       final result = await useCase.execute(reportId);
 
       result.when(
@@ -84,7 +81,7 @@ class ReportsPageNotifier extends _$ReportsPageNotifier {
   /// 分享报告
   Future<String?> shareReport(String reportId, ShareMethod method) async {
     try {
-      final useCase = ref.read(shareReportUseCaseProvider.notifier);
+      final useCase = ref.read(shareReportUseCaseProvider);
       final result = await useCase.execute(reportId, method);
 
       return result.when(
@@ -103,7 +100,7 @@ class ReportsPageNotifier extends _$ReportsPageNotifier {
   /// 请求生成新报告
   Future<void> requestReportGeneration(String patientId, ReportType type) async {
     try {
-      final useCase = ref.read(requestReportGenerationUseCaseProvider.notifier);
+      final useCase = ref.read(requestReportGenerationUseCaseProvider);
       final result = await useCase.execute(patientId, type);
 
       result.when(

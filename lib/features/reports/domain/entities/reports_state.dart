@@ -34,7 +34,6 @@ abstract class ReportsState with _$ReportsState {
 abstract class ReportDetailState with _$ReportDetailState {
   const factory ReportDetailState({
     HealthReport? report,
-    @Default(WebViewState()) WebViewState webViewState,
     @Default(false) bool isSharing,
     String? shareError,
     @Default([]) List<ReportShareRecord> shareHistory,

@@ -1,6 +1,8 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vitals/core/errors/app_error.dart';
+import '../../../../shared/providers/current_user_provider.dart';
+import '../../../../shared/models/user.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/entities/patient_entity.dart';
 import 'auth_providers.dart';
@@ -51,6 +53,15 @@ class AuthNotifier extends _$AuthNotifier {
 
       result.when(
         success: (loginResult) {
+          // 更新 currentUserProvider
+          final currentUser = User(
+            id: loginResult.user.id,
+            name: loginResult.user.name,
+            phone: loginResult.user.phone,
+          );
+          print('🔄 Login - 设置 currentUserProvider: ${currentUser.name} (${currentUser.id})');
+          ref.read(currentUserProvider.notifier).setUser(currentUser);
+
           state = state.copyWith(
             isLoading: false,
             user: loginResult.user,
@@ -118,6 +129,15 @@ class AuthNotifier extends _$AuthNotifier {
             },
           );
 
+          // 更新 currentUserProvider
+          final currentUser = User(
+            id: user.id,
+            name: user.name,
+            phone: user.phone,
+          );
+          print('🔄 AutoLogin - 设置 currentUserProvider: ${currentUser.name} (${currentUser.id})');
+          ref.read(currentUserProvider.notifier).setUser(currentUser);
+
           print('📝 更新认证状态: isAuthenticated=true, hasSignedPatient=$hasSignedPatient, isLoading=false');
           state = state.copyWith(
             isLoading: false,
@@ -155,6 +175,9 @@ class AuthNotifier extends _$AuthNotifier {
 
     // TODO: 调用登出用例
     await Future.delayed(const Duration(milliseconds: 100)); // 模拟API调用
+
+    // 清除 currentUserProvider
+    ref.read(currentUserProvider.notifier).clearUser();
 
     state = const AuthState();
   }

@@ -1,17 +1,14 @@
-import 'dart:io';
-import 'package:vitals/core/errors/app_error.dart';
+import '../../../../core/errors/app_error.dart';
 import '../datasources/profile_remote_datasource.dart';
 import '../datasources/profile_local_datasource.dart';
-import '../models/user_profile.dart';
-import '../models/connected_device.dart';
-import '../models/my_service.dart';
-import '../models/medication_reminder.dart';
-import '../models/app_settings.dart';
-import '../models/favorite_item.dart';
-import '../models/feedback_item.dart';
+import '../mappers/profile_mappers.dart';
+import '../../domain/entities/profile_entity.dart';
+import '../../domain/entities/user_profile_entity.dart';
+import '../../domain/entities/connected_device_entity.dart';
+import '../../domain/entities/app_settings_entity.dart';
 import '../../domain/repositories/profile_repository.dart';
 
-/// 个人中心仓库实现
+/// Profile仓库实现
 class ProfileRepositoryImpl implements ProfileRepository {
   final ProfileRemoteDataSource _remoteDataSource;
   final ProfileLocalDataSource _localDataSource;
@@ -19,171 +16,210 @@ class ProfileRepositoryImpl implements ProfileRepository {
   ProfileRepositoryImpl(this._remoteDataSource, this._localDataSource);
 
   @override
-  Future<Result<UserProfile, AppError>> getUserProfile({bool forceRefresh = false}) async {
+  Future<Result<ProfileEntity, AppError>> getProfile(String userId) async {
     try {
-      if (!forceRefresh) {
-        final cachedProfile = await _localDataSource.getCachedUserProfile();
-        if (cachedProfile != null) {
-          return Result.success(cachedProfile);
-        }
+      // 先尝试从本地缓存获取
+      final cachedProfile = await _localDataSource.getCachedUserProfile();
+      final cachedDevices = await _localDataSource.getCachedConnectedDevices();
+      final cachedSettings = await _localDataSource.getCachedAppSettings();
+
+      if (cachedProfile != null && cachedDevices != null && cachedSettings != null) {
+        final profileEntity = ProfileEntity(
+          userProfile: ProfileMappers.userProfileModelToEntity(cachedProfile),
+          connectedDevices: cachedDevices.map(ProfileMappers.connectedDeviceModelToEntity).toList(),
+          settings: ProfileMappers.appSettingsModelToEntity(cachedSettings),
+          lastUpdatedAt: DateTime.now(),
+        );
+        return Result.success(profileEntity);
+      }
+
+      // 从远程获取数据
+      final profile = await _remoteDataSource.getUserProfile();
+      final devices = await _remoteDataSource.getConnectedDevices();
+      final settings = await _remoteDataSource.getAppSettings();
+
+      // 缓存数据
+      await _localDataSource.cacheUserProfile(profile);
+      await _localDataSource.cacheConnectedDevices(devices);
+      await _localDataSource.cacheAppSettings(settings);
+
+      final profileEntity = ProfileEntity(
+        userProfile: ProfileMappers.userProfileModelToEntity(profile),
+        connectedDevices: devices.map(ProfileMappers.connectedDeviceModelToEntity).toList(),
+        settings: ProfileMappers.appSettingsModelToEntity(settings),
+        lastUpdatedAt: DateTime.now(),
+      );
+
+      return Result.success(profileEntity);
+    } catch (e) {
+      return Result.failure(AppError.network(message: '获取个人资料失败: ${e.toString()}'));
+    }
+  }
+
+  @override
+  Future<Result<UserProfileEntity, AppError>> getUserProfile(String userId) async {
+    try {
+      final cachedProfile = await _localDataSource.getCachedUserProfile();
+      if (cachedProfile != null) {
+        return Result.success(ProfileMappers.userProfileModelToEntity(cachedProfile));
       }
 
       final profile = await _remoteDataSource.getUserProfile();
       await _localDataSource.cacheUserProfile(profile);
-      return Result.success(profile);
+
+      return Result.success(ProfileMappers.userProfileModelToEntity(profile));
     } catch (e) {
-      return Result.failure(AppError.network(message: e.toString()));
+      return Result.failure(AppError.network(message: '获取用户资料失败: ${e.toString()}'));
     }
   }
 
   @override
-  Future<Result<UserProfile, AppError>> updateUserProfile(UserProfile profile) async {
+  Future<Result<UserProfileEntity, AppError>> updateUserProfile(
+    String userId,
+    UserProfileEntity profile,
+  ) async {
     try {
-      final updatedProfile = await _remoteDataSource.updateUserProfile(profile);
+      final profileModel = ProfileMappers.userProfileEntityToModel(profile);
+      final updatedProfile = await _remoteDataSource.updateUserProfile(profileModel);
       await _localDataSource.cacheUserProfile(updatedProfile);
-      return Result.success(updatedProfile);
+
+      return Result.success(ProfileMappers.userProfileModelToEntity(updatedProfile));
     } catch (e) {
-      return Result.failure(AppError.network(message: e.toString()));
+      return Result.failure(AppError.network(message: '更新用户资料失败: ${e.toString()}'));
     }
   }
 
   @override
-  Future<Result<String, AppError>> uploadAvatar(File avatarFile) async {
+  Future<Result<List<ConnectedDeviceEntity>, AppError>> getConnectedDevices(String userId) async {
     try {
-      final avatarUrl = await _remoteDataSource.uploadAvatar(avatarFile);
-      return Result.success(avatarUrl);
-    } catch (e) {
-      return Result.failure(AppError.network(message: e.toString()));
-    }
-  }
+      final cachedDevices = await _localDataSource.getCachedConnectedDevices();
+      if (cachedDevices != null) {
+        return Result.success(
+          cachedDevices.map(ProfileMappers.connectedDeviceModelToEntity).toList(),
+        );
+      }
 
-  @override
-  Future<Result<List<ConnectedDevice>, AppError>> getConnectedDevices() async {
-    try {
       final devices = await _remoteDataSource.getConnectedDevices();
-      return Result.success(devices);
+      await _localDataSource.cacheConnectedDevices(devices);
+
+      return Result.success(
+        devices.map(ProfileMappers.connectedDeviceModelToEntity).toList(),
+      );
     } catch (e) {
-      return Result.failure(AppError.network(message: e.toString()));
+      return Result.failure(AppError.network(message: '获取连接设备失败: ${e.toString()}'));
     }
   }
 
   @override
-  Future<Result<ConnectedDevice, AppError>> connectDevice(DeviceType type, Map<String, dynamic> config) async {
+  Future<Result<ConnectedDeviceEntity, AppError>> connectDevice(
+    String userId,
+    ConnectedDeviceEntity device,
+  ) async {
     try {
-      final device = await _remoteDataSource.connectDevice(type, config);
-      return Result.success(device);
+      final deviceModel = ProfileMappers.connectedDeviceEntityToModel(device);
+      final connectedDevice = await _remoteDataSource.connectDevice(deviceModel);
+
+      // 更新缓存
+      final cachedDevices = await _localDataSource.getCachedConnectedDevices() ?? [];
+      final updatedDevices = [...cachedDevices, connectedDevice];
+      await _localDataSource.cacheConnectedDevices(updatedDevices);
+
+      return Result.success(ProfileMappers.connectedDeviceModelToEntity(connectedDevice));
     } catch (e) {
-      return Result.failure(AppError.network(message: e.toString()));
+      return Result.failure(AppError.network(message: '连接设备失败: ${e.toString()}'));
     }
   }
 
   @override
-  Future<Result<void, AppError>> disconnectDevice(String deviceId) async {
+  Future<Result<void, AppError>> disconnectDevice(String userId, String deviceId) async {
     try {
       await _remoteDataSource.disconnectDevice(deviceId);
+
+      // 更新缓存
+      final cachedDevices = await _localDataSource.getCachedConnectedDevices() ?? [];
+      final updatedDevices = cachedDevices.where((device) => device.id != deviceId).toList();
+      await _localDataSource.cacheConnectedDevices(updatedDevices);
+
       return const Result.success(null);
     } catch (e) {
-      return Result.failure(AppError.network(message: e.toString()));
+      return Result.failure(AppError.network(message: '断开设备连接失败: ${e.toString()}'));
     }
   }
 
   @override
-  Future<Result<List<MyService>, AppError>> getMyServices() async {
+  Future<Result<void, AppError>> syncDeviceData(String userId, String deviceId) async {
     try {
-      final services = await _remoteDataSource.getMyServices();
-      return Result.success(services);
-    } catch (e) {
-      return Result.failure(AppError.network(message: e.toString()));
-    }
-  }
-
-  @override
-  Future<Result<List<MedicationReminder>, AppError>> getMedicationReminders(String patientId) async {
-    try {
-      final reminders = await _remoteDataSource.getMedicationReminders(patientId);
-      return Result.success(reminders);
-    } catch (e) {
-      return Result.failure(AppError.network(message: e.toString()));
-    }
-  }
-
-  @override
-  Future<Result<MedicationReminder, AppError>> createMedicationReminder(MedicationReminder reminder) async {
-    try {
-      final createdReminder = await _remoteDataSource.createMedicationReminder(reminder);
-      return Result.success(createdReminder);
-    } catch (e) {
-      return Result.failure(AppError.network(message: e.toString()));
-    }
-  }
-
-  @override
-  Future<Result<void, AppError>> deleteMedicationReminder(String reminderId) async {
-    try {
-      await _remoteDataSource.deleteMedicationReminder(reminderId);
+      await _remoteDataSource.syncDeviceData(deviceId);
       return const Result.success(null);
     } catch (e) {
-      return Result.failure(AppError.network(message: e.toString()));
+      return Result.failure(AppError.network(message: '同步设备数据失败: ${e.toString()}'));
     }
   }
 
   @override
-  Future<Result<List<FavoriteItem>, AppError>> getFavorites() async {
+  Future<Result<AppSettingsEntity, AppError>> getAppSettings(String userId) async {
     try {
-      final favorites = await _remoteDataSource.getFavorites();
-      return Result.success(favorites);
+      final cachedSettings = await _localDataSource.getCachedAppSettings();
+      if (cachedSettings != null) {
+        return Result.success(ProfileMappers.appSettingsModelToEntity(cachedSettings));
+      }
+
+      final settings = await _remoteDataSource.getAppSettings();
+      await _localDataSource.cacheAppSettings(settings);
+
+      return Result.success(ProfileMappers.appSettingsModelToEntity(settings));
     } catch (e) {
-      return Result.failure(AppError.network(message: e.toString()));
+      return Result.failure(AppError.network(message: '获取应用设置失败: ${e.toString()}'));
     }
   }
 
   @override
-  Future<Result<void, AppError>> addToFavorites(String contentId, FavoriteType type) async {
+  Future<Result<AppSettingsEntity, AppError>> updateAppSettings(
+    String userId,
+    AppSettingsEntity settings,
+  ) async {
     try {
-      await _remoteDataSource.addToFavorites(contentId, type);
+      final settingsModel = ProfileMappers.appSettingsEntityToModel(settings);
+      final updatedSettings = await _remoteDataSource.updateAppSettings(settingsModel);
+      await _localDataSource.cacheAppSettings(updatedSettings);
+
+      return Result.success(ProfileMappers.appSettingsModelToEntity(updatedSettings));
+    } catch (e) {
+      return Result.failure(AppError.network(message: '更新应用设置失败: ${e.toString()}'));
+    }
+  }
+
+  @override
+  Future<Result<void, AppError>> backupUserData(String userId) async {
+    try {
+      await _remoteDataSource.backupUserData(userId);
       return const Result.success(null);
     } catch (e) {
-      return Result.failure(AppError.network(message: e.toString()));
+      return Result.failure(AppError.network(message: '备份用户数据失败: ${e.toString()}'));
     }
   }
 
   @override
-  Future<Result<void, AppError>> removeFromFavorites(String favoriteId) async {
+  Future<Result<void, AppError>> restoreUserData(String userId, String backupId) async {
     try {
-      await _remoteDataSource.removeFromFavorites(favoriteId);
+      await _remoteDataSource.restoreUserData(userId, backupId);
+      // 清除本地缓存，强制重新获取
+      await _localDataSource.clearCache();
       return const Result.success(null);
     } catch (e) {
-      return Result.failure(AppError.network(message: e.toString()));
+      return Result.failure(AppError.network(message: '恢复用户数据失败: ${e.toString()}'));
     }
   }
 
   @override
-  Future<Result<void, AppError>> submitFeedback(FeedbackItem feedback) async {
+  Future<Result<void, AppError>> deleteUserAccount(String userId) async {
     try {
-      await _remoteDataSource.submitFeedback(feedback);
+      await _remoteDataSource.deleteUserAccount(userId);
+      await _localDataSource.clearCache();
       return const Result.success(null);
     } catch (e) {
-      return Result.failure(AppError.network(message: e.toString()));
-    }
-  }
-
-  @override
-  Future<Result<AppSettings, AppError>> getAppSettings() async {
-    try {
-      final settings = await _localDataSource.getAppSettings() ?? const AppSettings();
-      return Result.success(settings);
-    } catch (e) {
-      return Result.failure(AppError.unknown(message: e.toString()));
-    }
-  }
-
-  @override
-  Future<Result<void, AppError>> saveAppSettings(AppSettings settings) async {
-    try {
-      await _localDataSource.saveAppSettings(settings);
-      return const Result.success(null);
-    } catch (e) {
-      return Result.failure(AppError.unknown(message: e.toString()));
+      return Result.failure(AppError.network(message: '删除用户账户失败: ${e.toString()}'));
     }
   }
 }
+

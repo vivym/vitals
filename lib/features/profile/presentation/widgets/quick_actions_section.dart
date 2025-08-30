@@ -1,9 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../domain/entities/connected_device_entity.dart';
+import '../../domain/entities/app_settings_entity.dart';
 
 /// 快捷功能区域
 class QuickActionsSection extends StatelessWidget {
-  const QuickActionsSection({super.key});
+  const QuickActionsSection({
+    super.key,
+    required this.connectedDevices,
+    required this.settings,
+    this.onSettingsTap,
+  });
+
+  final List<ConnectedDeviceEntity> connectedDevices;
+  final AppSettingsEntity settings;
+  final VoidCallback? onSettingsTap;
 
   @override
   Widget build(BuildContext context) {
@@ -14,26 +25,60 @@ class QuickActionsSection extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _QuickActionItem(
-              icon: Icons.favorite,
-              label: '我的收藏',
-              color: Colors.blue,
-              onTap: () => context.go('/profile/favorites'),
+            Text(
+              '快捷功能',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            _QuickActionItem(
-              icon: Icons.feedback,
-              label: '健康反馈',
-              color: Colors.green,
-              onTap: () => context.go('/profile/feedback'),
+
+            const SizedBox(height: 16),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _QuickActionItem(
+                  icon: Icons.devices,
+                  label: '智能设备',
+                  badge: connectedDevices.length > 0 ? '${connectedDevices.length}' : null,
+                  color: Colors.blue,
+                  onTap: () => context.push('/profile/devices'),
+                ),
+                _QuickActionItem(
+                  icon: Icons.settings,
+                  label: '应用设置',
+                  badge: null,
+                  color: Colors.grey,
+                  onTap: onSettingsTap,
+                ),
+                _QuickActionItem(
+                  icon: Icons.favorite,
+                  label: '我的收藏',
+                  badge: null,
+                  color: Colors.red,
+                  onTap: () => context.push('/profile/favorites'),
+                ),
+                _QuickActionItem(
+                  icon: Icons.feedback,
+                  label: '健康反馈',
+                  badge: null,
+                  color: Colors.green,
+                  onTap: () => context.push('/profile/feedback'),
+                ),
+              ],
             ),
+
+            const SizedBox(height: 16),
           ],
         ),
       ),
     );
   }
+
+
 }
 
 /// 快捷操作项
@@ -42,13 +87,15 @@ class _QuickActionItem extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.color,
-    required this.onTap,
+    this.badge,
+    this.onTap,
   });
 
   final IconData icon;
   final String label;
   final Color color;
-  final VoidCallback onTap;
+  final String? badge;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -56,28 +103,64 @@ class _QuickActionItem extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(
-                icon,
-                size: 32,
-                color: color,
-              ),
+            // 图标容器
+            Stack(
+              children: [
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    icon,
+                    color: color,
+                    size: 24,
+                  ),
+                ),
+                // 徽章
+                if (badge != null)
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 20,
+                        minHeight: 20,
+                      ),
+                      child: Text(
+                        badge!,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+              ],
             ),
-            const SizedBox(height: 12),
+
+            const SizedBox(height: 8),
+
+            // 标签
             Text(
               label,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 fontWeight: FontWeight.w500,
-                color: Colors.grey.shade800,
               ),
+              textAlign: TextAlign.center,
             ),
           ],
         ),

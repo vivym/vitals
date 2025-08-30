@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../data/models/connected_device.dart';
-import '../../data/models/my_service.dart';
+import '../../domain/entities/connected_device_entity.dart';
 
 /// 功能列表区域
 class FunctionListSection extends StatelessWidget {
   const FunctionListSection({
     super.key,
     required this.connectedDevices,
-    required this.myServices,
+    this.myServicesCount = 0,
   });
 
-  final List<ConnectedDevice> connectedDevices;
-  final List<MyService> myServices;
+  final List<ConnectedDeviceEntity> connectedDevices;
+  final int myServicesCount;
 
   @override
   Widget build(BuildContext context) {
@@ -56,14 +55,14 @@ class FunctionListSection extends StatelessWidget {
                 context,
                 icon: Icons.medical_services,
                 title: '我的服务',
-                subtitle: '${myServices.length}项服务',
+                subtitle: '${myServicesCount}项服务',
                 onTap: () => context.go('/profile/services'),
               ),
               _buildListItem(
                 context,
                 icon: Icons.assessment,
-                title: '专项评估',
-                onTap: () => context.go('/profile/assessments'),
+                title: '阶段报告',
+                onTap: () => context.go('/profile/stage-reports'),
               ),
               _buildListItem(
                 context,

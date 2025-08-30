@@ -11,19 +11,16 @@ part of 'health_report.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
-
 /// @nodoc
 mixin _$HealthReport {
 
- String get id; String get patientId; String get title; String get description; ReportType get type; String get reportUrl; ReportStatus get status;@JsonKey(name: 'generated_at') DateTime? get generatedAt;@JsonKey(name: 'period_start') DateTime? get periodStart;@JsonKey(name: 'period_end') DateTime? get periodEnd; String? get thumbnailUrl; bool get isRead; bool get isShared;@JsonKey(name: 'created_at') DateTime? get createdAt; Map<String, dynamic>? get metadata;
+ String get id; String get patientId; String get title; String get description; ReportType get type; String get reportUrl; ReportStatus get status; DateTime? get generatedAt; DateTime? get periodStart; DateTime? get periodEnd; String? get thumbnailUrl; bool get isRead; bool get isShared; DateTime? get createdAt; Map<String, dynamic>? get metadata;
 /// Create a copy of HealthReport
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
 $HealthReportCopyWith<HealthReport> get copyWith => _$HealthReportCopyWithImpl<HealthReport>(this as HealthReport, _$identity);
 
-  /// Serializes this HealthReport to a JSON map.
-  Map<String, dynamic> toJson();
 
 
 @override
@@ -31,7 +28,7 @@ bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is HealthReport&&(identical(other.id, id) || other.id == id)&&(identical(other.patientId, patientId) || other.patientId == patientId)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.type, type) || other.type == type)&&(identical(other.reportUrl, reportUrl) || other.reportUrl == reportUrl)&&(identical(other.status, status) || other.status == status)&&(identical(other.generatedAt, generatedAt) || other.generatedAt == generatedAt)&&(identical(other.periodStart, periodStart) || other.periodStart == periodStart)&&(identical(other.periodEnd, periodEnd) || other.periodEnd == periodEnd)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.isRead, isRead) || other.isRead == isRead)&&(identical(other.isShared, isShared) || other.isShared == isShared)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&const DeepCollectionEquality().equals(other.metadata, metadata));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
 int get hashCode => Object.hash(runtimeType,id,patientId,title,description,type,reportUrl,status,generatedAt,periodStart,periodEnd,thumbnailUrl,isRead,isShared,createdAt,const DeepCollectionEquality().hash(metadata));
 
@@ -48,7 +45,7 @@ abstract mixin class $HealthReportCopyWith<$Res>  {
   factory $HealthReportCopyWith(HealthReport value, $Res Function(HealthReport) _then) = _$HealthReportCopyWithImpl;
 @useResult
 $Res call({
- String id, String patientId, String title, String description, ReportType type, String reportUrl, ReportStatus status,@JsonKey(name: 'generated_at') DateTime? generatedAt,@JsonKey(name: 'period_start') DateTime? periodStart,@JsonKey(name: 'period_end') DateTime? periodEnd, String? thumbnailUrl, bool isRead, bool isShared,@JsonKey(name: 'created_at') DateTime? createdAt, Map<String, dynamic>? metadata
+ String id, String patientId, String title, String description, ReportType type, String reportUrl, ReportStatus status, DateTime? generatedAt, DateTime? periodStart, DateTime? periodEnd, String? thumbnailUrl, bool isRead, bool isShared, DateTime? createdAt, Map<String, dynamic>? metadata
 });
 
 
@@ -167,7 +164,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String patientId,  String title,  String description,  ReportType type,  String reportUrl,  ReportStatus status, @JsonKey(name: 'generated_at')  DateTime? generatedAt, @JsonKey(name: 'period_start')  DateTime? periodStart, @JsonKey(name: 'period_end')  DateTime? periodEnd,  String? thumbnailUrl,  bool isRead,  bool isShared, @JsonKey(name: 'created_at')  DateTime? createdAt,  Map<String, dynamic>? metadata)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String patientId,  String title,  String description,  ReportType type,  String reportUrl,  ReportStatus status,  DateTime? generatedAt,  DateTime? periodStart,  DateTime? periodEnd,  String? thumbnailUrl,  bool isRead,  bool isShared,  DateTime? createdAt,  Map<String, dynamic>? metadata)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _HealthReport() when $default != null:
 return $default(_that.id,_that.patientId,_that.title,_that.description,_that.type,_that.reportUrl,_that.status,_that.generatedAt,_that.periodStart,_that.periodEnd,_that.thumbnailUrl,_that.isRead,_that.isShared,_that.createdAt,_that.metadata);case _:
@@ -188,7 +185,7 @@ return $default(_that.id,_that.patientId,_that.title,_that.description,_that.typ
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String patientId,  String title,  String description,  ReportType type,  String reportUrl,  ReportStatus status, @JsonKey(name: 'generated_at')  DateTime? generatedAt, @JsonKey(name: 'period_start')  DateTime? periodStart, @JsonKey(name: 'period_end')  DateTime? periodEnd,  String? thumbnailUrl,  bool isRead,  bool isShared, @JsonKey(name: 'created_at')  DateTime? createdAt,  Map<String, dynamic>? metadata)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String patientId,  String title,  String description,  ReportType type,  String reportUrl,  ReportStatus status,  DateTime? generatedAt,  DateTime? periodStart,  DateTime? periodEnd,  String? thumbnailUrl,  bool isRead,  bool isShared,  DateTime? createdAt,  Map<String, dynamic>? metadata)  $default,) {final _that = this;
 switch (_that) {
 case _HealthReport():
 return $default(_that.id,_that.patientId,_that.title,_that.description,_that.type,_that.reportUrl,_that.status,_that.generatedAt,_that.periodStart,_that.periodEnd,_that.thumbnailUrl,_that.isRead,_that.isShared,_that.createdAt,_that.metadata);case _:
@@ -208,7 +205,7 @@ return $default(_that.id,_that.patientId,_that.title,_that.description,_that.typ
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String patientId,  String title,  String description,  ReportType type,  String reportUrl,  ReportStatus status, @JsonKey(name: 'generated_at')  DateTime? generatedAt, @JsonKey(name: 'period_start')  DateTime? periodStart, @JsonKey(name: 'period_end')  DateTime? periodEnd,  String? thumbnailUrl,  bool isRead,  bool isShared, @JsonKey(name: 'created_at')  DateTime? createdAt,  Map<String, dynamic>? metadata)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String patientId,  String title,  String description,  ReportType type,  String reportUrl,  ReportStatus status,  DateTime? generatedAt,  DateTime? periodStart,  DateTime? periodEnd,  String? thumbnailUrl,  bool isRead,  bool isShared,  DateTime? createdAt,  Map<String, dynamic>? metadata)?  $default,) {final _that = this;
 switch (_that) {
 case _HealthReport() when $default != null:
 return $default(_that.id,_that.patientId,_that.title,_that.description,_that.type,_that.reportUrl,_that.status,_that.generatedAt,_that.periodStart,_that.periodEnd,_that.thumbnailUrl,_that.isRead,_that.isShared,_that.createdAt,_that.metadata);case _:
@@ -220,11 +217,11 @@ return $default(_that.id,_that.patientId,_that.title,_that.description,_that.typ
 }
 
 /// @nodoc
-@JsonSerializable()
+
 
 class _HealthReport extends HealthReport {
-  const _HealthReport({required this.id, required this.patientId, required this.title, required this.description, required this.type, required this.reportUrl, required this.status, @JsonKey(name: 'generated_at') this.generatedAt, @JsonKey(name: 'period_start') this.periodStart, @JsonKey(name: 'period_end') this.periodEnd, this.thumbnailUrl, this.isRead = false, this.isShared = false, @JsonKey(name: 'created_at') this.createdAt, final  Map<String, dynamic>? metadata}): _metadata = metadata,super._();
-  factory _HealthReport.fromJson(Map<String, dynamic> json) => _$HealthReportFromJson(json);
+  const _HealthReport({required this.id, required this.patientId, required this.title, required this.description, required this.type, required this.reportUrl, required this.status, this.generatedAt, this.periodStart, this.periodEnd, this.thumbnailUrl, this.isRead = false, this.isShared = false, this.createdAt, final  Map<String, dynamic>? metadata}): _metadata = metadata,super._();
+  
 
 @override final  String id;
 @override final  String patientId;
@@ -233,13 +230,13 @@ class _HealthReport extends HealthReport {
 @override final  ReportType type;
 @override final  String reportUrl;
 @override final  ReportStatus status;
-@override@JsonKey(name: 'generated_at') final  DateTime? generatedAt;
-@override@JsonKey(name: 'period_start') final  DateTime? periodStart;
-@override@JsonKey(name: 'period_end') final  DateTime? periodEnd;
+@override final  DateTime? generatedAt;
+@override final  DateTime? periodStart;
+@override final  DateTime? periodEnd;
 @override final  String? thumbnailUrl;
 @override@JsonKey() final  bool isRead;
 @override@JsonKey() final  bool isShared;
-@override@JsonKey(name: 'created_at') final  DateTime? createdAt;
+@override final  DateTime? createdAt;
  final  Map<String, dynamic>? _metadata;
 @override Map<String, dynamic>? get metadata {
   final value = _metadata;
@@ -256,17 +253,14 @@ class _HealthReport extends HealthReport {
 @pragma('vm:prefer-inline')
 _$HealthReportCopyWith<_HealthReport> get copyWith => __$HealthReportCopyWithImpl<_HealthReport>(this, _$identity);
 
-@override
-Map<String, dynamic> toJson() {
-  return _$HealthReportToJson(this, );
-}
+
 
 @override
 bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is _HealthReport&&(identical(other.id, id) || other.id == id)&&(identical(other.patientId, patientId) || other.patientId == patientId)&&(identical(other.title, title) || other.title == title)&&(identical(other.description, description) || other.description == description)&&(identical(other.type, type) || other.type == type)&&(identical(other.reportUrl, reportUrl) || other.reportUrl == reportUrl)&&(identical(other.status, status) || other.status == status)&&(identical(other.generatedAt, generatedAt) || other.generatedAt == generatedAt)&&(identical(other.periodStart, periodStart) || other.periodStart == periodStart)&&(identical(other.periodEnd, periodEnd) || other.periodEnd == periodEnd)&&(identical(other.thumbnailUrl, thumbnailUrl) || other.thumbnailUrl == thumbnailUrl)&&(identical(other.isRead, isRead) || other.isRead == isRead)&&(identical(other.isShared, isShared) || other.isShared == isShared)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&const DeepCollectionEquality().equals(other._metadata, _metadata));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
 int get hashCode => Object.hash(runtimeType,id,patientId,title,description,type,reportUrl,status,generatedAt,periodStart,periodEnd,thumbnailUrl,isRead,isShared,createdAt,const DeepCollectionEquality().hash(_metadata));
 
@@ -283,7 +277,7 @@ abstract mixin class _$HealthReportCopyWith<$Res> implements $HealthReportCopyWi
   factory _$HealthReportCopyWith(_HealthReport value, $Res Function(_HealthReport) _then) = __$HealthReportCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String patientId, String title, String description, ReportType type, String reportUrl, ReportStatus status,@JsonKey(name: 'generated_at') DateTime? generatedAt,@JsonKey(name: 'period_start') DateTime? periodStart,@JsonKey(name: 'period_end') DateTime? periodEnd, String? thumbnailUrl, bool isRead, bool isShared,@JsonKey(name: 'created_at') DateTime? createdAt, Map<String, dynamic>? metadata
+ String id, String patientId, String title, String description, ReportType type, String reportUrl, ReportStatus status, DateTime? generatedAt, DateTime? periodStart, DateTime? periodEnd, String? thumbnailUrl, bool isRead, bool isShared, DateTime? createdAt, Map<String, dynamic>? metadata
 });
 
 
@@ -324,19 +318,16 @@ as Map<String, dynamic>?,
 
 }
 
-
 /// @nodoc
 mixin _$ReportShareRecord {
 
- String get id; String get reportId; ShareMethod get method; String? get recipientInfo;@JsonKey(name: 'shared_at') DateTime get sharedAt; String? get message;
+ String get id; String get reportId; ShareMethod get method; String? get recipientInfo; DateTime get sharedAt; String? get message;
 /// Create a copy of ReportShareRecord
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
 $ReportShareRecordCopyWith<ReportShareRecord> get copyWith => _$ReportShareRecordCopyWithImpl<ReportShareRecord>(this as ReportShareRecord, _$identity);
 
-  /// Serializes this ReportShareRecord to a JSON map.
-  Map<String, dynamic> toJson();
 
 
 @override
@@ -344,7 +335,7 @@ bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is ReportShareRecord&&(identical(other.id, id) || other.id == id)&&(identical(other.reportId, reportId) || other.reportId == reportId)&&(identical(other.method, method) || other.method == method)&&(identical(other.recipientInfo, recipientInfo) || other.recipientInfo == recipientInfo)&&(identical(other.sharedAt, sharedAt) || other.sharedAt == sharedAt)&&(identical(other.message, message) || other.message == message));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
 int get hashCode => Object.hash(runtimeType,id,reportId,method,recipientInfo,sharedAt,message);
 
@@ -361,7 +352,7 @@ abstract mixin class $ReportShareRecordCopyWith<$Res>  {
   factory $ReportShareRecordCopyWith(ReportShareRecord value, $Res Function(ReportShareRecord) _then) = _$ReportShareRecordCopyWithImpl;
 @useResult
 $Res call({
- String id, String reportId, ShareMethod method, String? recipientInfo,@JsonKey(name: 'shared_at') DateTime sharedAt, String? message
+ String id, String reportId, ShareMethod method, String? recipientInfo, DateTime sharedAt, String? message
 });
 
 
@@ -471,7 +462,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String reportId,  ShareMethod method,  String? recipientInfo, @JsonKey(name: 'shared_at')  DateTime sharedAt,  String? message)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String reportId,  ShareMethod method,  String? recipientInfo,  DateTime sharedAt,  String? message)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ReportShareRecord() when $default != null:
 return $default(_that.id,_that.reportId,_that.method,_that.recipientInfo,_that.sharedAt,_that.message);case _:
@@ -492,7 +483,7 @@ return $default(_that.id,_that.reportId,_that.method,_that.recipientInfo,_that.s
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String reportId,  ShareMethod method,  String? recipientInfo, @JsonKey(name: 'shared_at')  DateTime sharedAt,  String? message)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String reportId,  ShareMethod method,  String? recipientInfo,  DateTime sharedAt,  String? message)  $default,) {final _that = this;
 switch (_that) {
 case _ReportShareRecord():
 return $default(_that.id,_that.reportId,_that.method,_that.recipientInfo,_that.sharedAt,_that.message);case _:
@@ -512,7 +503,7 @@ return $default(_that.id,_that.reportId,_that.method,_that.recipientInfo,_that.s
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String reportId,  ShareMethod method,  String? recipientInfo, @JsonKey(name: 'shared_at')  DateTime sharedAt,  String? message)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String reportId,  ShareMethod method,  String? recipientInfo,  DateTime sharedAt,  String? message)?  $default,) {final _that = this;
 switch (_that) {
 case _ReportShareRecord() when $default != null:
 return $default(_that.id,_that.reportId,_that.method,_that.recipientInfo,_that.sharedAt,_that.message);case _:
@@ -524,17 +515,17 @@ return $default(_that.id,_that.reportId,_that.method,_that.recipientInfo,_that.s
 }
 
 /// @nodoc
-@JsonSerializable()
+
 
 class _ReportShareRecord implements ReportShareRecord {
-  const _ReportShareRecord({required this.id, required this.reportId, required this.method, this.recipientInfo, @JsonKey(name: 'shared_at') required this.sharedAt, this.message});
-  factory _ReportShareRecord.fromJson(Map<String, dynamic> json) => _$ReportShareRecordFromJson(json);
+  const _ReportShareRecord({required this.id, required this.reportId, required this.method, this.recipientInfo, required this.sharedAt, this.message});
+  
 
 @override final  String id;
 @override final  String reportId;
 @override final  ShareMethod method;
 @override final  String? recipientInfo;
-@override@JsonKey(name: 'shared_at') final  DateTime sharedAt;
+@override final  DateTime sharedAt;
 @override final  String? message;
 
 /// Create a copy of ReportShareRecord
@@ -543,17 +534,14 @@ class _ReportShareRecord implements ReportShareRecord {
 @pragma('vm:prefer-inline')
 _$ReportShareRecordCopyWith<_ReportShareRecord> get copyWith => __$ReportShareRecordCopyWithImpl<_ReportShareRecord>(this, _$identity);
 
-@override
-Map<String, dynamic> toJson() {
-  return _$ReportShareRecordToJson(this, );
-}
+
 
 @override
 bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is _ReportShareRecord&&(identical(other.id, id) || other.id == id)&&(identical(other.reportId, reportId) || other.reportId == reportId)&&(identical(other.method, method) || other.method == method)&&(identical(other.recipientInfo, recipientInfo) || other.recipientInfo == recipientInfo)&&(identical(other.sharedAt, sharedAt) || other.sharedAt == sharedAt)&&(identical(other.message, message) || other.message == message));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
 int get hashCode => Object.hash(runtimeType,id,reportId,method,recipientInfo,sharedAt,message);
 
@@ -570,7 +558,7 @@ abstract mixin class _$ReportShareRecordCopyWith<$Res> implements $ReportShareRe
   factory _$ReportShareRecordCopyWith(_ReportShareRecord value, $Res Function(_ReportShareRecord) _then) = __$ReportShareRecordCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String reportId, ShareMethod method, String? recipientInfo,@JsonKey(name: 'shared_at') DateTime sharedAt, String? message
+ String id, String reportId, ShareMethod method, String? recipientInfo, DateTime sharedAt, String? message
 });
 
 
@@ -596,281 +584,6 @@ as ShareMethod,recipientInfo: freezed == recipientInfo ? _self.recipientInfo : r
 as String?,sharedAt: null == sharedAt ? _self.sharedAt : sharedAt // ignore: cast_nullable_to_non_nullable
 as DateTime,message: freezed == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
 as String?,
-  ));
-}
-
-
-}
-
-/// @nodoc
-mixin _$WebViewState {
-
- bool get isLoading; bool get hasError; String? get errorMessage; int get loadProgress; String? get currentUrl; bool get canGoBack; bool get canGoForward;
-/// Create a copy of WebViewState
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$WebViewStateCopyWith<WebViewState> get copyWith => _$WebViewStateCopyWithImpl<WebViewState>(this as WebViewState, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is WebViewState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.hasError, hasError) || other.hasError == hasError)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.loadProgress, loadProgress) || other.loadProgress == loadProgress)&&(identical(other.currentUrl, currentUrl) || other.currentUrl == currentUrl)&&(identical(other.canGoBack, canGoBack) || other.canGoBack == canGoBack)&&(identical(other.canGoForward, canGoForward) || other.canGoForward == canGoForward));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,isLoading,hasError,errorMessage,loadProgress,currentUrl,canGoBack,canGoForward);
-
-@override
-String toString() {
-  return 'WebViewState(isLoading: $isLoading, hasError: $hasError, errorMessage: $errorMessage, loadProgress: $loadProgress, currentUrl: $currentUrl, canGoBack: $canGoBack, canGoForward: $canGoForward)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $WebViewStateCopyWith<$Res>  {
-  factory $WebViewStateCopyWith(WebViewState value, $Res Function(WebViewState) _then) = _$WebViewStateCopyWithImpl;
-@useResult
-$Res call({
- bool isLoading, bool hasError, String? errorMessage, int loadProgress, String? currentUrl, bool canGoBack, bool canGoForward
-});
-
-
-
-
-}
-/// @nodoc
-class _$WebViewStateCopyWithImpl<$Res>
-    implements $WebViewStateCopyWith<$Res> {
-  _$WebViewStateCopyWithImpl(this._self, this._then);
-
-  final WebViewState _self;
-  final $Res Function(WebViewState) _then;
-
-/// Create a copy of WebViewState
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? hasError = null,Object? errorMessage = freezed,Object? loadProgress = null,Object? currentUrl = freezed,Object? canGoBack = null,Object? canGoForward = null,}) {
-  return _then(_self.copyWith(
-isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
-as bool,hasError: null == hasError ? _self.hasError : hasError // ignore: cast_nullable_to_non_nullable
-as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
-as String?,loadProgress: null == loadProgress ? _self.loadProgress : loadProgress // ignore: cast_nullable_to_non_nullable
-as int,currentUrl: freezed == currentUrl ? _self.currentUrl : currentUrl // ignore: cast_nullable_to_non_nullable
-as String?,canGoBack: null == canGoBack ? _self.canGoBack : canGoBack // ignore: cast_nullable_to_non_nullable
-as bool,canGoForward: null == canGoForward ? _self.canGoForward : canGoForward // ignore: cast_nullable_to_non_nullable
-as bool,
-  ));
-}
-
-}
-
-
-/// Adds pattern-matching-related methods to [WebViewState].
-extension WebViewStatePatterns on WebViewState {
-/// A variant of `map` that fallback to returning `orElse`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _WebViewState value)?  $default,{required TResult orElse(),}){
-final _that = this;
-switch (_that) {
-case _WebViewState() when $default != null:
-return $default(_that);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// Callbacks receives the raw object, upcasted.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case final Subclass2 value:
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _WebViewState value)  $default,){
-final _that = this;
-switch (_that) {
-case _WebViewState():
-return $default(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
-}
-/// A variant of `map` that fallback to returning `null`.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case final Subclass value:
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _WebViewState value)?  $default,){
-final _that = this;
-switch (_that) {
-case _WebViewState() when $default != null:
-return $default(_that);case _:
-  return null;
-
-}
-}
-/// A variant of `when` that fallback to an `orElse` callback.
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return orElse();
-/// }
-/// ```
-
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  bool hasError,  String? errorMessage,  int loadProgress,  String? currentUrl,  bool canGoBack,  bool canGoForward)?  $default,{required TResult orElse(),}) {final _that = this;
-switch (_that) {
-case _WebViewState() when $default != null:
-return $default(_that.isLoading,_that.hasError,_that.errorMessage,_that.loadProgress,_that.currentUrl,_that.canGoBack,_that.canGoForward);case _:
-  return orElse();
-
-}
-}
-/// A `switch`-like method, using callbacks.
-///
-/// As opposed to `map`, this offers destructuring.
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case Subclass2(:final field2):
-///     return ...;
-/// }
-/// ```
-
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  bool hasError,  String? errorMessage,  int loadProgress,  String? currentUrl,  bool canGoBack,  bool canGoForward)  $default,) {final _that = this;
-switch (_that) {
-case _WebViewState():
-return $default(_that.isLoading,_that.hasError,_that.errorMessage,_that.loadProgress,_that.currentUrl,_that.canGoBack,_that.canGoForward);case _:
-  throw StateError('Unexpected subclass');
-
-}
-}
-/// A variant of `when` that fallback to returning `null`
-///
-/// It is equivalent to doing:
-/// ```dart
-/// switch (sealedClass) {
-///   case Subclass(:final field):
-///     return ...;
-///   case _:
-///     return null;
-/// }
-/// ```
-
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  bool hasError,  String? errorMessage,  int loadProgress,  String? currentUrl,  bool canGoBack,  bool canGoForward)?  $default,) {final _that = this;
-switch (_that) {
-case _WebViewState() when $default != null:
-return $default(_that.isLoading,_that.hasError,_that.errorMessage,_that.loadProgress,_that.currentUrl,_that.canGoBack,_that.canGoForward);case _:
-  return null;
-
-}
-}
-
-}
-
-/// @nodoc
-
-
-class _WebViewState implements WebViewState {
-  const _WebViewState({this.isLoading = false, this.hasError = false, this.errorMessage, this.loadProgress = 0, this.currentUrl, this.canGoBack = false, this.canGoForward = false});
-  
-
-@override@JsonKey() final  bool isLoading;
-@override@JsonKey() final  bool hasError;
-@override final  String? errorMessage;
-@override@JsonKey() final  int loadProgress;
-@override final  String? currentUrl;
-@override@JsonKey() final  bool canGoBack;
-@override@JsonKey() final  bool canGoForward;
-
-/// Create a copy of WebViewState
-/// with the given fields replaced by the non-null parameter values.
-@override @JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$WebViewStateCopyWith<_WebViewState> get copyWith => __$WebViewStateCopyWithImpl<_WebViewState>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _WebViewState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.hasError, hasError) || other.hasError == hasError)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.loadProgress, loadProgress) || other.loadProgress == loadProgress)&&(identical(other.currentUrl, currentUrl) || other.currentUrl == currentUrl)&&(identical(other.canGoBack, canGoBack) || other.canGoBack == canGoBack)&&(identical(other.canGoForward, canGoForward) || other.canGoForward == canGoForward));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,isLoading,hasError,errorMessage,loadProgress,currentUrl,canGoBack,canGoForward);
-
-@override
-String toString() {
-  return 'WebViewState(isLoading: $isLoading, hasError: $hasError, errorMessage: $errorMessage, loadProgress: $loadProgress, currentUrl: $currentUrl, canGoBack: $canGoBack, canGoForward: $canGoForward)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$WebViewStateCopyWith<$Res> implements $WebViewStateCopyWith<$Res> {
-  factory _$WebViewStateCopyWith(_WebViewState value, $Res Function(_WebViewState) _then) = __$WebViewStateCopyWithImpl;
-@override @useResult
-$Res call({
- bool isLoading, bool hasError, String? errorMessage, int loadProgress, String? currentUrl, bool canGoBack, bool canGoForward
-});
-
-
-
-
-}
-/// @nodoc
-class __$WebViewStateCopyWithImpl<$Res>
-    implements _$WebViewStateCopyWith<$Res> {
-  __$WebViewStateCopyWithImpl(this._self, this._then);
-
-  final _WebViewState _self;
-  final $Res Function(_WebViewState) _then;
-
-/// Create a copy of WebViewState
-/// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? hasError = null,Object? errorMessage = freezed,Object? loadProgress = null,Object? currentUrl = freezed,Object? canGoBack = null,Object? canGoForward = null,}) {
-  return _then(_WebViewState(
-isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
-as bool,hasError: null == hasError ? _self.hasError : hasError // ignore: cast_nullable_to_non_nullable
-as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
-as String?,loadProgress: null == loadProgress ? _self.loadProgress : loadProgress // ignore: cast_nullable_to_non_nullable
-as int,currentUrl: freezed == currentUrl ? _self.currentUrl : currentUrl // ignore: cast_nullable_to_non_nullable
-as String?,canGoBack: null == canGoBack ? _self.canGoBack : canGoBack // ignore: cast_nullable_to_non_nullable
-as bool,canGoForward: null == canGoForward ? _self.canGoForward : canGoForward // ignore: cast_nullable_to_non_nullable
-as bool,
   ));
 }
 

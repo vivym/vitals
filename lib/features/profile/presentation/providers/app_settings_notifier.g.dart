@@ -7,7 +7,7 @@ part of 'app_settings_notifier.dart';
 // **************************************************************************
 
 String _$appSettingsNotifierHash() =>
-    r'74cae3b89a0e619153bd8481d7d8e91574f914f1';
+    r'5f012b305b3cc605457dfd0733a2934fba86becd';
 
 /// 应用设置状态管理
 ///
@@ -16,7 +16,7 @@ String _$appSettingsNotifierHash() =>
 final appSettingsNotifierProvider =
     AutoDisposeNotifierProvider<
       AppSettingsNotifier,
-      AsyncValue<AppSettings>
+      AsyncValue<AppSettingsEntity>
     >.internal(
       AppSettingsNotifier.new,
       name: r'appSettingsNotifierProvider',
@@ -27,6 +27,7 @@ final appSettingsNotifierProvider =
       allTransitiveDependencies: null,
     );
 
-typedef _$AppSettingsNotifier = AutoDisposeNotifier<AsyncValue<AppSettings>>;
+typedef _$AppSettingsNotifier =
+    AutoDisposeNotifier<AsyncValue<AppSettingsEntity>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

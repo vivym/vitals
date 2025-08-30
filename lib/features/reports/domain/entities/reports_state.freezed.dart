@@ -292,7 +292,7 @@ as DateTime?,
 /// @nodoc
 mixin _$ReportDetailState {
 
- HealthReport? get report; WebViewState get webViewState; bool get isSharing; String? get shareError; List<ReportShareRecord> get shareHistory;
+ HealthReport? get report; bool get isSharing; String? get shareError; List<ReportShareRecord> get shareHistory;
 /// Create a copy of ReportDetailState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -303,16 +303,16 @@ $ReportDetailStateCopyWith<ReportDetailState> get copyWith => _$ReportDetailStat
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ReportDetailState&&(identical(other.report, report) || other.report == report)&&(identical(other.webViewState, webViewState) || other.webViewState == webViewState)&&(identical(other.isSharing, isSharing) || other.isSharing == isSharing)&&(identical(other.shareError, shareError) || other.shareError == shareError)&&const DeepCollectionEquality().equals(other.shareHistory, shareHistory));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ReportDetailState&&(identical(other.report, report) || other.report == report)&&(identical(other.isSharing, isSharing) || other.isSharing == isSharing)&&(identical(other.shareError, shareError) || other.shareError == shareError)&&const DeepCollectionEquality().equals(other.shareHistory, shareHistory));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,report,webViewState,isSharing,shareError,const DeepCollectionEquality().hash(shareHistory));
+int get hashCode => Object.hash(runtimeType,report,isSharing,shareError,const DeepCollectionEquality().hash(shareHistory));
 
 @override
 String toString() {
-  return 'ReportDetailState(report: $report, webViewState: $webViewState, isSharing: $isSharing, shareError: $shareError, shareHistory: $shareHistory)';
+  return 'ReportDetailState(report: $report, isSharing: $isSharing, shareError: $shareError, shareHistory: $shareHistory)';
 }
 
 
@@ -323,11 +323,11 @@ abstract mixin class $ReportDetailStateCopyWith<$Res>  {
   factory $ReportDetailStateCopyWith(ReportDetailState value, $Res Function(ReportDetailState) _then) = _$ReportDetailStateCopyWithImpl;
 @useResult
 $Res call({
- HealthReport? report, WebViewState webViewState, bool isSharing, String? shareError, List<ReportShareRecord> shareHistory
+ HealthReport? report, bool isSharing, String? shareError, List<ReportShareRecord> shareHistory
 });
 
 
-$HealthReportCopyWith<$Res>? get report;$WebViewStateCopyWith<$Res> get webViewState;
+$HealthReportCopyWith<$Res>? get report;
 
 }
 /// @nodoc
@@ -340,11 +340,10 @@ class _$ReportDetailStateCopyWithImpl<$Res>
 
 /// Create a copy of ReportDetailState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? report = freezed,Object? webViewState = null,Object? isSharing = null,Object? shareError = freezed,Object? shareHistory = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? report = freezed,Object? isSharing = null,Object? shareError = freezed,Object? shareHistory = null,}) {
   return _then(_self.copyWith(
 report: freezed == report ? _self.report : report // ignore: cast_nullable_to_non_nullable
-as HealthReport?,webViewState: null == webViewState ? _self.webViewState : webViewState // ignore: cast_nullable_to_non_nullable
-as WebViewState,isSharing: null == isSharing ? _self.isSharing : isSharing // ignore: cast_nullable_to_non_nullable
+as HealthReport?,isSharing: null == isSharing ? _self.isSharing : isSharing // ignore: cast_nullable_to_non_nullable
 as bool,shareError: freezed == shareError ? _self.shareError : shareError // ignore: cast_nullable_to_non_nullable
 as String?,shareHistory: null == shareHistory ? _self.shareHistory : shareHistory // ignore: cast_nullable_to_non_nullable
 as List<ReportShareRecord>,
@@ -361,15 +360,6 @@ $HealthReportCopyWith<$Res>? get report {
 
   return $HealthReportCopyWith<$Res>(_self.report!, (value) {
     return _then(_self.copyWith(report: value));
-  });
-}/// Create a copy of ReportDetailState
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$WebViewStateCopyWith<$Res> get webViewState {
-  
-  return $WebViewStateCopyWith<$Res>(_self.webViewState, (value) {
-    return _then(_self.copyWith(webViewState: value));
   });
 }
 }
@@ -453,10 +443,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( HealthReport? report,  WebViewState webViewState,  bool isSharing,  String? shareError,  List<ReportShareRecord> shareHistory)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( HealthReport? report,  bool isSharing,  String? shareError,  List<ReportShareRecord> shareHistory)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ReportDetailState() when $default != null:
-return $default(_that.report,_that.webViewState,_that.isSharing,_that.shareError,_that.shareHistory);case _:
+return $default(_that.report,_that.isSharing,_that.shareError,_that.shareHistory);case _:
   return orElse();
 
 }
@@ -474,10 +464,10 @@ return $default(_that.report,_that.webViewState,_that.isSharing,_that.shareError
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( HealthReport? report,  WebViewState webViewState,  bool isSharing,  String? shareError,  List<ReportShareRecord> shareHistory)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( HealthReport? report,  bool isSharing,  String? shareError,  List<ReportShareRecord> shareHistory)  $default,) {final _that = this;
 switch (_that) {
 case _ReportDetailState():
-return $default(_that.report,_that.webViewState,_that.isSharing,_that.shareError,_that.shareHistory);case _:
+return $default(_that.report,_that.isSharing,_that.shareError,_that.shareHistory);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -494,10 +484,10 @@ return $default(_that.report,_that.webViewState,_that.isSharing,_that.shareError
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( HealthReport? report,  WebViewState webViewState,  bool isSharing,  String? shareError,  List<ReportShareRecord> shareHistory)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( HealthReport? report,  bool isSharing,  String? shareError,  List<ReportShareRecord> shareHistory)?  $default,) {final _that = this;
 switch (_that) {
 case _ReportDetailState() when $default != null:
-return $default(_that.report,_that.webViewState,_that.isSharing,_that.shareError,_that.shareHistory);case _:
+return $default(_that.report,_that.isSharing,_that.shareError,_that.shareHistory);case _:
   return null;
 
 }
@@ -509,11 +499,10 @@ return $default(_that.report,_that.webViewState,_that.isSharing,_that.shareError
 
 
 class _ReportDetailState implements ReportDetailState {
-  const _ReportDetailState({this.report, this.webViewState = const WebViewState(), this.isSharing = false, this.shareError, final  List<ReportShareRecord> shareHistory = const []}): _shareHistory = shareHistory;
+  const _ReportDetailState({this.report, this.isSharing = false, this.shareError, final  List<ReportShareRecord> shareHistory = const []}): _shareHistory = shareHistory;
   
 
 @override final  HealthReport? report;
-@override@JsonKey() final  WebViewState webViewState;
 @override@JsonKey() final  bool isSharing;
 @override final  String? shareError;
  final  List<ReportShareRecord> _shareHistory;
@@ -534,16 +523,16 @@ _$ReportDetailStateCopyWith<_ReportDetailState> get copyWith => __$ReportDetailS
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ReportDetailState&&(identical(other.report, report) || other.report == report)&&(identical(other.webViewState, webViewState) || other.webViewState == webViewState)&&(identical(other.isSharing, isSharing) || other.isSharing == isSharing)&&(identical(other.shareError, shareError) || other.shareError == shareError)&&const DeepCollectionEquality().equals(other._shareHistory, _shareHistory));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ReportDetailState&&(identical(other.report, report) || other.report == report)&&(identical(other.isSharing, isSharing) || other.isSharing == isSharing)&&(identical(other.shareError, shareError) || other.shareError == shareError)&&const DeepCollectionEquality().equals(other._shareHistory, _shareHistory));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,report,webViewState,isSharing,shareError,const DeepCollectionEquality().hash(_shareHistory));
+int get hashCode => Object.hash(runtimeType,report,isSharing,shareError,const DeepCollectionEquality().hash(_shareHistory));
 
 @override
 String toString() {
-  return 'ReportDetailState(report: $report, webViewState: $webViewState, isSharing: $isSharing, shareError: $shareError, shareHistory: $shareHistory)';
+  return 'ReportDetailState(report: $report, isSharing: $isSharing, shareError: $shareError, shareHistory: $shareHistory)';
 }
 
 
@@ -554,11 +543,11 @@ abstract mixin class _$ReportDetailStateCopyWith<$Res> implements $ReportDetailS
   factory _$ReportDetailStateCopyWith(_ReportDetailState value, $Res Function(_ReportDetailState) _then) = __$ReportDetailStateCopyWithImpl;
 @override @useResult
 $Res call({
- HealthReport? report, WebViewState webViewState, bool isSharing, String? shareError, List<ReportShareRecord> shareHistory
+ HealthReport? report, bool isSharing, String? shareError, List<ReportShareRecord> shareHistory
 });
 
 
-@override $HealthReportCopyWith<$Res>? get report;@override $WebViewStateCopyWith<$Res> get webViewState;
+@override $HealthReportCopyWith<$Res>? get report;
 
 }
 /// @nodoc
@@ -571,11 +560,10 @@ class __$ReportDetailStateCopyWithImpl<$Res>
 
 /// Create a copy of ReportDetailState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? report = freezed,Object? webViewState = null,Object? isSharing = null,Object? shareError = freezed,Object? shareHistory = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? report = freezed,Object? isSharing = null,Object? shareError = freezed,Object? shareHistory = null,}) {
   return _then(_ReportDetailState(
 report: freezed == report ? _self.report : report // ignore: cast_nullable_to_non_nullable
-as HealthReport?,webViewState: null == webViewState ? _self.webViewState : webViewState // ignore: cast_nullable_to_non_nullable
-as WebViewState,isSharing: null == isSharing ? _self.isSharing : isSharing // ignore: cast_nullable_to_non_nullable
+as HealthReport?,isSharing: null == isSharing ? _self.isSharing : isSharing // ignore: cast_nullable_to_non_nullable
 as bool,shareError: freezed == shareError ? _self.shareError : shareError // ignore: cast_nullable_to_non_nullable
 as String?,shareHistory: null == shareHistory ? _self._shareHistory : shareHistory // ignore: cast_nullable_to_non_nullable
 as List<ReportShareRecord>,
@@ -593,15 +581,6 @@ $HealthReportCopyWith<$Res>? get report {
 
   return $HealthReportCopyWith<$Res>(_self.report!, (value) {
     return _then(_self.copyWith(report: value));
-  });
-}/// Create a copy of ReportDetailState
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$WebViewStateCopyWith<$Res> get webViewState {
-  
-  return $WebViewStateCopyWith<$Res>(_self.webViewState, (value) {
-    return _then(_self.copyWith(webViewState: value));
   });
 }
 }

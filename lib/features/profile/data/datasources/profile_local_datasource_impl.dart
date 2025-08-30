@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../models/user_profile.dart';
 import '../models/app_settings.dart';
+import '../models/connected_device.dart';
 import 'profile_local_datasource.dart';
 
 /// 个人中心本地数据源实现
@@ -13,7 +14,7 @@ class ProfileLocalDataSourceImpl implements ProfileLocalDataSource {
   ProfileLocalDataSourceImpl(this._prefs, this._secureStorage);
 
   @override
-  Future<AppSettings?> getAppSettings() async {
+  Future<AppSettings?> getCachedAppSettings() async {
     final settingsJson = _prefs.getString('app_settings');
     if (settingsJson != null) {
       try {
@@ -27,7 +28,7 @@ class ProfileLocalDataSourceImpl implements ProfileLocalDataSource {
   }
 
   @override
-  Future<void> saveAppSettings(AppSettings settings) async {
+  Future<void> cacheAppSettings(AppSettings settings) async {
     await _prefs.setString('app_settings', jsonEncode(settings.toJson()));
   }
 
@@ -51,10 +52,33 @@ class ProfileLocalDataSourceImpl implements ProfileLocalDataSource {
   }
 
   @override
-  Future<void> clearCachedData() async {
+  Future<List<ConnectedDevice>?> getCachedConnectedDevices() async {
+    final devicesJson = _prefs.getString('connected_devices');
+    if (devicesJson != null) {
+      try {
+        final List<dynamic> devicesList = jsonDecode(devicesJson);
+        return devicesList
+            .map((json) => ConnectedDevice.fromJson(json))
+            .toList();
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  }
+
+  @override
+  Future<void> cacheConnectedDevices(List<ConnectedDevice> devices) async {
+    final devicesJson = jsonEncode(devices.map((device) => device.toJson()).toList());
+    await _prefs.setString('connected_devices', devicesJson);
+  }
+
+  @override
+  Future<void> clearCache() async {
     await Future.wait([
       _prefs.remove('user_profile'),
       _prefs.remove('app_settings'),
+      _prefs.remove('connected_devices'),
     ]);
   }
 }

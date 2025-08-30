@@ -1,12 +1,13 @@
+import 'package:vitals/features/reports/data/models/health_report_model.dart';
 import 'package:vitals/features/reports/domain/entities/health_report.dart';
 
 /// 健康报告远程数据源接口
 abstract class ReportsRemoteDataSource {
   /// 获取患者的健康报告列表
-  Future<List<HealthReport>> getReports(String patientId);
+  Future<List<HealthReportModel>> getReports(String patientId);
 
   /// 根据ID获取特定报告
-  Future<HealthReport> getReportById(String reportId);
+  Future<HealthReportModel> getReportById(String reportId);
 
   /// 标记报告为已读
   Future<void> markReportAsRead(String reportId);

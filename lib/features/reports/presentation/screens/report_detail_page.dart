@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:vitals/features/reports/domain/entities/health_report.dart';
-import 'package:vitals/features/reports/domain/entities/reports_state.dart';
 import 'package:vitals/features/reports/presentation/providers/reports_page_providers.dart';
 
 /// 健康报告详情页面

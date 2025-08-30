@@ -1,60 +1,53 @@
-import 'dart:io';
-import 'package:vitals/core/errors/app_error.dart';
-import '../../data/models/user_profile.dart';
-import '../../data/models/connected_device.dart';
-import '../../data/models/my_service.dart';
-import '../../data/models/medication_reminder.dart';
-import '../../data/models/app_settings.dart';
-import '../../data/models/favorite_item.dart';
-import '../../data/models/feedback_item.dart';
+import '../../../../core/errors/app_error.dart';
+import '../entities/profile_entity.dart';
+import '../entities/user_profile_entity.dart';
+import '../entities/connected_device_entity.dart';
+import '../entities/app_settings_entity.dart';
 
-/// 个人中心仓库接口
+/// Profile仓库接口
 abstract class ProfileRepository {
-  /// 获取用户资料
-  Future<Result<UserProfile, AppError>> getUserProfile({bool forceRefresh = false});
+  /// 获取完整的个人资料数据
+  Future<Result<ProfileEntity, AppError>> getProfile(String userId);
 
-  /// 更新用户资料
-  Future<Result<UserProfile, AppError>> updateUserProfile(UserProfile profile);
+  /// 获取用户基本信息
+  Future<Result<UserProfileEntity, AppError>> getUserProfile(String userId);
 
-  /// 上传头像
-  Future<Result<String, AppError>> uploadAvatar(File avatarFile);
+  /// 更新用户基本信息
+  Future<Result<UserProfileEntity, AppError>> updateUserProfile(
+    String userId,
+    UserProfileEntity profile,
+  );
 
-  /// 获取已连接设备
-  Future<Result<List<ConnectedDevice>, AppError>> getConnectedDevices();
+  /// 获取连接的设备列表
+  Future<Result<List<ConnectedDeviceEntity>, AppError>> getConnectedDevices(String userId);
 
-  /// 连接设备
-  Future<Result<ConnectedDevice, AppError>> connectDevice(DeviceType type, Map<String, dynamic> config);
+  /// 连接新设备
+  Future<Result<ConnectedDeviceEntity, AppError>> connectDevice(
+    String userId,
+    ConnectedDeviceEntity device,
+  );
 
   /// 断开设备连接
-  Future<Result<void, AppError>> disconnectDevice(String deviceId);
+  Future<Result<void, AppError>> disconnectDevice(String userId, String deviceId);
 
-  /// 获取我的服务
-  Future<Result<List<MyService>, AppError>> getMyServices();
-
-  /// 获取用药提醒
-  Future<Result<List<MedicationReminder>, AppError>> getMedicationReminders(String patientId);
-
-  /// 创建用药提醒
-  Future<Result<MedicationReminder, AppError>> createMedicationReminder(MedicationReminder reminder);
-
-  /// 删除用药提醒
-  Future<Result<void, AppError>> deleteMedicationReminder(String reminderId);
-
-  /// 获取收藏内容
-  Future<Result<List<FavoriteItem>, AppError>> getFavorites();
-
-  /// 添加到收藏
-  Future<Result<void, AppError>> addToFavorites(String contentId, FavoriteType type);
-
-  /// 从收藏中移除
-  Future<Result<void, AppError>> removeFromFavorites(String favoriteId);
-
-  /// 提交反馈
-  Future<Result<void, AppError>> submitFeedback(FeedbackItem feedback);
+  /// 同步设备数据
+  Future<Result<void, AppError>> syncDeviceData(String userId, String deviceId);
 
   /// 获取应用设置
-  Future<Result<AppSettings, AppError>> getAppSettings();
+  Future<Result<AppSettingsEntity, AppError>> getAppSettings(String userId);
 
-  /// 保存应用设置
-  Future<Result<void, AppError>> saveAppSettings(AppSettings settings);
+  /// 更新应用设置
+  Future<Result<AppSettingsEntity, AppError>> updateAppSettings(
+    String userId,
+    AppSettingsEntity settings,
+  );
+
+  /// 备份用户数据
+  Future<Result<void, AppError>> backupUserData(String userId);
+
+  /// 恢复用户数据
+  Future<Result<void, AppError>> restoreUserData(String userId, String backupId);
+
+  /// 删除用户账户
+  Future<Result<void, AppError>> deleteUserAccount(String userId);
 }

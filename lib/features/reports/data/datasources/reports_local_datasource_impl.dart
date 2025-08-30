@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vitals/features/reports/data/datasources/reports_local_datasource.dart';
-import 'package:vitals/features/reports/domain/entities/health_report.dart';
+import 'package:vitals/features/reports/data/models/health_report_model.dart';
 
 /// 健康报告本地数据源实现
 /// 使用SharedPreferences存储数据
@@ -14,7 +14,7 @@ class ReportsLocalDataSourceImpl implements ReportsLocalDataSource {
   ReportsLocalDataSourceImpl(this._sharedPreferences);
 
   @override
-  Future<List<HealthReport>?> getCachedReports(String patientId) async {
+  Future<List<HealthReportModel>?> getCachedReports(String patientId) async {
     try {
       final key = 'cached_reports_$patientId';
       final cachedData = _sharedPreferences.getString(key);
@@ -25,7 +25,7 @@ class ReportsLocalDataSourceImpl implements ReportsLocalDataSource {
 
       final jsonList = jsonDecode(cachedData) as List<dynamic>;
       final reports = jsonList
-          .map((json) => HealthReport.fromJson(json as Map<String, dynamic>))
+          .map((json) => HealthReportModel.fromJson(json as Map<String, dynamic>))
           .toList();
 
       return reports;
@@ -36,7 +36,7 @@ class ReportsLocalDataSourceImpl implements ReportsLocalDataSource {
   }
 
   @override
-  Future<void> cacheReports(String patientId, List<HealthReport> reports) async {
+  Future<void> cacheReports(String patientId, List<HealthReportModel> reports) async {
     final key = 'cached_reports_$patientId';
     final timestampKey = 'cached_reports_timestamp_$patientId';
 
