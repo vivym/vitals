@@ -51,6 +51,16 @@ class DataEntryNotifier extends _$DataEntryNotifier {
     state = state.copyWith(notes: value);
   }
 
+  // 切换输入模式
+  void toggleInputMode() {
+    state = state.copyWith(isDiastolicMode: !state.isDiastolicMode);
+  }
+
+  // 设置输入模式
+  void setInputMode(bool isDiastolic) {
+    state = state.copyWith(isDiastolicMode: isDiastolic);
+  }
+
   // 设置提交状态
   void setSubmitting(bool isSubmitting) {
     state = state.copyWith(isSubmitting: isSubmitting);

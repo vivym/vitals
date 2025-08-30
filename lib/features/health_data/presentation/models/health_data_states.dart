@@ -70,6 +70,7 @@ abstract class DataEntryState with _$DataEntryState {
     String? notes,
     @Default({}) Map<String, String> validationErrors,
     @Default(false) bool isSubmitting,
+    @Default(false) bool isDiastolicMode, // 添加输入模式标记
   }) = _DataEntryState;
 
   const DataEntryState._();

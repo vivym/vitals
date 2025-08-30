@@ -22,7 +22,7 @@ class HealthDataOverviewSection extends StatelessWidget {
               style: Theme.of(context).textTheme.titleLarge,
             ),
             TextButton(
-              onPressed: () => context.go('/health-data'),
+              onPressed: () {}, // 空函数，保持按钮外观但无功能
               child: const Text('查看更多'),
             ),
           ],
@@ -66,7 +66,7 @@ class BloodPressureCard extends StatelessWidget {
       unit: 'mmHg',
       subtitle: data.level?.label ?? '',
       color: data.level?.color ?? Theme.of(context).primaryColor,
-      onTap: () => context.go('/health-data/blood-pressure'),
+      onTap: () => context.go('/dashboard/health-data/blood-pressure'),
     );
   }
 }
@@ -86,7 +86,7 @@ class HeartRateCard extends StatelessWidget {
       unit: '次/分',
       subtitle: data.zone?.label ?? '',
       color: data.zone?.color ?? Theme.of(context).primaryColor,
-      onTap: () => context.go('/health-data/heart-rate'),
+      onTap: () {}, // 空函数，保持按钮外观但无功能
     );
   }
 }
@@ -102,11 +102,11 @@ class WeightCard extends StatelessWidget {
     return HealthDataCard(
       icon: Icons.monitor_weight,
       title: '体重',
-      value: '${data.weight.toStringAsFixed(1)}',
+      value: data.weight.toStringAsFixed(1),
       unit: 'kg',
       subtitle: data.category?.label ?? '',
       color: data.category?.color ?? Theme.of(context).primaryColor,
-      onTap: () => context.go('/health-data/weight'),
+      onTap: () {}, // 空函数，保持按钮外观但无功能
     );
   }
 }
@@ -126,7 +126,7 @@ class StepsCard extends StatelessWidget {
       unit: '步',
       subtitle: data.goal != null ? '目标: ${data.goal}步' : '',
       color: Theme.of(context).primaryColor,
-      onTap: () => context.go('/health-data/steps'),
+      onTap: () {}, // 空函数，保持按钮外观但无功能
     );
   }
 }

@@ -5,6 +5,7 @@ import '../../features/auth/presentation/screens/login_screen.dart' as auth_page
 import '../../features/auth/presentation/screens/patient_sign_screen.dart' as auth_pages;
 import '../../features/auth/presentation/screens/patient_sign_success_screen.dart' as auth_pages;
 import '../../features/auth/presentation/providers/auth_provider.dart';
+import '../../features/health_data/presentation/screens/blood_pressure_screen.dart';
 
 import '../../shared/widgets/main_navigation_scaffold.dart';
 
@@ -120,6 +121,13 @@ class AppRouter {
         GoRoute(
           path: AppRoutes.dashboard,
           builder: (context, state) => const MainNavigationScaffold(currentIndex: 0),
+          routes: [
+            // 血压详情页面作为子路由
+            GoRoute(
+              path: 'health-data/blood-pressure',
+              builder: (context, state) => const BloodPressureScreen(),
+            ),
+          ],
         ),
 
         // 其他底部导航页面重定向到主导航页面

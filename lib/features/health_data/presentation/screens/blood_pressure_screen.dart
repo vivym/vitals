@@ -20,6 +20,7 @@ class BloodPressureScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('血压详情'),
+        automaticallyImplyLeading: true, // 确保显示返回按钮
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),

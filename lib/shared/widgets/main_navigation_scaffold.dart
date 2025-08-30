@@ -169,9 +169,9 @@ class _DashboardPageContent extends ConsumerWidget {
         title: const Text('王高南'),
         centerTitle: true,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () => ref.read(dashboardNotifierProvider.notifier).refresh(),
+          TextButton(
+            onPressed: () {}, // 暂时为空函数
+            child: const Text('我的方案', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),

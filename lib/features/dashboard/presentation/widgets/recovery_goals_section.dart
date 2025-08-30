@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import '../../data/models/dashboard_models.dart';
 
 /// 康复目标区域
@@ -21,7 +20,7 @@ class RecoveryGoalsSection extends StatelessWidget {
               style: Theme.of(context).textTheme.titleLarge,
             ),
             TextButton(
-              onPressed: () => context.go('/health-data/goals'),
+              onPressed: () {}, // 空函数，保持按钮外观但无功能
               child: const Text('查看全部'),
             ),
           ],

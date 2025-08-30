@@ -7,7 +7,7 @@ part of 'blood_pressure_notifier.dart';
 // **************************************************************************
 
 String _$bloodPressureNotifierHash() =>
-    r'cb00c062f5e0151fa264e58d239b4c7cc483bd2b';
+    r'198ac0f6c3d97eaee2775b55ffc9ee66e165f9c0';
 
 /// 血压状态管理 - 参考Dashboard模块架构
 ///

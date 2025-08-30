@@ -292,7 +292,7 @@ as String?,
 /// @nodoc
 mixin _$DataEntryState {
 
- int? get systolic; int? get diastolic; int? get heartRate; double? get weight; DateTime? get recordedAt; String? get notes; Map<String, String> get validationErrors; bool get isSubmitting;
+ int? get systolic; int? get diastolic; int? get heartRate; double? get weight; DateTime? get recordedAt; String? get notes; Map<String, String> get validationErrors; bool get isSubmitting; bool get isDiastolicMode;
 /// Create a copy of DataEntryState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -303,16 +303,16 @@ $DataEntryStateCopyWith<DataEntryState> get copyWith => _$DataEntryStateCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DataEntryState&&(identical(other.systolic, systolic) || other.systolic == systolic)&&(identical(other.diastolic, diastolic) || other.diastolic == diastolic)&&(identical(other.heartRate, heartRate) || other.heartRate == heartRate)&&(identical(other.weight, weight) || other.weight == weight)&&(identical(other.recordedAt, recordedAt) || other.recordedAt == recordedAt)&&(identical(other.notes, notes) || other.notes == notes)&&const DeepCollectionEquality().equals(other.validationErrors, validationErrors)&&(identical(other.isSubmitting, isSubmitting) || other.isSubmitting == isSubmitting));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DataEntryState&&(identical(other.systolic, systolic) || other.systolic == systolic)&&(identical(other.diastolic, diastolic) || other.diastolic == diastolic)&&(identical(other.heartRate, heartRate) || other.heartRate == heartRate)&&(identical(other.weight, weight) || other.weight == weight)&&(identical(other.recordedAt, recordedAt) || other.recordedAt == recordedAt)&&(identical(other.notes, notes) || other.notes == notes)&&const DeepCollectionEquality().equals(other.validationErrors, validationErrors)&&(identical(other.isSubmitting, isSubmitting) || other.isSubmitting == isSubmitting)&&(identical(other.isDiastolicMode, isDiastolicMode) || other.isDiastolicMode == isDiastolicMode));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,systolic,diastolic,heartRate,weight,recordedAt,notes,const DeepCollectionEquality().hash(validationErrors),isSubmitting);
+int get hashCode => Object.hash(runtimeType,systolic,diastolic,heartRate,weight,recordedAt,notes,const DeepCollectionEquality().hash(validationErrors),isSubmitting,isDiastolicMode);
 
 @override
 String toString() {
-  return 'DataEntryState(systolic: $systolic, diastolic: $diastolic, heartRate: $heartRate, weight: $weight, recordedAt: $recordedAt, notes: $notes, validationErrors: $validationErrors, isSubmitting: $isSubmitting)';
+  return 'DataEntryState(systolic: $systolic, diastolic: $diastolic, heartRate: $heartRate, weight: $weight, recordedAt: $recordedAt, notes: $notes, validationErrors: $validationErrors, isSubmitting: $isSubmitting, isDiastolicMode: $isDiastolicMode)';
 }
 
 
@@ -323,7 +323,7 @@ abstract mixin class $DataEntryStateCopyWith<$Res>  {
   factory $DataEntryStateCopyWith(DataEntryState value, $Res Function(DataEntryState) _then) = _$DataEntryStateCopyWithImpl;
 @useResult
 $Res call({
- int? systolic, int? diastolic, int? heartRate, double? weight, DateTime? recordedAt, String? notes, Map<String, String> validationErrors, bool isSubmitting
+ int? systolic, int? diastolic, int? heartRate, double? weight, DateTime? recordedAt, String? notes, Map<String, String> validationErrors, bool isSubmitting, bool isDiastolicMode
 });
 
 
@@ -340,7 +340,7 @@ class _$DataEntryStateCopyWithImpl<$Res>
 
 /// Create a copy of DataEntryState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? systolic = freezed,Object? diastolic = freezed,Object? heartRate = freezed,Object? weight = freezed,Object? recordedAt = freezed,Object? notes = freezed,Object? validationErrors = null,Object? isSubmitting = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? systolic = freezed,Object? diastolic = freezed,Object? heartRate = freezed,Object? weight = freezed,Object? recordedAt = freezed,Object? notes = freezed,Object? validationErrors = null,Object? isSubmitting = null,Object? isDiastolicMode = null,}) {
   return _then(_self.copyWith(
 systolic: freezed == systolic ? _self.systolic : systolic // ignore: cast_nullable_to_non_nullable
 as int?,diastolic: freezed == diastolic ? _self.diastolic : diastolic // ignore: cast_nullable_to_non_nullable
@@ -350,6 +350,7 @@ as double?,recordedAt: freezed == recordedAt ? _self.recordedAt : recordedAt // 
 as DateTime?,notes: freezed == notes ? _self.notes : notes // ignore: cast_nullable_to_non_nullable
 as String?,validationErrors: null == validationErrors ? _self.validationErrors : validationErrors // ignore: cast_nullable_to_non_nullable
 as Map<String, String>,isSubmitting: null == isSubmitting ? _self.isSubmitting : isSubmitting // ignore: cast_nullable_to_non_nullable
+as bool,isDiastolicMode: null == isDiastolicMode ? _self.isDiastolicMode : isDiastolicMode // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }
@@ -435,10 +436,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int? systolic,  int? diastolic,  int? heartRate,  double? weight,  DateTime? recordedAt,  String? notes,  Map<String, String> validationErrors,  bool isSubmitting)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int? systolic,  int? diastolic,  int? heartRate,  double? weight,  DateTime? recordedAt,  String? notes,  Map<String, String> validationErrors,  bool isSubmitting,  bool isDiastolicMode)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _DataEntryState() when $default != null:
-return $default(_that.systolic,_that.diastolic,_that.heartRate,_that.weight,_that.recordedAt,_that.notes,_that.validationErrors,_that.isSubmitting);case _:
+return $default(_that.systolic,_that.diastolic,_that.heartRate,_that.weight,_that.recordedAt,_that.notes,_that.validationErrors,_that.isSubmitting,_that.isDiastolicMode);case _:
   return orElse();
 
 }
@@ -456,10 +457,10 @@ return $default(_that.systolic,_that.diastolic,_that.heartRate,_that.weight,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int? systolic,  int? diastolic,  int? heartRate,  double? weight,  DateTime? recordedAt,  String? notes,  Map<String, String> validationErrors,  bool isSubmitting)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int? systolic,  int? diastolic,  int? heartRate,  double? weight,  DateTime? recordedAt,  String? notes,  Map<String, String> validationErrors,  bool isSubmitting,  bool isDiastolicMode)  $default,) {final _that = this;
 switch (_that) {
 case _DataEntryState():
-return $default(_that.systolic,_that.diastolic,_that.heartRate,_that.weight,_that.recordedAt,_that.notes,_that.validationErrors,_that.isSubmitting);case _:
+return $default(_that.systolic,_that.diastolic,_that.heartRate,_that.weight,_that.recordedAt,_that.notes,_that.validationErrors,_that.isSubmitting,_that.isDiastolicMode);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -476,10 +477,10 @@ return $default(_that.systolic,_that.diastolic,_that.heartRate,_that.weight,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int? systolic,  int? diastolic,  int? heartRate,  double? weight,  DateTime? recordedAt,  String? notes,  Map<String, String> validationErrors,  bool isSubmitting)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int? systolic,  int? diastolic,  int? heartRate,  double? weight,  DateTime? recordedAt,  String? notes,  Map<String, String> validationErrors,  bool isSubmitting,  bool isDiastolicMode)?  $default,) {final _that = this;
 switch (_that) {
 case _DataEntryState() when $default != null:
-return $default(_that.systolic,_that.diastolic,_that.heartRate,_that.weight,_that.recordedAt,_that.notes,_that.validationErrors,_that.isSubmitting);case _:
+return $default(_that.systolic,_that.diastolic,_that.heartRate,_that.weight,_that.recordedAt,_that.notes,_that.validationErrors,_that.isSubmitting,_that.isDiastolicMode);case _:
   return null;
 
 }
@@ -491,7 +492,7 @@ return $default(_that.systolic,_that.diastolic,_that.heartRate,_that.weight,_tha
 
 
 class _DataEntryState extends DataEntryState {
-  const _DataEntryState({this.systolic, this.diastolic, this.heartRate, this.weight, this.recordedAt, this.notes, final  Map<String, String> validationErrors = const {}, this.isSubmitting = false}): _validationErrors = validationErrors,super._();
+  const _DataEntryState({this.systolic, this.diastolic, this.heartRate, this.weight, this.recordedAt, this.notes, final  Map<String, String> validationErrors = const {}, this.isSubmitting = false, this.isDiastolicMode = false}): _validationErrors = validationErrors,super._();
   
 
 @override final  int? systolic;
@@ -508,6 +509,7 @@ class _DataEntryState extends DataEntryState {
 }
 
 @override@JsonKey() final  bool isSubmitting;
+@override@JsonKey() final  bool isDiastolicMode;
 
 /// Create a copy of DataEntryState
 /// with the given fields replaced by the non-null parameter values.
@@ -519,16 +521,16 @@ _$DataEntryStateCopyWith<_DataEntryState> get copyWith => __$DataEntryStateCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DataEntryState&&(identical(other.systolic, systolic) || other.systolic == systolic)&&(identical(other.diastolic, diastolic) || other.diastolic == diastolic)&&(identical(other.heartRate, heartRate) || other.heartRate == heartRate)&&(identical(other.weight, weight) || other.weight == weight)&&(identical(other.recordedAt, recordedAt) || other.recordedAt == recordedAt)&&(identical(other.notes, notes) || other.notes == notes)&&const DeepCollectionEquality().equals(other._validationErrors, _validationErrors)&&(identical(other.isSubmitting, isSubmitting) || other.isSubmitting == isSubmitting));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DataEntryState&&(identical(other.systolic, systolic) || other.systolic == systolic)&&(identical(other.diastolic, diastolic) || other.diastolic == diastolic)&&(identical(other.heartRate, heartRate) || other.heartRate == heartRate)&&(identical(other.weight, weight) || other.weight == weight)&&(identical(other.recordedAt, recordedAt) || other.recordedAt == recordedAt)&&(identical(other.notes, notes) || other.notes == notes)&&const DeepCollectionEquality().equals(other._validationErrors, _validationErrors)&&(identical(other.isSubmitting, isSubmitting) || other.isSubmitting == isSubmitting)&&(identical(other.isDiastolicMode, isDiastolicMode) || other.isDiastolicMode == isDiastolicMode));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,systolic,diastolic,heartRate,weight,recordedAt,notes,const DeepCollectionEquality().hash(_validationErrors),isSubmitting);
+int get hashCode => Object.hash(runtimeType,systolic,diastolic,heartRate,weight,recordedAt,notes,const DeepCollectionEquality().hash(_validationErrors),isSubmitting,isDiastolicMode);
 
 @override
 String toString() {
-  return 'DataEntryState(systolic: $systolic, diastolic: $diastolic, heartRate: $heartRate, weight: $weight, recordedAt: $recordedAt, notes: $notes, validationErrors: $validationErrors, isSubmitting: $isSubmitting)';
+  return 'DataEntryState(systolic: $systolic, diastolic: $diastolic, heartRate: $heartRate, weight: $weight, recordedAt: $recordedAt, notes: $notes, validationErrors: $validationErrors, isSubmitting: $isSubmitting, isDiastolicMode: $isDiastolicMode)';
 }
 
 
@@ -539,7 +541,7 @@ abstract mixin class _$DataEntryStateCopyWith<$Res> implements $DataEntryStateCo
   factory _$DataEntryStateCopyWith(_DataEntryState value, $Res Function(_DataEntryState) _then) = __$DataEntryStateCopyWithImpl;
 @override @useResult
 $Res call({
- int? systolic, int? diastolic, int? heartRate, double? weight, DateTime? recordedAt, String? notes, Map<String, String> validationErrors, bool isSubmitting
+ int? systolic, int? diastolic, int? heartRate, double? weight, DateTime? recordedAt, String? notes, Map<String, String> validationErrors, bool isSubmitting, bool isDiastolicMode
 });
 
 
@@ -556,7 +558,7 @@ class __$DataEntryStateCopyWithImpl<$Res>
 
 /// Create a copy of DataEntryState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? systolic = freezed,Object? diastolic = freezed,Object? heartRate = freezed,Object? weight = freezed,Object? recordedAt = freezed,Object? notes = freezed,Object? validationErrors = null,Object? isSubmitting = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? systolic = freezed,Object? diastolic = freezed,Object? heartRate = freezed,Object? weight = freezed,Object? recordedAt = freezed,Object? notes = freezed,Object? validationErrors = null,Object? isSubmitting = null,Object? isDiastolicMode = null,}) {
   return _then(_DataEntryState(
 systolic: freezed == systolic ? _self.systolic : systolic // ignore: cast_nullable_to_non_nullable
 as int?,diastolic: freezed == diastolic ? _self.diastolic : diastolic // ignore: cast_nullable_to_non_nullable
@@ -566,6 +568,7 @@ as double?,recordedAt: freezed == recordedAt ? _self.recordedAt : recordedAt // 
 as DateTime?,notes: freezed == notes ? _self.notes : notes // ignore: cast_nullable_to_non_nullable
 as String?,validationErrors: null == validationErrors ? _self._validationErrors : validationErrors // ignore: cast_nullable_to_non_nullable
 as Map<String, String>,isSubmitting: null == isSubmitting ? _self.isSubmitting : isSubmitting // ignore: cast_nullable_to_non_nullable
+as bool,isDiastolicMode: null == isDiastolicMode ? _self.isDiastolicMode : isDiastolicMode // ignore: cast_nullable_to_non_nullable
 as bool,
   ));
 }

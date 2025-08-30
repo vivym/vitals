@@ -10,8 +10,6 @@ class BloodPressureInputDialog extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final entryState = ref.watch(dataEntryNotifierProvider);
-
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -42,37 +40,50 @@ class BloodPressureInputDialog extends ConsumerWidget {
             // 自定义数字键盘输入
             _BloodPressureInputFields(),
 
-            const SizedBox(height: 24),
 
-            // 华为运动健康绑定
-            _HealthIntegrationLink(),
 
-            const SizedBox(height: 24),
-
-            // 提交按钮
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: entryState.isValid ? () => _submitData(context, ref) : null,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: entryState.isSubmitting
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Text('确定'),
-              ),
-            ),
           ],
         ),
       ),
     );
   }
 
-  void _submitData(BuildContext context, WidgetRef ref) async {
+
+}
+
+// 对话框头部
+class _DialogHeader extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final entryState = ref.watch(dataEntryNotifierProvider);
+    final isValid = entryState.systolic != null &&
+                   entryState.systolic! > 0 &&
+                   entryState.diastolic != null &&
+                   entryState.diastolic! > 0;
+
+    return Row(
+      children: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('取消'),
+        ),
+        Expanded(
+          child: Center(
+            child: Text(
+              '记录血压',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+          ),
+        ),
+        TextButton(
+          onPressed: isValid ? () => _handleSubmit(context, ref) : null,
+          child: const Text('确定'),
+        ),
+      ],
+    );
+  }
+
+  void _handleSubmit(BuildContext context, WidgetRef ref) async {
     final entryState = ref.read(dataEntryNotifierProvider);
 
     if (entryState.hasBloodPressureData) {
@@ -90,30 +101,6 @@ class BloodPressureInputDialog extends ConsumerWidget {
         Navigator.of(context).pop();
       }
     }
-  }
-}
-
-// 对话框头部
-class _DialogHeader extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('取消'),
-        ),
-        Expanded(
-          child: Center(
-            child: Text(
-              '记录血压',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-          ),
-        ),
-        const SizedBox(width: 64), // 平衡布局
-      ],
-    );
   }
 }
 
@@ -155,19 +142,45 @@ class _BloodPressureInputFields extends ConsumerWidget {
           height: 80,
           decoration: BoxDecoration(
             border: Border.all(
-              color: Theme.of(context).colorScheme.outline,
+              color: Colors.grey.shade300, // 浅灰色边框
               width: 2,
             ),
             borderRadius: BorderRadius.circular(12),
           ),
           child: Center(
-            child: Text(
-              '${entryState.systolic ?? 0} / ${entryState.diastolic ?? 0} mmHg',
-              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary,
-              ),
+                    child: RichText(
+          text: TextSpan(
+            style: Theme.of(context).textTheme.headlineLarge?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.primary,
+              fontSize: 32, // 明确设置更大的字体大小
             ),
+            children: [
+              // 收缩压部分
+              TextSpan(
+                text: '${entryState.systolic ?? 0}',
+                style: TextStyle(
+                  fontSize: !entryState.isDiastolicMode ? 36 : 32, // 当前状态字体更大
+                  color: !entryState.isDiastolicMode ? Colors.green : Theme.of(context).colorScheme.primary, // 当前状态为绿色
+                  height: 1.2, // 增加行高
+                ),
+              ),
+              // 分隔符
+              const TextSpan(text: ' / '),
+              // 舒张压部分
+              TextSpan(
+                text: '${entryState.diastolic ?? 0}',
+                style: TextStyle(
+                  fontSize: entryState.isDiastolicMode ? 36 : 32, // 当前状态字体更大
+                  color: entryState.isDiastolicMode ? Colors.green : Theme.of(context).colorScheme.primary, // 当前状态为绿色
+                  height: 1.2, // 增加行高
+                ),
+              ),
+              // 单位
+              const TextSpan(text: ' mmHg'),
+            ],
+          ),
+        ),
           ),
         ),
 
@@ -189,20 +202,9 @@ class _BloodPressureInputFields extends ConsumerWidget {
           },
         ),
 
-        // 验证错误
-        if (entryState.validationErrors.isNotEmpty) ...[
-          const SizedBox(height: 16),
-          ...entryState.validationErrors.entries.map((entry) => Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: Text(
-              entry.value,
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.error,
-                fontSize: 12,
-              ),
-            ),
-          )),
-        ],
+        // 错误信息区域（始终显示）
+        const SizedBox(height: 16),
+        _ErrorDisplayArea(),
       ],
     );
   }
@@ -210,60 +212,100 @@ class _BloodPressureInputFields extends ConsumerWidget {
   void _handleNumberInput(WidgetRef ref, int number) {
     final entryState = ref.read(dataEntryNotifierProvider);
 
-    // 简单的输入逻辑：先输入收缩压，再输入舒张压
-    if (entryState.systolic == null || entryState.systolic == 0) {
-      ref.read(dataEntryNotifierProvider.notifier).updateSystolic(number);
-    } else if (entryState.diastolic == null || entryState.diastolic == 0) {
-      ref.read(dataEntryNotifierProvider.notifier).updateDiastolic(number);
+    // 根据当前输入模式决定输入收缩压还是舒张压
+    if (!entryState.isDiastolicMode) {
+      // 输入收缩压
+      final currentSystolic = entryState.systolic ?? 0;
+      final newSystolic = currentSystolic * 10 + number;
+      if (newSystolic <= 999) { // 限制最大值
+        ref.read(dataEntryNotifierProvider.notifier).updateSystolic(newSystolic);
+      }
+    } else {
+      // 输入舒张压
+      final currentDiastolic = entryState.diastolic ?? 0;
+      final newDiastolic = currentDiastolic * 10 + number;
+      if (newDiastolic <= 999) { // 限制最大值
+        ref.read(dataEntryNotifierProvider.notifier).updateDiastolic(newDiastolic);
+      }
     }
   }
 
   void _handleBackspace(WidgetRef ref) {
     final entryState = ref.read(dataEntryNotifierProvider);
 
-    if (entryState.diastolic != null && entryState.diastolic != 0) {
-      ref.read(dataEntryNotifierProvider.notifier).updateDiastolic(null);
-    } else if (entryState.systolic != null && entryState.systolic != 0) {
-      ref.read(dataEntryNotifierProvider.notifier).updateSystolic(null);
+    if (entryState.isDiastolicMode) {
+      // 当前在舒张压模式，删除舒张压
+      if (entryState.diastolic != null && entryState.diastolic! > 0) {
+        final newDiastolic = entryState.diastolic! ~/ 10;
+        ref.read(dataEntryNotifierProvider.notifier).updateDiastolic(newDiastolic == 0 ? 0 : newDiastolic);
+      } else {
+        // 舒张压为0，切换回收缩压输入模式
+        ref.read(dataEntryNotifierProvider.notifier).setInputMode(false);
+      }
+    } else {
+      // 当前在收缩压模式，删除收缩压
+      if (entryState.systolic != null && entryState.systolic! > 0) {
+        final newSystolic = entryState.systolic! ~/ 10;
+        ref.read(dataEntryNotifierProvider.notifier).updateSystolic(newSystolic == 0 ? null : newSystolic);
+      }
     }
   }
 
   void _handleNext(WidgetRef ref) {
     final entryState = ref.read(dataEntryNotifierProvider);
 
-    // 如果收缩压已输入，切换到舒张压
-    if (entryState.systolic != null && entryState.systolic != 0) {
-      // 可以添加一些视觉反馈
+    if (!entryState.isDiastolicMode) {
+      // 当前在输入收缩压，切换到舒张压模式
+      if (entryState.systolic != null && entryState.systolic! > 0) {
+        ref.read(dataEntryNotifierProvider.notifier).setInputMode(true);
+        // 如果舒张压还没有值，初始化为0
+        if (entryState.diastolic == null) {
+          ref.read(dataEntryNotifierProvider.notifier).updateDiastolic(0);
+        }
+      }
+    } else {
+      // 当前在输入舒张压，切换回收缩压模式
+      ref.read(dataEntryNotifierProvider.notifier).setInputMode(false);
     }
   }
 }
 
-// 健康集成链接
-class _HealthIntegrationLink extends StatelessWidget {
+// 错误显示区域（始终显示占位符防止高度变化）
+class _ErrorDisplayArea extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        // 处理华为运动健康绑定
-      },
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.link,
-            size: 16,
-            color: Theme.of(context).colorScheme.primary,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final entryState = ref.watch(dataEntryNotifierProvider);
+
+    // 如果没有错误，显示占位符保持高度一致
+    if (entryState.validationErrors.isEmpty) {
+      return const SizedBox(
+        height: 40, // 与错误信息框高度一致
+        child: Center(
+          child: Text(
+            ' ', // 空格字符，保持视觉一致性
+            style: TextStyle(color: Colors.transparent),
           ),
-          const SizedBox(width: 8),
-          Text(
-            '绑定华为运动健康',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.primary,
-              decoration: TextDecoration.underline,
-            ),
-          ),
-        ],
+        ),
+      );
+    }
+
+    // 显示错误信息
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        border: Border.all(color: Theme.of(context).colorScheme.error),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        entryState.validationErrors.values.first, // 显示第一个错误
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.error,
+          fontSize: 14,
+        ),
       ),
     );
   }
 }
+
+
