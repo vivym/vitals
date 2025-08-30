@@ -1,6 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../domain/repositories/dashboard_repository.dart';
 import '../../domain/usecases/get_dashboard_data_usecase.dart';
 import '../../domain/usecases/get_education_items_usecase.dart';
@@ -38,7 +37,7 @@ DashboardLocalDataSource dashboardLocalDataSource(Ref ref) {
 // =============================================================================
 
 @Riverpod(keepAlive: true)
-DashboardRepository dashboardRepository(DashboardRepositoryRef ref) {
+DashboardRepository dashboardRepository(Ref ref) {
   return DashboardRepositoryImpl(
     ref.read(dashboardRemoteDataSourceProvider),
     ref.read(dashboardLocalDataSourceProvider),
@@ -50,35 +49,35 @@ DashboardRepository dashboardRepository(DashboardRepositoryRef ref) {
 // =============================================================================
 
 @Riverpod(keepAlive: true)
-GetDashboardDataUseCase getDashboardDataUseCase(GetDashboardDataUseCaseRef ref) {
+GetDashboardDataUseCase getDashboardDataUseCase(Ref ref) {
   return GetDashboardDataUseCaseImpl(
     ref.read(dashboardRepositoryProvider),
   );
 }
 
 @Riverpod(keepAlive: true)
-GetEducationItemsUseCase getEducationItemsUseCase(GetEducationItemsUseCaseRef ref) {
+GetEducationItemsUseCase getEducationItemsUseCase(Ref ref) {
   return GetEducationItemsUseCaseImpl(
     ref.read(dashboardRepositoryProvider),
   );
 }
 
 @Riverpod(keepAlive: true)
-MarkEducationAsReadUseCase markEducationAsReadUseCase(MarkEducationAsReadUseCaseRef ref) {
+MarkEducationAsReadUseCase markEducationAsReadUseCase(Ref ref) {
   return MarkEducationAsReadUseCaseImpl(
     ref.read(dashboardRepositoryProvider),
   );
 }
 
 @Riverpod(keepAlive: true)
-ToggleEducationFavoriteUseCase toggleEducationFavoriteUseCase(ToggleEducationFavoriteUseCaseRef ref) {
+ToggleEducationFavoriteUseCase toggleEducationFavoriteUseCase(Ref ref) {
   return ToggleEducationFavoriteUseCaseImpl(
     ref.read(dashboardRepositoryProvider),
   );
 }
 
 @Riverpod(keepAlive: true)
-CalculateHealthScoreUseCase calculateHealthScoreUseCase(CalculateHealthScoreUseCaseRef ref) {
+CalculateHealthScoreUseCase calculateHealthScoreUseCase(Ref ref) {
   return CalculateHealthScoreUseCaseImpl(
     ref.read(dashboardRepositoryProvider),
   );

@@ -265,7 +265,6 @@ class DioApiClient implements ApiClient {
         return AppError.network(message: 'SSL证书验证失败');
 
       case DioExceptionType.unknown:
-      default:
         return AppError.unknown(
           message: error.message ?? '未知错误',
           cause: error,

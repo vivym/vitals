@@ -1,4 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:vitals/core/network/network_providers.dart';
@@ -22,12 +23,12 @@ part 'auth_providers.g.dart';
 // =============================================================================
 
 @Riverpod(keepAlive: true)
-SharedPreferences sharedPreferences(SharedPreferencesRef ref) {
+SharedPreferences sharedPreferences(Ref ref) {
   throw UnimplementedError('需要在main.dart中重写此Provider');
 }
 
 @Riverpod(keepAlive: true)
-FlutterSecureStorage flutterSecureStorage(FlutterSecureStorageRef ref) {
+FlutterSecureStorage flutterSecureStorage(Ref ref) {
   return const FlutterSecureStorage();
 }
 
@@ -38,12 +39,12 @@ FlutterSecureStorage flutterSecureStorage(FlutterSecureStorageRef ref) {
 // =============================================================================
 
 @Riverpod(keepAlive: true)
-AuthRemoteDataSource authRemoteDataSource(AuthRemoteDataSourceRef ref) {
+AuthRemoteDataSource authRemoteDataSource(Ref ref) {
   return AuthRemoteDataSourceImpl(ref.read(apiClientProvider));
 }
 
 @Riverpod(keepAlive: true)
-AuthLocalDataSource authLocalDataSource(AuthLocalDataSourceRef ref) {
+AuthLocalDataSource authLocalDataSource(Ref ref) {
   return AuthLocalDataSourceImpl(
     ref.read(sharedPreferencesProvider),
     ref.read(flutterSecureStorageProvider),
@@ -55,7 +56,7 @@ AuthLocalDataSource authLocalDataSource(AuthLocalDataSourceRef ref) {
 // =============================================================================
 
 @Riverpod(keepAlive: true)
-AuthRepository authRepository(AuthRepositoryRef ref) {
+AuthRepository authRepository(Ref ref) {
   return AuthRepositoryImpl(
     ref.read(authRemoteDataSourceProvider),
     ref.read(authLocalDataSourceProvider),
@@ -67,21 +68,21 @@ AuthRepository authRepository(AuthRepositoryRef ref) {
 // =============================================================================
 
 @Riverpod(keepAlive: true)
-LoginUseCase loginUseCase(LoginUseCaseRef ref) {
+LoginUseCase loginUseCase(Ref ref) {
   return LoginUseCaseImpl(ref.read(authRepositoryProvider));
 }
 
 @Riverpod(keepAlive: true)
-AutoLoginUseCase autoLoginUseCase(AutoLoginUseCaseRef ref) {
+AutoLoginUseCase autoLoginUseCase(Ref ref) {
   return AutoLoginUseCaseImpl(ref.read(authRepositoryProvider));
 }
 
 @Riverpod(keepAlive: true)
-SignPatientUseCase signPatientUseCase(SignPatientUseCaseRef ref) {
+SignPatientUseCase signPatientUseCase(Ref ref) {
   return SignPatientUseCaseImpl(ref.read(authRepositoryProvider));
 }
 
 @Riverpod(keepAlive: true)
-CheckPatientSignedUseCase checkPatientSignedUseCase(CheckPatientSignedUseCaseRef ref) {
+CheckPatientSignedUseCase checkPatientSignedUseCase(Ref ref) {
   return CheckPatientSignedUseCaseImpl(ref.read(authRepositoryProvider));
 }

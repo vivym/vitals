@@ -45,7 +45,7 @@ final dashboardLocalDataSourceProvider =
 // ignore: unused_element
 typedef DashboardLocalDataSourceRef = ProviderRef<DashboardLocalDataSource>;
 String _$dashboardRepositoryHash() =>
-    r'83829703b5625d4e319830698563130f7d44c613';
+    r'736465f2e6ed703c19cce8317f183fbaa4aeb2f2';
 
 /// See also [dashboardRepository].
 @ProviderFor(dashboardRepository)
@@ -63,7 +63,7 @@ final dashboardRepositoryProvider = Provider<DashboardRepository>.internal(
 // ignore: unused_element
 typedef DashboardRepositoryRef = ProviderRef<DashboardRepository>;
 String _$getDashboardDataUseCaseHash() =>
-    r'da5c665a2c858a81b5b6200a88e77d2ae638caa6';
+    r'743ce171ad80e86487f7644cff57cba7eb2252a7';
 
 /// See also [getDashboardDataUseCase].
 @ProviderFor(getDashboardDataUseCase)
@@ -82,7 +82,7 @@ final getDashboardDataUseCaseProvider =
 // ignore: unused_element
 typedef GetDashboardDataUseCaseRef = ProviderRef<GetDashboardDataUseCase>;
 String _$getEducationItemsUseCaseHash() =>
-    r'2c72d0f2b75bb3d7c21e30c1e1bef935fb643ad7';
+    r'efdec5afde6e3ecb04155ccd8add549fb265c138';
 
 /// See also [getEducationItemsUseCase].
 @ProviderFor(getEducationItemsUseCase)
@@ -101,7 +101,7 @@ final getEducationItemsUseCaseProvider =
 // ignore: unused_element
 typedef GetEducationItemsUseCaseRef = ProviderRef<GetEducationItemsUseCase>;
 String _$markEducationAsReadUseCaseHash() =>
-    r'd50cf505f8a8c1d0d49a31dd1a410d2b568a80e7';
+    r'a740f705e676905ffc354c10bb3dd41e6eac4220';
 
 /// See also [markEducationAsReadUseCase].
 @ProviderFor(markEducationAsReadUseCase)
@@ -120,7 +120,7 @@ final markEducationAsReadUseCaseProvider =
 // ignore: unused_element
 typedef MarkEducationAsReadUseCaseRef = ProviderRef<MarkEducationAsReadUseCase>;
 String _$toggleEducationFavoriteUseCaseHash() =>
-    r'58f759eb7f0493dbbb4429897d314942b70f6c38';
+    r'1213e0b5f0d2f7d505895b01c15fed16478b904a';
 
 /// See also [toggleEducationFavoriteUseCase].
 @ProviderFor(toggleEducationFavoriteUseCase)
@@ -140,7 +140,7 @@ final toggleEducationFavoriteUseCaseProvider =
 typedef ToggleEducationFavoriteUseCaseRef =
     ProviderRef<ToggleEducationFavoriteUseCase>;
 String _$calculateHealthScoreUseCaseHash() =>
-    r'63ca8261aa9e8fa792e82933144d41bb987e7e75';
+    r'7bc8a6bcaaf92cf727cde4e7f68882f9b4c41cfe';
 
 /// See also [calculateHealthScoreUseCase].
 @ProviderFor(calculateHealthScoreUseCase)

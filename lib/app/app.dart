@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'router/app_router.dart';
 import 'themes/app_theme.dart';
@@ -34,7 +33,7 @@ class VitalsApp extends ConsumerWidget {
       builder: (context, child) {
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(
-            textScaleFactor: 1.0, // 防止系统字体大小影响
+            textScaler: TextScaler.linear(1.0), // 防止系统字体大小影响
           ),
           child: child!,
         );

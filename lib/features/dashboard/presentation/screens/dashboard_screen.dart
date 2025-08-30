@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/dashboard_notifier.dart';
-import '../widgets/health_score_card.dart';
 import '../widgets/health_data_overview_section.dart';
 import '../widgets/recovery_goals_section.dart';
 import '../widgets/health_education_section.dart';
-import '../widgets/quick_actions_section.dart';
 import '../widgets/loading_view.dart';
 import '../widgets/error_view.dart';
 import '../widgets/empty_state_view.dart';
@@ -47,11 +45,6 @@ class DashboardContent extends ConsumerWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        // 健康评分卡片
-        const HealthScoreCard(),
-
-        const SizedBox(height: 16),
-
         // 健康数据概览
         if (state.healthData != null) ...[
           HealthDataOverviewSection(data: state.healthData!),
@@ -69,9 +62,6 @@ class DashboardContent extends ConsumerWidget {
           HealthEducationSection(items: state.educationItems),
           const SizedBox(height: 16),
         ],
-
-        // 快速操作
-        const QuickActionsSection(),
       ],
     );
   }

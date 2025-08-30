@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math';
 import '../errors/app_error.dart';
 import 'api_client.dart';

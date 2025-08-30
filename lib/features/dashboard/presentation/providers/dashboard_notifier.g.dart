@@ -67,7 +67,7 @@ final recommendedEducationProvider =
 // ignore: unused_element
 typedef RecommendedEducationRef =
     AutoDisposeProviderRef<List<data.HealthEducationItem>>;
-String _$dashboardNotifierHash() => r'4f853f06caca46aa26db1bc047d8ca0fd187eb9c';
+String _$dashboardNotifierHash() => r'f10ad636ae515a58dd810e6c3e068f0c865805ec';
 
 /// 首页状态管理
 ///

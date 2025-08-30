@@ -14,7 +14,10 @@ class DashboardRemoteDataSourceMock implements DashboardRemoteDataSource {
   Future<DashboardResponse> getDashboardData(String patientId) async {
     await Future.delayed(_delay);
 
-    return DashboardResponse(
+    print('🔍 [MockDataSource] getDashboardData 被调用');
+    print('  - patientId: $patientId');
+
+    final response = DashboardResponse(
       healthData: HealthDataOverview(
         bloodPressure: BloodPressureSummary(
           systolic: 128,
@@ -44,6 +47,24 @@ class DashboardRemoteDataSourceMock implements DashboardRemoteDataSource {
           distance: 5.8,
         ),
         lastUpdated: DateTime.now(),
+      ),
+      healthScore: HealthScore(
+        totalScore: 78,
+        categoryScores: {
+          '血压': 65,
+          '心率': 85,
+          '体重': 90,
+          '运动': 70,
+        },
+        level: '一般',
+        description: '整体健康状况一般，血压偏高需要关注',
+        recommendations: [
+          '定期监测血压',
+          '增加有氧运动',
+          '控制饮食中的盐分',
+          '保持规律作息',
+        ],
+        calculatedAt: DateTime.now().subtract(const Duration(hours: 6)),
       ),
       recoveryGoals: [
         RecoveryGoal(
@@ -151,6 +172,14 @@ class DashboardRemoteDataSourceMock implements DashboardRemoteDataSource {
       ],
       lastUpdated: DateTime.now(),
     );
+
+    print('🔍 [MockDataSource] 返回数据:');
+    print('  - healthScore: ${response.healthScore?.totalScore}');
+    print('  - healthData: ${response.healthData.runtimeType}');
+    print('  - recoveryGoals: ${response.recoveryGoals.length} 个');
+    print('  - educationItems: ${response.educationItems.length} 个');
+
+    return response;
   }
 
   @override

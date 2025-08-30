@@ -6,7 +6,7 @@ part of 'auth_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$sharedPreferencesHash() => r'b112efd48dbab9a0c0c91030a0336476ca037421';
+String _$sharedPreferencesHash() => r'2528f3ead6f34336b49fa5068002f8fdff01a0ca';
 
 /// See also [sharedPreferences].
 @ProviderFor(sharedPreferences)
@@ -24,7 +24,7 @@ final sharedPreferencesProvider = Provider<SharedPreferences>.internal(
 // ignore: unused_element
 typedef SharedPreferencesRef = ProviderRef<SharedPreferences>;
 String _$flutterSecureStorageHash() =>
-    r'd2f09e488339d1103415fb8714b47df4f4b78eb8';
+    r'74fc6ea2bb3b1f668a5f3e4f549614146c526484';
 
 /// See also [flutterSecureStorage].
 @ProviderFor(flutterSecureStorage)
@@ -42,7 +42,7 @@ final flutterSecureStorageProvider = Provider<FlutterSecureStorage>.internal(
 // ignore: unused_element
 typedef FlutterSecureStorageRef = ProviderRef<FlutterSecureStorage>;
 String _$authRemoteDataSourceHash() =>
-    r'8d91a1c04f610249b99ffe8f6d57b54f95dd172a';
+    r'eeffe6c4d1598601fc525bf80da2ceabfb14fb8b';
 
 /// See also [authRemoteDataSource].
 @ProviderFor(authRemoteDataSource)
@@ -60,7 +60,7 @@ final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>.internal(
 // ignore: unused_element
 typedef AuthRemoteDataSourceRef = ProviderRef<AuthRemoteDataSource>;
 String _$authLocalDataSourceHash() =>
-    r'3311d7963598490b463422b3ae6981196b3bb41c';
+    r'83f6604bb06966c57fbe18dd2f7067e199c423c1';
 
 /// See also [authLocalDataSource].
 @ProviderFor(authLocalDataSource)
@@ -77,7 +77,7 @@ final authLocalDataSourceProvider = Provider<AuthLocalDataSource>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef AuthLocalDataSourceRef = ProviderRef<AuthLocalDataSource>;
-String _$authRepositoryHash() => r'a9e2ffd1dfc444337216f4de8abed6df774e984c';
+String _$authRepositoryHash() => r'fc411c7ced7d4e556a8cfaa3cf297767a487041a';
 
 /// See also [authRepository].
 @ProviderFor(authRepository)
@@ -94,7 +94,7 @@ final authRepositoryProvider = Provider<AuthRepository>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef AuthRepositoryRef = ProviderRef<AuthRepository>;
-String _$loginUseCaseHash() => r'3480b0913996e8ae9977519d8830d345538fc4e7';
+String _$loginUseCaseHash() => r'cf55f534d637f8e40ff7916477c3cebd9a8bb0d5';
 
 /// See also [loginUseCase].
 @ProviderFor(loginUseCase)
@@ -111,7 +111,7 @@ final loginUseCaseProvider = Provider<LoginUseCase>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef LoginUseCaseRef = ProviderRef<LoginUseCase>;
-String _$autoLoginUseCaseHash() => r'ac6ef117d0d76b8f0d2acb7488a5db4b84b09707';
+String _$autoLoginUseCaseHash() => r'1d972a37ea96b98085f3e1747532acfc956cf4e6';
 
 /// See also [autoLoginUseCase].
 @ProviderFor(autoLoginUseCase)
@@ -129,7 +129,7 @@ final autoLoginUseCaseProvider = Provider<AutoLoginUseCase>.internal(
 // ignore: unused_element
 typedef AutoLoginUseCaseRef = ProviderRef<AutoLoginUseCase>;
 String _$signPatientUseCaseHash() =>
-    r'c4452e7d2b59947c452ecdbea868069296a166e3';
+    r'86b4039f9db75c66880e7e28d55438e08ac90605';
 
 /// See also [signPatientUseCase].
 @ProviderFor(signPatientUseCase)
@@ -147,7 +147,7 @@ final signPatientUseCaseProvider = Provider<SignPatientUseCase>.internal(
 // ignore: unused_element
 typedef SignPatientUseCaseRef = ProviderRef<SignPatientUseCase>;
 String _$checkPatientSignedUseCaseHash() =>
-    r'72bc53410ece80df48f71f507d9b432c2d209c1a';
+    r'f6dd39d4dcde363f9c62fda6abc148cd6c11dc07';
 
 /// See also [checkPatientSignedUseCase].
 @ProviderFor(checkPatientSignedUseCase)

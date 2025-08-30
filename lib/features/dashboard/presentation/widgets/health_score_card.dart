@@ -10,6 +10,16 @@ class HealthScoreCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final score = ref.watch(healthScoreProvider);
 
+    print('🔍 [HealthScoreCard] build 开始');
+    print('  - score: ${score?.runtimeType}');
+    if (score != null) {
+      print('  - score.totalScore: ${score.totalScore}');
+      print('  - score.level: ${score.level}');
+      print('  - score.description: ${score.description}');
+    } else {
+      print('  - score 为 null');
+    }
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(20),

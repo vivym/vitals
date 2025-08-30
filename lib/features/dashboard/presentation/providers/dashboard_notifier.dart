@@ -215,11 +215,16 @@ class DashboardNotifier extends _$DashboardNotifier {
       result.when(
         success: (dashboardEntity) {
           // 将领域实体转换为数据模型
+          final mappedHealthData = _mapHealthDataOverview(dashboardEntity.healthData);
+          final mappedRecoveryGoals = _mapRecoveryGoals(dashboardEntity.recoveryGoals);
+          final mappedEducationItems = _mapEducationItems(dashboardEntity.educationItems);
+          final mappedHealthScore = _mapHealthScore(dashboardEntity.healthScore);
+
           state = AsyncValue.data(DashboardState(
-            healthData: _mapHealthDataOverview(dashboardEntity.healthData),
-            recoveryGoals: _mapRecoveryGoals(dashboardEntity.recoveryGoals),
-            educationItems: _mapEducationItems(dashboardEntity.educationItems),
-            healthScore: _mapHealthScore(dashboardEntity.healthScore),
+            healthData: mappedHealthData,
+            recoveryGoals: mappedRecoveryGoals,
+            educationItems: mappedEducationItems,
+            healthScore: mappedHealthScore,
             lastUpdated: dashboardEntity.lastUpdated,
           ));
         },
@@ -399,9 +404,11 @@ List<data.HealthEducationItem> _mapEducationItems(
 data.HealthScore? _mapHealthScore(
   HealthScoreEntity? entity,
 ) {
-  if (entity == null) return null;
+  if (entity == null) {
+    return null;
+  }
 
-  return data.HealthScore(
+  final result = data.HealthScore(
     totalScore: entity.totalScore,
     categoryScores: entity.categoryScores,
     level: entity.level.label, // 将枚举转换为字符串标签
@@ -409,6 +416,8 @@ data.HealthScore? _mapHealthScore(
     recommendations: entity.recommendations,
     calculatedAt: entity.calculatedAt,
   );
+
+  return result;
 }
 
 // =============================================================================
