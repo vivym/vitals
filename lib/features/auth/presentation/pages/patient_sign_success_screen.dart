@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../app/router/app_router.dart';
+import '../providers/auth_provider.dart';
 
-/// 签约成功页面
-/// 显示患者创建成功的确认页面
-class SuccessScreen extends ConsumerStatefulWidget {
-  const SuccessScreen({super.key});
+/// 患者签约成功页面
+/// 显示患者签约成功的确认页面
+class PatientSignSuccessScreen extends ConsumerStatefulWidget {
+  const PatientSignSuccessScreen({super.key});
 
   @override
-  ConsumerState<SuccessScreen> createState() => _SuccessScreenState();
+  ConsumerState<PatientSignSuccessScreen> createState() => _PatientSignSuccessScreenState();
 }
 
-class _SuccessScreenState extends ConsumerState<SuccessScreen>
+class _PatientSignSuccessScreenState extends ConsumerState<PatientSignSuccessScreen>
     with TickerProviderStateMixin {
   late AnimationController _iconAnimationController;
   late AnimationController _contentAnimationController;
@@ -78,12 +80,17 @@ class _SuccessScreenState extends ConsumerState<SuccessScreen>
     super.dispose();
   }
 
-      void _handleBackHome() {
-      context.go('/dashboard');
-    }
+  void _onContinue() {
+    // 检查用户认证状态，根据情况决定跳转
+    final authState = ref.read(authNotifierProvider);
 
-  void _handleBack() {
-    context.pop();
+    if (authState.isAuthenticated && authState.hasSignedPatient) {
+      // 用户已认证且已签约，跳转到首页
+      context.go(AppRoutes.dashboard);
+    } else {
+      // 其他情况跳转到登录页面
+      context.go(AppRoutes.login);
+    }
   }
 
   @override
@@ -100,14 +107,7 @@ class _SuccessScreenState extends ConsumerState<SuccessScreen>
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
-          leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back,
-              color: Colors.black87,
-              semanticLabel: '返回上一页',
-            ),
-            onPressed: _handleBack,
-          ),
+          automaticallyImplyLeading: false,  // 不允许返回
           title: Text(
             '签约成功',
             style: TextStyle(
@@ -172,7 +172,7 @@ class _SuccessScreenState extends ConsumerState<SuccessScreen>
                                   ),
                                   const SizedBox(height: 16),
                                   Text(
-                                    '患者信息已成功创建',
+                                    '患者签约已成功完成',
                                     style: theme.textTheme.bodyLarge?.copyWith(
                                       color: Colors.grey[600],
                                       fontSize: 16,
@@ -180,7 +180,7 @@ class _SuccessScreenState extends ConsumerState<SuccessScreen>
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    '您可以开始使用我们的服务了',
+                                    '您现在可以开始使用我们的健康服务了',
                                     style: theme.textTheme.bodyMedium?.copyWith(
                                       color: Colors.grey[500],
                                       fontSize: 14,
@@ -209,7 +209,7 @@ class _SuccessScreenState extends ConsumerState<SuccessScreen>
                             width: double.infinity,
                             height: 50,
                             child: ElevatedButton(
-                              onPressed: _handleBackHome,
+                              onPressed: _onContinue,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: theme.primaryColor,
                                 foregroundColor: Colors.white,
@@ -219,12 +219,12 @@ class _SuccessScreenState extends ConsumerState<SuccessScreen>
                                 ),
                               ),
                               child: Text(
-                                '返回首页',
+                                '开始使用',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
                                 ),
-                                semanticsLabel: '返回首页按钮',
+                                semanticsLabel: '开始使用按钮',
                               ),
                             ),
                           ),

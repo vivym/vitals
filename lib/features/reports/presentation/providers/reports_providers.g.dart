@@ -29,7 +29,7 @@ final reportsRemoteDataSourceProvider =
 typedef ReportsRemoteDataSourceRef =
     AutoDisposeProviderRef<ReportsRemoteDataSource>;
 String _$reportsLocalDataSourceHash() =>
-    r'83617c45adfbbab59239f6ed92f507383e25143f';
+    r'c913468312f0953b28f7461cdb667eb3f0449509';
 
 /// 本地数据源提供者
 ///

@@ -1,22 +1,52 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vitals/core/errors/app_error.dart';
-import '../../data/models/auth_models.dart';
-import '../../data/models/patient.dart';
-import '../../domain/usecases/create_patient_usecase.dart';
+import '../../domain/entities/patient_entity.dart';
+import '../../domain/repositories/auth_repository.dart';
 import 'auth_provider.dart';
 import 'auth_providers.dart';
 
-export 'auth_providers.dart';
+part 'patient_sign_form_provider.g.dart';
+part 'patient_sign_form_provider.freezed.dart';
 
-part 'patient_form_provider.g.dart';
+/// 表单验证状态
+@freezed
+abstract class FormValidationState with _$FormValidationState {
+  const FormValidationState._();
 
-/// 患者表单状态通知器
-/// 管理患者创建表单的状态和验证
+  const factory FormValidationState({
+    @Default({}) Map<String, String> errors,
+    @Default(false) bool isValid,
+  }) = _FormValidationState;
+}
+
+/// 患者签约表单状态
+@freezed
+abstract class PatientSignFormState with _$PatientSignFormState {
+  const PatientSignFormState._();
+
+  const factory PatientSignFormState({
+    String? name,
+    String? idNumber,
+    Gender? gender,
+    DateTime? birthDate,
+    String? phone,
+    String? medicalRecordNumber,
+    String? emergencyContact,
+    String? emergencyContactPhone,
+    @Default(FormValidationState()) FormValidationState validationState,
+    @Default(false) bool isSubmitting,
+    AppError? generalError,
+  }) = _PatientSignFormState;
+}
+
+/// 患者签约表单状态通知器
+/// 管理患者签约表单的状态和验证
 @riverpod
-class PatientFormNotifier extends _$PatientFormNotifier {
+class PatientSignFormNotifier extends _$PatientSignFormNotifier {
   @override
-  PatientFormState build() {
-    return const PatientFormState();
+  PatientSignFormState build() {
+    return const PatientSignFormState();
   }
 
   /// 更新姓名
@@ -63,34 +93,35 @@ class PatientFormNotifier extends _$PatientFormNotifier {
     }
   }
 
-  /// 创建患者
-  Future<bool> createPatient() async {
+  /// 签约患者
+  Future<bool> signPatient() async {
     if (!_validateAllFields()) {
       return false;
     }
 
     state = state.copyWith(isSubmitting: true);
 
-    final request = CreatePatientRequest(
+    final request = SignPatientRequest(
       name: state.name!,
       idNumber: state.idNumber!,
       gender: state.gender!,
       birthDate: state.birthDate!,
       phone: state.phone!,
+      medicalRecordNumber: state.medicalRecordNumber,
       emergencyContact: state.emergencyContact,
       emergencyContactPhone: state.emergencyContactPhone,
     );
 
-    final createPatientUseCase = ref.read(createPatientUseCaseProvider);
-    final result = await createPatientUseCase.execute(request);
+    final signPatientUseCase = ref.read(signPatientUseCaseProvider);
+    final result = await signPatientUseCase.execute(request);
 
     return result.when(
       success: (patient) {
-        // 添加患者到认证状态
-        ref.read(authNotifierProvider.notifier).addPatient(patient);
+        // 通知 AuthNotifier 签约成功
+        ref.read(authNotifierProvider.notifier).onPatientSigned(patient);
 
         // 重置表单
-        state = const PatientFormState();
+        state = const PatientSignFormState();
         return true;
       },
       failure: (error) {
@@ -105,7 +136,7 @@ class PatientFormNotifier extends _$PatientFormNotifier {
 
   /// 重置表单
   void reset() {
-    state = const PatientFormState();
+    state = const PatientSignFormState();
   }
 
   /// 清除通用错误

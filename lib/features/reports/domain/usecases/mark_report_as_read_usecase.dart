@@ -1,7 +1,7 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vitals/core/errors/app_error.dart';
 import 'package:vitals/features/reports/domain/repositories/reports_repository.dart';
-import 'package:vitals/features/reports/data/providers/reports_providers.dart';
+import 'package:vitals/features/reports/presentation/providers/reports_providers.dart';
 
 part 'mark_report_as_read_usecase.g.dart';
 

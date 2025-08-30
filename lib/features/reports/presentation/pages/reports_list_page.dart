@@ -211,9 +211,7 @@ class ReportsListPage extends HookConsumerWidget {
                   patientId,
                   ReportType.recoveryMonthly,
                 );
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('已请求生成康复月报')),
-                );
+                // TODO: 通过状态管理显示成功信息，不使用SnackBar
               },
             ),
             ListTile(
@@ -225,9 +223,7 @@ class ReportsListPage extends HookConsumerWidget {
                   patientId,
                   ReportType.healthAssessment,
                 );
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('已请求生成健康评估')),
-                );
+                // TODO: 通过状态管理显示成功信息，不使用SnackBar
               },
             ),
           ],

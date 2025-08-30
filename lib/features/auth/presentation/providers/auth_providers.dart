@@ -1,19 +1,19 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import '../../../../core/network/network_providers.dart';
+import 'package:vitals/core/network/network_providers.dart';
 import '../../data/datasources/auth_remote_datasource.dart';
 import '../../data/datasources/auth_remote_datasource_impl.dart';
 import '../../data/datasources/auth_local_datasource.dart';
 import '../../data/datasources/auth_local_datasource_impl.dart';
-import '../../data/repositories/auth_repository.dart';
+import '../../domain/repositories/auth_repository.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../domain/usecases/login_usecase.dart';
 import '../../domain/usecases/login_usecase_impl.dart';
 import '../../domain/usecases/auto_login_usecase.dart';
 import '../../domain/usecases/auto_login_usecase_impl.dart';
-import '../../domain/usecases/create_patient_usecase.dart';
-import '../../domain/usecases/create_patient_usecase_impl.dart';
+import '../../domain/usecases/sign_patient_usecase.dart';
+import '../../domain/usecases/check_patient_signed_usecase.dart';
 
 part 'auth_providers.g.dart';
 
@@ -77,6 +77,11 @@ AutoLoginUseCase autoLoginUseCase(AutoLoginUseCaseRef ref) {
 }
 
 @Riverpod(keepAlive: true)
-CreatePatientUseCase createPatientUseCase(CreatePatientUseCaseRef ref) {
-  return CreatePatientUseCaseImpl(ref.read(authRepositoryProvider));
+SignPatientUseCase signPatientUseCase(SignPatientUseCaseRef ref) {
+  return SignPatientUseCaseImpl(ref.read(authRepositoryProvider));
+}
+
+@Riverpod(keepAlive: true)
+CheckPatientSignedUseCase checkPatientSignedUseCase(CheckPatientSignedUseCaseRef ref) {
+  return CheckPatientSignedUseCaseImpl(ref.read(authRepositoryProvider));
 }

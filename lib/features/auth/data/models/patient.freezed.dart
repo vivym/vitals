@@ -306,22 +306,22 @@ as DateTime?,
 
 
 /// @nodoc
-mixin _$CreatePatientRequest {
+mixin _$SignPatientRequest {
 
  String get name;@JsonKey(name: 'id_number') String get idNumber; Gender get gender;@JsonKey(name: 'birth_date') DateTime get birthDate; String get phone;@JsonKey(name: 'medical_record_number') String? get medicalRecordNumber;@JsonKey(name: 'emergency_contact') String? get emergencyContact;@JsonKey(name: 'emergency_contact_phone') String? get emergencyContactPhone;
-/// Create a copy of CreatePatientRequest
+/// Create a copy of SignPatientRequest
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$CreatePatientRequestCopyWith<CreatePatientRequest> get copyWith => _$CreatePatientRequestCopyWithImpl<CreatePatientRequest>(this as CreatePatientRequest, _$identity);
+$SignPatientRequestCopyWith<SignPatientRequest> get copyWith => _$SignPatientRequestCopyWithImpl<SignPatientRequest>(this as SignPatientRequest, _$identity);
 
-  /// Serializes this CreatePatientRequest to a JSON map.
+  /// Serializes this SignPatientRequest to a JSON map.
   Map<String, dynamic> toJson();
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreatePatientRequest&&(identical(other.name, name) || other.name == name)&&(identical(other.idNumber, idNumber) || other.idNumber == idNumber)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.birthDate, birthDate) || other.birthDate == birthDate)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.medicalRecordNumber, medicalRecordNumber) || other.medicalRecordNumber == medicalRecordNumber)&&(identical(other.emergencyContact, emergencyContact) || other.emergencyContact == emergencyContact)&&(identical(other.emergencyContactPhone, emergencyContactPhone) || other.emergencyContactPhone == emergencyContactPhone));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SignPatientRequest&&(identical(other.name, name) || other.name == name)&&(identical(other.idNumber, idNumber) || other.idNumber == idNumber)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.birthDate, birthDate) || other.birthDate == birthDate)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.medicalRecordNumber, medicalRecordNumber) || other.medicalRecordNumber == medicalRecordNumber)&&(identical(other.emergencyContact, emergencyContact) || other.emergencyContact == emergencyContact)&&(identical(other.emergencyContactPhone, emergencyContactPhone) || other.emergencyContactPhone == emergencyContactPhone));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -330,15 +330,15 @@ int get hashCode => Object.hash(runtimeType,name,idNumber,gender,birthDate,phone
 
 @override
 String toString() {
-  return 'CreatePatientRequest(name: $name, idNumber: $idNumber, gender: $gender, birthDate: $birthDate, phone: $phone, medicalRecordNumber: $medicalRecordNumber, emergencyContact: $emergencyContact, emergencyContactPhone: $emergencyContactPhone)';
+  return 'SignPatientRequest(name: $name, idNumber: $idNumber, gender: $gender, birthDate: $birthDate, phone: $phone, medicalRecordNumber: $medicalRecordNumber, emergencyContact: $emergencyContact, emergencyContactPhone: $emergencyContactPhone)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $CreatePatientRequestCopyWith<$Res>  {
-  factory $CreatePatientRequestCopyWith(CreatePatientRequest value, $Res Function(CreatePatientRequest) _then) = _$CreatePatientRequestCopyWithImpl;
+abstract mixin class $SignPatientRequestCopyWith<$Res>  {
+  factory $SignPatientRequestCopyWith(SignPatientRequest value, $Res Function(SignPatientRequest) _then) = _$SignPatientRequestCopyWithImpl;
 @useResult
 $Res call({
  String name,@JsonKey(name: 'id_number') String idNumber, Gender gender,@JsonKey(name: 'birth_date') DateTime birthDate, String phone,@JsonKey(name: 'medical_record_number') String? medicalRecordNumber,@JsonKey(name: 'emergency_contact') String? emergencyContact,@JsonKey(name: 'emergency_contact_phone') String? emergencyContactPhone
@@ -349,14 +349,14 @@ $Res call({
 
 }
 /// @nodoc
-class _$CreatePatientRequestCopyWithImpl<$Res>
-    implements $CreatePatientRequestCopyWith<$Res> {
-  _$CreatePatientRequestCopyWithImpl(this._self, this._then);
+class _$SignPatientRequestCopyWithImpl<$Res>
+    implements $SignPatientRequestCopyWith<$Res> {
+  _$SignPatientRequestCopyWithImpl(this._self, this._then);
 
-  final CreatePatientRequest _self;
-  final $Res Function(CreatePatientRequest) _then;
+  final SignPatientRequest _self;
+  final $Res Function(SignPatientRequest) _then;
 
-/// Create a copy of CreatePatientRequest
+/// Create a copy of SignPatientRequest
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? idNumber = null,Object? gender = null,Object? birthDate = null,Object? phone = null,Object? medicalRecordNumber = freezed,Object? emergencyContact = freezed,Object? emergencyContactPhone = freezed,}) {
   return _then(_self.copyWith(
@@ -375,8 +375,8 @@ as String?,
 }
 
 
-/// Adds pattern-matching-related methods to [CreatePatientRequest].
-extension CreatePatientRequestPatterns on CreatePatientRequest {
+/// Adds pattern-matching-related methods to [SignPatientRequest].
+extension SignPatientRequestPatterns on SignPatientRequest {
 /// A variant of `map` that fallback to returning `orElse`.
 ///
 /// It is equivalent to doing:
@@ -389,10 +389,10 @@ extension CreatePatientRequestPatterns on CreatePatientRequest {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _CreatePatientRequest value)?  $default,{required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _SignPatientRequest value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case _CreatePatientRequest() when $default != null:
+case _SignPatientRequest() when $default != null:
 return $default(_that);case _:
   return orElse();
 
@@ -411,10 +411,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _CreatePatientRequest value)  $default,){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _SignPatientRequest value)  $default,){
 final _that = this;
 switch (_that) {
-case _CreatePatientRequest():
+case _SignPatientRequest():
 return $default(_that);case _:
   throw StateError('Unexpected subclass');
 
@@ -432,10 +432,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _CreatePatientRequest value)?  $default,){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _SignPatientRequest value)?  $default,){
 final _that = this;
 switch (_that) {
-case _CreatePatientRequest() when $default != null:
+case _SignPatientRequest() when $default != null:
 return $default(_that);case _:
   return null;
 
@@ -455,7 +455,7 @@ return $default(_that);case _:
 
 @optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name, @JsonKey(name: 'id_number')  String idNumber,  Gender gender, @JsonKey(name: 'birth_date')  DateTime birthDate,  String phone, @JsonKey(name: 'medical_record_number')  String? medicalRecordNumber, @JsonKey(name: 'emergency_contact')  String? emergencyContact, @JsonKey(name: 'emergency_contact_phone')  String? emergencyContactPhone)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case _CreatePatientRequest() when $default != null:
+case _SignPatientRequest() when $default != null:
 return $default(_that.name,_that.idNumber,_that.gender,_that.birthDate,_that.phone,_that.medicalRecordNumber,_that.emergencyContact,_that.emergencyContactPhone);case _:
   return orElse();
 
@@ -476,7 +476,7 @@ return $default(_that.name,_that.idNumber,_that.gender,_that.birthDate,_that.pho
 
 @optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name, @JsonKey(name: 'id_number')  String idNumber,  Gender gender, @JsonKey(name: 'birth_date')  DateTime birthDate,  String phone, @JsonKey(name: 'medical_record_number')  String? medicalRecordNumber, @JsonKey(name: 'emergency_contact')  String? emergencyContact, @JsonKey(name: 'emergency_contact_phone')  String? emergencyContactPhone)  $default,) {final _that = this;
 switch (_that) {
-case _CreatePatientRequest():
+case _SignPatientRequest():
 return $default(_that.name,_that.idNumber,_that.gender,_that.birthDate,_that.phone,_that.medicalRecordNumber,_that.emergencyContact,_that.emergencyContactPhone);case _:
   throw StateError('Unexpected subclass');
 
@@ -496,7 +496,7 @@ return $default(_that.name,_that.idNumber,_that.gender,_that.birthDate,_that.pho
 
 @optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name, @JsonKey(name: 'id_number')  String idNumber,  Gender gender, @JsonKey(name: 'birth_date')  DateTime birthDate,  String phone, @JsonKey(name: 'medical_record_number')  String? medicalRecordNumber, @JsonKey(name: 'emergency_contact')  String? emergencyContact, @JsonKey(name: 'emergency_contact_phone')  String? emergencyContactPhone)?  $default,) {final _that = this;
 switch (_that) {
-case _CreatePatientRequest() when $default != null:
+case _SignPatientRequest() when $default != null:
 return $default(_that.name,_that.idNumber,_that.gender,_that.birthDate,_that.phone,_that.medicalRecordNumber,_that.emergencyContact,_that.emergencyContactPhone);case _:
   return null;
 
@@ -508,9 +508,9 @@ return $default(_that.name,_that.idNumber,_that.gender,_that.birthDate,_that.pho
 /// @nodoc
 @JsonSerializable()
 
-class _CreatePatientRequest extends CreatePatientRequest {
-  const _CreatePatientRequest({required this.name, @JsonKey(name: 'id_number') required this.idNumber, required this.gender, @JsonKey(name: 'birth_date') required this.birthDate, required this.phone, @JsonKey(name: 'medical_record_number') this.medicalRecordNumber, @JsonKey(name: 'emergency_contact') this.emergencyContact, @JsonKey(name: 'emergency_contact_phone') this.emergencyContactPhone}): super._();
-  factory _CreatePatientRequest.fromJson(Map<String, dynamic> json) => _$CreatePatientRequestFromJson(json);
+class _SignPatientRequest extends SignPatientRequest {
+  const _SignPatientRequest({required this.name, @JsonKey(name: 'id_number') required this.idNumber, required this.gender, @JsonKey(name: 'birth_date') required this.birthDate, required this.phone, @JsonKey(name: 'medical_record_number') this.medicalRecordNumber, @JsonKey(name: 'emergency_contact') this.emergencyContact, @JsonKey(name: 'emergency_contact_phone') this.emergencyContactPhone}): super._();
+  factory _SignPatientRequest.fromJson(Map<String, dynamic> json) => _$SignPatientRequestFromJson(json);
 
 @override final  String name;
 @override@JsonKey(name: 'id_number') final  String idNumber;
@@ -521,20 +521,20 @@ class _CreatePatientRequest extends CreatePatientRequest {
 @override@JsonKey(name: 'emergency_contact') final  String? emergencyContact;
 @override@JsonKey(name: 'emergency_contact_phone') final  String? emergencyContactPhone;
 
-/// Create a copy of CreatePatientRequest
+/// Create a copy of SignPatientRequest
 /// with the given fields replaced by the non-null parameter values.
 @override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$CreatePatientRequestCopyWith<_CreatePatientRequest> get copyWith => __$CreatePatientRequestCopyWithImpl<_CreatePatientRequest>(this, _$identity);
+_$SignPatientRequestCopyWith<_SignPatientRequest> get copyWith => __$SignPatientRequestCopyWithImpl<_SignPatientRequest>(this, _$identity);
 
 @override
 Map<String, dynamic> toJson() {
-  return _$CreatePatientRequestToJson(this, );
+  return _$SignPatientRequestToJson(this, );
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CreatePatientRequest&&(identical(other.name, name) || other.name == name)&&(identical(other.idNumber, idNumber) || other.idNumber == idNumber)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.birthDate, birthDate) || other.birthDate == birthDate)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.medicalRecordNumber, medicalRecordNumber) || other.medicalRecordNumber == medicalRecordNumber)&&(identical(other.emergencyContact, emergencyContact) || other.emergencyContact == emergencyContact)&&(identical(other.emergencyContactPhone, emergencyContactPhone) || other.emergencyContactPhone == emergencyContactPhone));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SignPatientRequest&&(identical(other.name, name) || other.name == name)&&(identical(other.idNumber, idNumber) || other.idNumber == idNumber)&&(identical(other.gender, gender) || other.gender == gender)&&(identical(other.birthDate, birthDate) || other.birthDate == birthDate)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.medicalRecordNumber, medicalRecordNumber) || other.medicalRecordNumber == medicalRecordNumber)&&(identical(other.emergencyContact, emergencyContact) || other.emergencyContact == emergencyContact)&&(identical(other.emergencyContactPhone, emergencyContactPhone) || other.emergencyContactPhone == emergencyContactPhone));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -543,15 +543,15 @@ int get hashCode => Object.hash(runtimeType,name,idNumber,gender,birthDate,phone
 
 @override
 String toString() {
-  return 'CreatePatientRequest(name: $name, idNumber: $idNumber, gender: $gender, birthDate: $birthDate, phone: $phone, medicalRecordNumber: $medicalRecordNumber, emergencyContact: $emergencyContact, emergencyContactPhone: $emergencyContactPhone)';
+  return 'SignPatientRequest(name: $name, idNumber: $idNumber, gender: $gender, birthDate: $birthDate, phone: $phone, medicalRecordNumber: $medicalRecordNumber, emergencyContact: $emergencyContact, emergencyContactPhone: $emergencyContactPhone)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$CreatePatientRequestCopyWith<$Res> implements $CreatePatientRequestCopyWith<$Res> {
-  factory _$CreatePatientRequestCopyWith(_CreatePatientRequest value, $Res Function(_CreatePatientRequest) _then) = __$CreatePatientRequestCopyWithImpl;
+abstract mixin class _$SignPatientRequestCopyWith<$Res> implements $SignPatientRequestCopyWith<$Res> {
+  factory _$SignPatientRequestCopyWith(_SignPatientRequest value, $Res Function(_SignPatientRequest) _then) = __$SignPatientRequestCopyWithImpl;
 @override @useResult
 $Res call({
  String name,@JsonKey(name: 'id_number') String idNumber, Gender gender,@JsonKey(name: 'birth_date') DateTime birthDate, String phone,@JsonKey(name: 'medical_record_number') String? medicalRecordNumber,@JsonKey(name: 'emergency_contact') String? emergencyContact,@JsonKey(name: 'emergency_contact_phone') String? emergencyContactPhone
@@ -562,17 +562,17 @@ $Res call({
 
 }
 /// @nodoc
-class __$CreatePatientRequestCopyWithImpl<$Res>
-    implements _$CreatePatientRequestCopyWith<$Res> {
-  __$CreatePatientRequestCopyWithImpl(this._self, this._then);
+class __$SignPatientRequestCopyWithImpl<$Res>
+    implements _$SignPatientRequestCopyWith<$Res> {
+  __$SignPatientRequestCopyWithImpl(this._self, this._then);
 
-  final _CreatePatientRequest _self;
-  final $Res Function(_CreatePatientRequest) _then;
+  final _SignPatientRequest _self;
+  final $Res Function(_SignPatientRequest) _then;
 
-/// Create a copy of CreatePatientRequest
+/// Create a copy of SignPatientRequest
 /// with the given fields replaced by the non-null parameter values.
 @override @pragma('vm:prefer-inline') $Res call({Object? name = null,Object? idNumber = null,Object? gender = null,Object? birthDate = null,Object? phone = null,Object? medicalRecordNumber = freezed,Object? emergencyContact = freezed,Object? emergencyContactPhone = freezed,}) {
-  return _then(_CreatePatientRequest(
+  return _then(_SignPatientRequest(
 name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,idNumber: null == idNumber ? _self.idNumber : idNumber // ignore: cast_nullable_to_non_nullable
 as String,gender: null == gender ? _self.gender : gender // ignore: cast_nullable_to_non_nullable

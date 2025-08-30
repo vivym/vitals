@@ -57,18 +57,16 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<List<Patient>> getPatients() async {
+  Future<Patient?> getPatient() async {
     try {
-      final response = await _apiClient.get<Map<String, dynamic>>('/auth/patients');
+      final response = await _apiClient.get<Map<String, dynamic>>('/auth/patient');
 
-      // 处理Mock API响应格式：{ success: true, data: [...], message: "..." }
+      // 处理Mock API响应格式：{ success: true, data: {...}, message: "..." }
       if (response['success'] == true && response['data'] != null) {
-        final patientsData = response['data'] as List<dynamic>;
-        return patientsData
-            .map((json) => Patient.fromJson(json as Map<String, dynamic>))
-            .toList();
+        return Patient.fromJson(response['data'] as Map<String, dynamic>);
       } else {
-        throw AppError.network(message: response['message'] ?? '获取患者列表失败');
+        // 没有患者时返回null，不抛出错误
+        return null;
       }
     } catch (e) {
       throw _handleApiError(e);
@@ -76,13 +74,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<Patient> createPatient(CreatePatientRequest request) async {
+  Future<Patient> signPatient(SignPatientRequest request) async {
     try {
       final response = await _apiClient.post<Map<String, dynamic>>(
-        '/auth/patients',
+        '/auth/patient/sign',
         data: request.toJson(),
       );
-      return Patient.fromJson(response);
+
+      // 处理Mock API响应格式：{ success: true, data: {...}, message: "..." }
+      if (response['success'] == true && response['data'] != null) {
+        return Patient.fromJson(response['data'] as Map<String, dynamic>);
+      } else {
+        throw AppError.network(message: response['message'] ?? '患者签约失败');
+      }
     } catch (e) {
       throw _handleApiError(e);
     }

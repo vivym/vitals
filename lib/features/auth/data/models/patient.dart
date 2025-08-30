@@ -37,12 +37,12 @@ abstract class Patient with _$Patient {
   factory Patient.fromJson(Map<String, dynamic> json) => _$PatientFromJson(json);
 }
 
-/// 患者创建请求模型
+/// 患者签约请求模型
 @freezed
-abstract class CreatePatientRequest with _$CreatePatientRequest {
-  const CreatePatientRequest._();
+abstract class SignPatientRequest with _$SignPatientRequest {
+  const SignPatientRequest._();
 
-  const factory CreatePatientRequest({
+  const factory SignPatientRequest({
     required String name,
     @JsonKey(name: 'id_number') required String idNumber,
     required Gender gender,
@@ -51,8 +51,8 @@ abstract class CreatePatientRequest with _$CreatePatientRequest {
     @JsonKey(name: 'medical_record_number') String? medicalRecordNumber,
     @JsonKey(name: 'emergency_contact') String? emergencyContact,
     @JsonKey(name: 'emergency_contact_phone') String? emergencyContactPhone,
-  }) = _CreatePatientRequest;
+  }) = _SignPatientRequest;
 
-  factory CreatePatientRequest.fromJson(Map<String, dynamic> json) =>
-      _$CreatePatientRequestFromJson(json);
+  factory SignPatientRequest.fromJson(Map<String, dynamic> json) =>
+      _$SignPatientRequestFromJson(json);
 }

@@ -1,8 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vitals/app/router/app_router.dart';
-import 'package:vitals/app/app.dart';
 
 void main() {
   group('App Router Tests', () {
@@ -17,7 +14,7 @@ void main() {
       expect(AppRoutes.splash, equals('/'));
       expect(AppRoutes.login, equals('/login'));
       expect(AppRoutes.dashboard, equals('/dashboard'));
-      expect(AppRoutes.createPatient, equals('/patients/create'));
+      expect(AppRoutes.patientSign, equals('/patient/sign'));
     });
 
     test('should import correct login screen class', () {
@@ -27,8 +24,8 @@ void main() {
       expect(loginPath, equals('/login'));
 
       // 验证路由常量配置正确
-      expect(AppRoutes.createPatient, equals('/patients/create'));
-      expect(AppRoutes.patientCreateSuccess, equals('/patients/create/success'));
+      expect(AppRoutes.patientSign, equals('/patient/sign'));
+      expect(AppRoutes.patientSignSuccess, equals('/patient/sign/success'));
     });
   });
 }

@@ -6,7 +6,7 @@ import 'package:vitals/features/reports/data/datasources/reports_remote_datasour
 import 'package:vitals/features/reports/data/repositories/reports_repository_impl.dart';
 import 'package:vitals/features/reports/domain/entities/health_report.dart';
 import 'package:vitals/features/reports/domain/repositories/reports_repository.dart';
-import 'package:vitals/features/reports/data/providers/reports_providers.dart';
+import 'package:vitals/features/reports/presentation/providers/reports_providers.dart';
 import 'package:vitals/features/reports/domain/usecases/get_reports_usecase.dart';
 
 class MockReportsRemoteDataSource extends Mock implements ReportsRemoteDataSource {}

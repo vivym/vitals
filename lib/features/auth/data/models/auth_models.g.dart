@@ -22,11 +22,9 @@ _LoginResponse _$LoginResponseFromJson(Map<String, dynamic> json) =>
     _LoginResponse(
       token: json['token'] as String,
       user: User.fromJson(json['user'] as Map<String, dynamic>),
-      patients:
-          (json['patients'] as List<dynamic>?)
-              ?.map((e) => Patient.fromJson(e as Map<String, dynamic>))
-              .toList() ??
-          const [],
+      patient: json['patient'] == null
+          ? null
+          : Patient.fromJson(json['patient'] as Map<String, dynamic>),
       expiresAt: json['expires_at'] == null
           ? null
           : DateTime.parse(json['expires_at'] as String),
@@ -36,6 +34,6 @@ Map<String, dynamic> _$LoginResponseToJson(_LoginResponse instance) =>
     <String, dynamic>{
       'token': instance.token,
       'user': instance.user,
-      'patients': instance.patients,
+      'patient': instance.patient,
       'expires_at': instance.expiresAt?.toIso8601String(),
     };

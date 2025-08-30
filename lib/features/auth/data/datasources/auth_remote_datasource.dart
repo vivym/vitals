@@ -13,9 +13,9 @@ abstract class AuthRemoteDataSource {
   /// 获取当前用户信息
   Future<User> getCurrentUser();
 
-  /// 获取用户的患者列表
-  Future<List<Patient>> getPatients();
+  /// 获取用户签约的患者信息（单个）
+  Future<Patient?> getPatient();
 
-  /// 创建新患者
-  Future<Patient> createPatient(CreatePatientRequest request);
+  /// 患者签约
+  Future<Patient> signPatient(SignPatientRequest request);
 }

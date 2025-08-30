@@ -6,7 +6,6 @@ import 'package:vitals/features/auth/data/datasources/auth_remote_datasource.dar
 import 'package:vitals/features/auth/data/datasources/auth_remote_datasource_impl.dart';
 import 'package:vitals/features/auth/data/models/auth_models.dart';
 import 'package:vitals/features/auth/data/models/patient.dart';
-import 'package:vitals/features/auth/data/models/user.dart';
 
 // Mock classes
 class MockApiClient extends Mock implements ApiClient {}
@@ -35,7 +34,7 @@ void main() {
               'phone': '13800000000',
               'email': 'zhangsan@example.com',
             },
-            'patients': [],
+            'patient': null,
           },
           'message': '登录成功',
         };
@@ -52,7 +51,7 @@ void main() {
         expect(result.token, 'test_token');
         expect(result.user.name, '张三');
         expect(result.user.phone, '13800000000');
-        expect(result.patients, isEmpty);
+        expect(result.patient, isNull);
 
         verify(() => mockApiClient.post<Map<String, dynamic>>(
               '/auth/mock-login',
@@ -102,10 +101,14 @@ void main() {
       test('should return User when request is successful', () async {
         // Given
         final expectedResponse = {
-          'id': '1',
-          'name': '张三',
-          'phone': '13800000000',
-          'email': 'zhangsan@example.com',
+          'success': true,
+          'data': {
+            'id': '1',
+            'name': '张三',
+            'phone': '13800000000',
+            'email': 'zhangsan@example.com',
+          },
+          'message': '获取成功',
         };
 
         when(() => mockApiClient.get<Map<String, dynamic>>('/auth/user'))
@@ -135,11 +138,12 @@ void main() {
       });
     });
 
-    group('getPatients', () {
-      test('should return list of patients when request is successful', () async {
+    group('getPatient', () {
+      test('should return patient when request is successful', () async {
         // Given
-        final expectedResponse = [
-          {
+        final expectedResponse = {
+          'success': true,
+          'data': {
             'id': '1',
             'name': '张三',
             'id_number': '310101199001011234',
@@ -147,27 +151,46 @@ void main() {
             'birth_date': '1990-01-01T00:00:00.000Z',
             'phone': '13800000000',
           },
-        ];
+          'message': '获取成功',
+        };
 
-        when(() => mockApiClient.get<List<dynamic>>('/auth/patients'))
+        when(() => mockApiClient.get<Map<String, dynamic>>('/auth/patient'))
             .thenAnswer((_) async => expectedResponse);
 
         // When
-        final result = await dataSource.getPatients();
+        final result = await dataSource.getPatient();
 
         // Then
-        expect(result, hasLength(1));
-        expect(result.first.name, '张三');
-        expect(result.first.idNumber, '310101199001011234');
+        expect(result, isNotNull);
+        expect(result!.name, '张三');
+        expect(result.idNumber, '310101199001011234');
 
-        verify(() => mockApiClient.get<List<dynamic>>('/auth/patients')).called(1);
+        verify(() => mockApiClient.get<Map<String, dynamic>>('/auth/patient')).called(1);
+      });
+
+      test('should return null when no patient exists', () async {
+        // Given
+        final expectedResponse = {
+          'success': true,
+          'data': null,
+          'message': '没有找到患者',
+        };
+
+        when(() => mockApiClient.get<Map<String, dynamic>>('/auth/patient'))
+            .thenAnswer((_) async => expectedResponse);
+
+        // When
+        final result = await dataSource.getPatient();
+
+        // Then
+        expect(result, isNull);
       });
     });
 
-    group('createPatient', () {
+    group('signPatient', () {
       test('should return created patient when request is successful', () async {
         // Given
-        final request = CreatePatientRequest(
+        final request = SignPatientRequest(
           name: '李四',
           idNumber: '310101199501011234',
           gender: Gender.male,
@@ -176,21 +199,25 @@ void main() {
         );
 
         final expectedResponse = {
-          'id': '2',
-          'name': '李四',
-          'id_number': '310101199501011234',
-          'gender': 1,
-          'birth_date': '1995-01-01T00:00:00.000Z',
-          'phone': '13900000000',
+          'success': true,
+          'data': {
+            'id': '2',
+            'name': '李四',
+            'id_number': '310101199501011234',
+            'gender': 1,
+            'birth_date': '1995-01-01T00:00:00.000Z',
+            'phone': '13900000000',
+          },
+          'message': '创建成功',
         };
 
         when(() => mockApiClient.post<Map<String, dynamic>>(
-              '/auth/patients',
+              '/auth/patient/sign',
               data: request.toJson(),
             )).thenAnswer((_) async => expectedResponse);
 
         // When
-        final result = await dataSource.createPatient(request);
+        final result = await dataSource.signPatient(request);
 
         // Then
         expect(result.id, '2');
@@ -198,7 +225,7 @@ void main() {
         expect(result.idNumber, '310101199501011234');
 
         verify(() => mockApiClient.post<Map<String, dynamic>>(
-              '/auth/patients',
+              '/auth/patient/sign',
               data: request.toJson(),
             )).called(1);
       });

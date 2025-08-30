@@ -1,26 +1,19 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:vitals/core/errors/app_error.dart';
-import 'package:vitals/features/auth/data/repositories/auth_repository.dart';
+import 'package:vitals/features/auth/domain/repositories/auth_repository.dart';
 import 'package:vitals/features/auth/domain/usecases/login_usecase.dart';
 import 'package:vitals/features/auth/domain/usecases/login_usecase_impl.dart';
-import 'package:vitals/features/auth/data/models/auth_models.dart';
-import 'package:vitals/features/auth/data/models/user.dart';
+import 'package:vitals/features/auth/domain/entities/user_entity.dart';
+import 'package:vitals/features/auth/domain/entities/patient_entity.dart';
 
 // Mock classes
 class MockAuthRepository extends Mock implements AuthRepository {}
-
-// Fake classes
-class FakeLoginRequest extends Fake implements LoginRequest {}
 
 void main() {
   group('LoginUseCase', () {
     late LoginUseCase useCase;
     late MockAuthRepository mockRepository;
-
-    setUpAll(() {
-      registerFallbackValue(FakeLoginRequest());
-    });
 
     setUp(() {
       mockRepository = MockAuthRepository();
@@ -42,7 +35,7 @@ void main() {
           failure: (error) {
             expect(error, isA<AppError>());
             error.maybeWhen(
-              validation: (message, field) {
+              validation: (field, message) {
                 expect(field, 'terms');
                 expect(message, contains('协议'));
               },
@@ -51,7 +44,7 @@ void main() {
           },
         );
 
-        verifyNever(() => mockRepository.login(any()));
+        verifyNever(() => mockRepository.login(any(), agreedToTerms: any(named: 'agreedToTerms')));
       });
 
       test('should return validation error when phone is invalid', () async {
@@ -67,7 +60,7 @@ void main() {
           success: (_) => fail('Expected failure'),
           failure: (error) {
             error.maybeWhen(
-              validation: (message, field) {
+              validation: (field, message) {
                 expect(field, 'phone');
                 expect(message, contains('手机号'));
               },
@@ -76,7 +69,7 @@ void main() {
           },
         );
 
-        verifyNever(() => mockRepository.login(any()));
+        verifyNever(() => mockRepository.login(any(), agreedToTerms: any(named: 'agreedToTerms')));
       });
 
       group('phone validation', () {
@@ -89,34 +82,67 @@ void main() {
             '19800000000', // 新号段
           ];
 
-          final response = LoginResponse(
-            token: 'test_token',
-            user: const User(id: '1', name: 'Test', phone: '13800000000'),
-            patients: const [],
-          );
-
-          when(() => mockRepository.login(any()))
-              .thenAnswer((_) async => Result.success(response));
-
           for (final phone in validPhones) {
+            // Given
+            final mockUser = UserEntity(
+              id: '1',
+              name: 'Test User',
+              phone: phone,
+              email: 'test@example.com',
+              createdAt: DateTime.now(),
+              updatedAt: DateTime.now(),
+            );
+
+            final mockPatients = [
+              PatientEntity(
+                id: '1',
+                name: 'Patient 1',
+                idNumber: '123456789012345678',
+                gender: Gender.male,
+                birthDate: DateTime(1990, 1, 1),
+                phone: '13800000001',
+                createdAt: DateTime.now(),
+                updatedAt: DateTime.now(),
+              ),
+            ];
+
+            final mockLoginResult = LoginResult(
+              user: mockUser,
+              token: 'test_token',
+              patient: mockPatients.first,
+            );
+
+            when(() => mockRepository.login(phone, agreedToTerms: true))
+                .thenAnswer((_) async => Result.success(mockLoginResult));
+
+            // When
             // When
             final result = await useCase.execute(phone, agreedToTerms: true);
 
             // Then
-            expect(result.isSuccess, true, reason: 'Phone $phone should be valid');
+            expect(result.isSuccess, true);
+            result.when(
+              success: (loginResult) {
+                expect(loginResult.user.phone, phone);
+                expect(loginResult.token, 'test_token');
+                expect(loginResult.patient, isNotNull);
+              },
+              failure: (_) => fail('Expected success'),
+            );
           }
+
+          verify(() => mockRepository.login(any(), agreedToTerms: true)).called(validPhones.length);
         });
 
         test('should reject invalid phone numbers', () async {
           // Given
           final invalidPhones = [
             '123',           // 太短
-            '12345678901',   // 不以1开头
-            '10800000000',   // 第二位无效
-            '1380000000',    // 太短
-            '138000000001',  // 太长
-            '',              // 空字符串
+            '1234567890',    // 太短
+            '123456789012',  // 太长
             'abcdefghijk',   // 非数字
+            '1234567890a',   // 包含字母
+            '1234567890 ',   // 包含空格
           ];
 
           for (final phone in invalidPhones) {
@@ -125,25 +151,91 @@ void main() {
 
             // Then
             expect(result.isFailure, true, reason: 'Phone $phone should be invalid');
+            result.when(
+              success: (_) => fail('Expected failure for phone: $phone'),
+              failure: (error) {
+                error.maybeWhen(
+                  validation: (field, message) {
+                    expect(field, 'phone');
+                    expect(message, contains('手机号'));
+                  },
+                  orElse: () => fail('Expected validation error for phone: $phone'),
+                );
+              },
+            );
           }
 
-          verifyNever(() => mockRepository.login(any()));
+          verifyNever(() => mockRepository.login(any(), agreedToTerms: true));
         });
       });
     });
 
-    group('repository integration', () {
-      test('should return success when repository login succeeds', () async {
+    group('repository interaction', () {
+      test('should call repository with correct parameters when validation passes', () async {
         // Given
         const phone = '13800000000';
-        final expectedResponse = LoginResponse(
-          token: 'test_token',
-          user: const User(id: '1', name: 'Test User', phone: phone),
-          patients: const [],
+        const agreedToTerms = true;
+
+        final mockUser = UserEntity(
+          id: '1',
+          name: 'Test User',
+          phone: phone,
+          email: 'test@example.com',
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
         );
 
-        when(() => mockRepository.login(any()))
-            .thenAnswer((_) async => Result.success(expectedResponse));
+        final mockLoginResult = LoginResult(
+          user: mockUser,
+          token: 'test_token',
+          patient: null,
+        );
+
+        when(() => mockRepository.login(phone, agreedToTerms: agreedToTerms))
+            .thenAnswer((_) async => Result.success(mockLoginResult));
+
+        // When
+        final result = await useCase.execute(phone, agreedToTerms: agreedToTerms);
+
+        // Then
+        expect(result.isSuccess, true);
+        verify(() => mockRepository.login(phone, agreedToTerms: agreedToTerms)).called(1);
+      });
+
+      test('should handle repository success response', () async {
+        // Given
+        const phone = '13800000000';
+
+        final mockUser = UserEntity(
+          id: '1',
+          name: 'Test User',
+          phone: phone,
+          email: 'test@example.com',
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
+
+        final mockPatients = [
+          PatientEntity(
+            id: '1',
+            name: 'Patient 1',
+            idNumber: '123456789012345678',
+            gender: Gender.male,
+            birthDate: DateTime(1990, 1, 1),
+            phone: '13800000001',
+            createdAt: DateTime.now(),
+            updatedAt: DateTime.now(),
+          ),
+        ];
+
+                    final mockLoginResult = LoginResult(
+              user: mockUser,
+              token: 'test_token',
+              patient: mockPatients.first,
+            );
+
+        when(() => mockRepository.login(phone, agreedToTerms: true))
+            .thenAnswer((_) async => Result.success(mockLoginResult));
 
         // When
         final result = await useCase.execute(phone, agreedToTerms: true);
@@ -151,25 +243,25 @@ void main() {
         // Then
         expect(result.isSuccess, true);
         result.when(
-          success: (response) {
-            expect(response.token, 'test_token');
-            expect(response.user.phone, phone);
+          success: (loginResult) {
+            expect(loginResult.user.id, '1');
+            expect(loginResult.user.name, 'Test User');
+            expect(loginResult.user.phone, phone);
+            expect(loginResult.token, 'test_token');
+            expect(loginResult.patient, isNotNull);
+            expect(loginResult.patient!.name, 'Patient 1');
           },
           failure: (_) => fail('Expected success'),
         );
-
-        verify(() => mockRepository.login(
-          const LoginRequest(phone: phone, agreedToTerms: true),
-        )).called(1);
       });
 
-      test('should return failure when repository login fails', () async {
+      test('should handle repository failure response', () async {
         // Given
         const phone = '13800000000';
-        const error = AppError.network(message: 'Network error');
+        final mockError = AppError.network(message: 'Network error');
 
-        when(() => mockRepository.login(any()))
-            .thenAnswer((_) async => const Result.failure(error));
+        when(() => mockRepository.login(phone, agreedToTerms: true))
+            .thenAnswer((_) async => Result.failure(mockError));
 
         // When
         final result = await useCase.execute(phone, agreedToTerms: true);
@@ -178,34 +270,100 @@ void main() {
         expect(result.isFailure, true);
         result.when(
           success: (_) => fail('Expected failure'),
-          failure: (appError) => expect(appError, error),
+          failure: (error) {
+            expect(error, mockError);
+            error.maybeWhen(
+              network: (message, statusCode) => expect(message, 'Network error'),
+              orElse: () => fail('Expected network error'),
+            );
+          },
         );
-
-        verify(() => mockRepository.login(
-          const LoginRequest(phone: phone, agreedToTerms: true),
-        )).called(1);
       });
 
-      test('should pass correct login request to repository', () async {
+      test('should propagate repository exception', () async {
         // Given
         const phone = '13800000000';
-        final response = LoginResponse(
-          token: 'test_token',
-          user: const User(id: '1', name: 'Test', phone: phone),
-          patients: const [],
-        );
+        final exception = Exception('Unexpected error');
 
-        when(() => mockRepository.login(any()))
-            .thenAnswer((_) async => Result.success(response));
+        when(() => mockRepository.login(phone, agreedToTerms: true))
+            .thenThrow(exception);
+
+        // When & Then
+        expect(
+          () => useCase.execute(phone, agreedToTerms: true),
+          throwsA(exception),
+        );
+      });
+    });
+
+    group('edge cases', () {
+      test('should handle empty phone string', () async {
+        // Given
+        const phone = '';
 
         // When
-        await useCase.execute(phone, agreedToTerms: true);
+        final result = await useCase.execute(phone, agreedToTerms: true);
 
         // Then
-        final captured = verify(() => mockRepository.login(captureAny())).captured;
-        final loginRequest = captured.first as LoginRequest;
-        expect(loginRequest.phone, phone);
-        expect(loginRequest.agreedToTerms, true);
+        expect(result.isFailure, true);
+        result.when(
+          success: (_) => fail('Expected failure'),
+          failure: (error) {
+            error.maybeWhen(
+              validation: (field, message) {
+                expect(field, 'phone');
+                expect(message, contains('手机号'));
+              },
+              orElse: () => fail('Expected validation error'),
+            );
+          },
+        );
+      });
+
+      test('should handle whitespace-only phone string', () async {
+        // Given
+        const phone = '   ';
+
+        // When
+        final result = await useCase.execute(phone, agreedToTerms: true);
+
+        // Then
+        expect(result.isFailure, true);
+        result.when(
+          success: (_) => fail('Expected failure'),
+          failure: (error) {
+            error.maybeWhen(
+              validation: (field, message) {
+                expect(field, 'phone');
+                expect(message, contains('手机号'));
+              },
+              orElse: () => fail('Expected validation error'),
+            );
+          },
+        );
+      });
+
+      test('should handle very long phone string', () async {
+        // Given
+        const phone = '138000000001234567890';
+
+        // When
+        final result = await useCase.execute(phone, agreedToTerms: true);
+
+        // Then
+        expect(result.isFailure, true);
+        result.when(
+          success: (_) => fail('Expected failure'),
+          failure: (error) {
+            error.maybeWhen(
+              validation: (field, message) {
+                expect(field, 'phone');
+                expect(message, contains('手机号'));
+              },
+              orElse: () => fail('Expected validation error'),
+            );
+          },
+        );
       });
     });
   });

@@ -1,15 +1,36 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:vitals/core/errors/app_error.dart';
-import '../../data/models/auth_models.dart';
-import '../../data/models/user.dart';
-import '../../data/models/patient.dart';
-import '../../domain/usecases/login_usecase.dart';
-import '../../domain/usecases/auto_login_usecase.dart';
+import '../../domain/entities/user_entity.dart';
+import '../../domain/entities/patient_entity.dart';
 import 'auth_providers.dart';
 
 export 'auth_providers.dart';
 
 part 'auth_provider.g.dart';
+part 'auth_provider.freezed.dart';
+
+/// 认证状态 - 直接在 Provider 中定义
+@freezed
+abstract class AuthState with _$AuthState {
+  const factory AuthState({
+    UserEntity? user,
+    PatientEntity? patient,
+    String? token,
+    @Default(false) bool isAuthenticated,
+    @Default(false) bool isLoading,
+    @Default(false) bool hasAgreedToTerms,
+    @Default(false) bool hasSignedPatient,
+    AppError? error,
+  }) = _AuthState;
+
+  const AuthState._();
+
+  bool get hasError => error != null;
+  bool get isReady => !isLoading && error == null;
+  bool get canLogin => hasAgreedToTerms && isReady;
+  bool get requiresPatientSign => isAuthenticated && !hasSignedPatient;
+}
 
 /// 认证状态通知器
 /// 管理用户认证状态，包括登录、登出、自动登录等
@@ -29,12 +50,14 @@ class AuthNotifier extends _$AuthNotifier {
       final result = await loginUseCase.execute(phone, agreedToTerms: agreedToTerms);
 
       result.when(
-        success: (response) {
+        success: (loginResult) {
           state = state.copyWith(
             isLoading: false,
-            user: response.user,
-            patients: response.patients,
+            user: loginResult.user,
+            patient: loginResult.patient,           // 单个患者
+            token: loginResult.token,
             isAuthenticated: true,
+            hasSignedPatient: loginResult.patient != null,  // 检查是否已签约
           );
         },
         failure: (error) {
@@ -97,11 +120,11 @@ class AuthNotifier extends _$AuthNotifier {
     state = state.copyWith(error: null);
   }
 
-  /// 添加患者到当前状态
-  void addPatient(Patient patient) {
-    final updatedPatients = [...state.patients, patient];
-    state = state.copyWith(patients: updatedPatients);
+  /// 患者签约成功后更新状态
+  void onPatientSigned(PatientEntity patient) {
+    state = state.copyWith(
+      patient: patient,
+      hasSignedPatient: true,
+    );
   }
 }
-
-

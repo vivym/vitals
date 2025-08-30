@@ -94,7 +94,7 @@ void main() {
         expect(loginResponse.token, 'mock_auth_token');
         expect(loginResponse.user.name, '张三');
         expect(loginResponse.user.phone, '13800000000');
-        expect(loginResponse.patients, isNotEmpty);
+        expect(loginResponse.patient, isNotNull);
 
         // 验证本地存储
         final savedToken = await flutterSecureStorage.read(key: 'auth_token');

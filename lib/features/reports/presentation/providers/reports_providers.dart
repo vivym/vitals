@@ -1,5 +1,8 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vitals/features/auth/presentation/providers/auth_providers.dart';
 import 'package:vitals/features/reports/data/datasources/reports_local_datasource.dart';
+import 'package:vitals/features/reports/data/datasources/reports_local_datasource_impl.dart';
 import 'package:vitals/features/reports/data/datasources/reports_remote_datasource.dart';
 import 'package:vitals/features/reports/data/datasources/reports_remote_datasource_mock.dart';
 import 'package:vitals/features/reports/data/repositories/reports_repository_impl.dart';
@@ -17,8 +20,8 @@ ReportsRemoteDataSource reportsRemoteDataSource(ReportsRemoteDataSourceRef ref) 
 /// 本地数据源提供者
 @riverpod
 ReportsLocalDataSource reportsLocalDataSource(ReportsLocalDataSourceRef ref) {
-  // TODO: 实现真实的本地数据源
-  throw UnimplementedError();
+  final sharedPreferences = ref.watch(sharedPreferencesProvider);
+  return ReportsLocalDataSourceImpl(sharedPreferences);
 }
 
 /// 仓库提供者

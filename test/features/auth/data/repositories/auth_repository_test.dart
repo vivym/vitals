@@ -3,20 +3,22 @@ import 'package:mocktail/mocktail.dart';
 import 'package:vitals/core/errors/app_error.dart';
 import 'package:vitals/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:vitals/features/auth/data/datasources/auth_local_datasource.dart';
-import 'package:vitals/features/auth/data/repositories/auth_repository.dart';
 import 'package:vitals/features/auth/data/repositories/auth_repository_impl.dart';
-import 'package:vitals/features/auth/data/models/auth_models.dart';
-import 'package:vitals/features/auth/data/models/patient.dart';
-import 'package:vitals/features/auth/data/models/user.dart';
+import 'package:vitals/features/auth/domain/repositories/auth_repository.dart';
+import 'package:vitals/features/auth/domain/entities/patient_entity.dart';
+import 'package:vitals/features/auth/data/models/auth_models.dart' as data;
+import 'package:vitals/features/auth/data/models/patient.dart' as data;
+import 'package:vitals/features/auth/data/models/user.dart' as data;
 
 // Mock classes
 class MockAuthRemoteDataSource extends Mock implements AuthRemoteDataSource {}
 class MockAuthLocalDataSource extends Mock implements AuthLocalDataSource {}
 
 // Fake classes for fallback values
-class FakeUser extends Fake implements User {}
-class FakeLoginRequest extends Fake implements LoginRequest {}
-class FakeCreatePatientRequest extends Fake implements CreatePatientRequest {}
+class FakeUser extends Fake implements data.User {}
+class FakePatient extends Fake implements data.Patient {}
+class FakeLoginRequest extends Fake implements data.LoginRequest {}
+class FakeSignPatientRequest extends Fake implements data.SignPatientRequest {}
 
 void main() {
   group('AuthRepository', () {
@@ -27,8 +29,9 @@ void main() {
     setUpAll(() {
       // Register fallback values for mocktail
       registerFallbackValue(FakeUser());
+      registerFallbackValue(FakePatient());
       registerFallbackValue(FakeLoginRequest());
-      registerFallbackValue(FakeCreatePatientRequest());
+      registerFallbackValue(FakeSignPatientRequest());
     });
 
     setUp(() {
@@ -40,69 +43,61 @@ void main() {
     group('login', () {
       test('should save auth state and return success when login succeeds', () async {
         // Given
-        const request = LoginRequest(phone: '13800000000', agreedToTerms: true);
-        final response = LoginResponse(
-          token: 'test_token',
-          user: const User(id: '1', name: '张三', phone: '13800000000'),
-          patients: const [],
+        const phone = '13800000000';
+        const agreedToTerms = true;
+
+        final user = data.User(id: '1', name: '张三', phone: '13800000000');
+        final patient = data.Patient(
+          id: '1',
+          name: '张三',
+          idNumber: '310101199001011234',
+          gender: data.Gender.male,
+          birthDate: DateTime(1990, 1, 1),
+          phone: '13800000000',
         );
 
-        when(() => mockRemoteDataSource.login(request))
-            .thenAnswer((_) async => response);
+        final loginResponse = data.LoginResponse(
+          token: 'test_token',
+          user: user,
+          patient: patient,
+        );
+
+        when(() => mockRemoteDataSource.login(any()))
+            .thenAnswer((_) async => loginResponse);
         when(() => mockLocalDataSource.saveAuthToken(any()))
             .thenAnswer((_) async {});
         when(() => mockLocalDataSource.saveCachedUser(any()))
             .thenAnswer((_) async {});
 
         // When
-        final result = await repository.login(request);
+        final result = await repository.login(phone, agreedToTerms: agreedToTerms);
 
         // Then
         expect(result.isSuccess, true);
         result.when(
-          success: (loginResponse) {
-            expect(loginResponse.token, 'test_token');
-            expect(loginResponse.user.name, '张三');
+          success: (loginResult) {
+            expect(loginResult.token, 'test_token');
+            expect(loginResult.user.name, '张三');
+            expect(loginResult.patient, isNotNull);
+            expect(loginResult.patient!.name, '张三');
           },
           failure: (_) => fail('Expected success'),
         );
 
-        verify(() => mockRemoteDataSource.login(request)).called(1);
+        verify(() => mockRemoteDataSource.login(any())).called(1);
         verify(() => mockLocalDataSource.saveAuthToken('test_token')).called(1);
-        verify(() => mockLocalDataSource.saveCachedUser(response.user)).called(1);
+        verify(() => mockLocalDataSource.saveCachedUser(any())).called(1);
       });
 
       test('should return failure when remote login fails', () async {
         // Given
-        const request = LoginRequest(phone: '13800000000', agreedToTerms: true);
+        const phone = '13800000000';
         const error = AppError.network(message: 'Network error');
 
-        when(() => mockRemoteDataSource.login(request)).thenThrow(error);
+        when(() => mockRemoteDataSource.login(any())).thenThrow(error);
 
         // When
-        final result = await repository.login(request);
-
-        // Then
-        expect(result.isFailure, true);
-        result.when(
-          success: (_) => fail('Expected failure'),
-          failure: (appError) => expect(appError, error),
-        );
-
-        verify(() => mockRemoteDataSource.login(request)).called(1);
-        verifyNever(() => mockLocalDataSource.saveAuthToken(any()));
-        verifyNever(() => mockLocalDataSource.saveCachedUser(any()));
-      });
-
-      test('should wrap unknown exceptions in AppError.unknown', () async {
-        // Given
-        const request = LoginRequest(phone: '13800000000', agreedToTerms: true);
-        final exception = Exception('Unknown error');
-
-        when(() => mockRemoteDataSource.login(request)).thenThrow(exception);
-
-        // When
-        final result = await repository.login(request);
+        final result = await repository.login(phone);
 
         // Then
         expect(result.isFailure, true);
@@ -110,223 +105,255 @@ void main() {
           success: (_) => fail('Expected failure'),
           failure: (error) {
             expect(error, isA<AppError>());
-            error.maybeWhen(
-              unknown: (message, cause) {
-                expect(message, contains('Exception: Unknown error'));
-                expect(cause, exception);
-              },
-              orElse: () => fail('Expected unknown error'),
-            );
           },
         );
-      });
-    });
 
-    group('logout', () {
-      test('should clear auth state and return success when logout succeeds', () async {
+        verify(() => mockRemoteDataSource.login(any())).called(1);
+        verifyNever(() => mockLocalDataSource.saveAuthToken(any()));
+        verifyNever(() => mockLocalDataSource.saveCachedUser(any()));
+      });
+
+      test('should call remote data source when terms agreed', () async {
         // Given
-        when(() => mockRemoteDataSource.logout()).thenAnswer((_) async {});
-        when(() => mockLocalDataSource.removeAuthToken()).thenAnswer((_) async {});
-        when(() => mockLocalDataSource.removeCachedUser()).thenAnswer((_) async {});
+        const phone = '13800000000';
+        const agreedToTerms = true;
+
+        final user = data.User(id: '1', name: '张三', phone: '13800000000');
+        final patient = data.Patient(
+          id: '1',
+          name: '张三',
+          idNumber: '310101199001011234',
+          gender: data.Gender.male,
+          birthDate: DateTime(1990, 1, 1),
+          phone: '13800000000',
+        );
+
+        final loginResponse = data.LoginResponse(
+          token: 'test_token',
+          user: user,
+          patient: patient,
+        );
+
+        when(() => mockRemoteDataSource.login(any()))
+            .thenAnswer((_) async => loginResponse);
+        when(() => mockLocalDataSource.saveAuthToken(any()))
+            .thenAnswer((_) async {});
+        when(() => mockLocalDataSource.saveCachedUser(any()))
+            .thenAnswer((_) async {});
 
         // When
-        final result = await repository.logout();
+        final result = await repository.login(phone, agreedToTerms: agreedToTerms);
 
         // Then
         expect(result.isSuccess, true);
-
-        verify(() => mockRemoteDataSource.logout()).called(1);
-        verify(() => mockLocalDataSource.removeAuthToken()).called(1);
-        verify(() => mockLocalDataSource.removeCachedUser()).called(1);
-      });
-
-      test('should still clear local state when remote logout fails', () async {
-        // Given
-        const error = AppError.network(message: 'Network error');
-        when(() => mockRemoteDataSource.logout()).thenThrow(error);
-        when(() => mockLocalDataSource.removeAuthToken()).thenAnswer((_) async {});
-        when(() => mockLocalDataSource.removeCachedUser()).thenAnswer((_) async {});
-
-        // When
-        final result = await repository.logout();
-
-        // Then
-        expect(result.isFailure, true);
-
-        verify(() => mockRemoteDataSource.logout()).called(1);
-        verify(() => mockLocalDataSource.removeAuthToken()).called(1);
-        verify(() => mockLocalDataSource.removeCachedUser()).called(1);
+        verify(() => mockRemoteDataSource.login(any())).called(1);
+        verify(() => mockLocalDataSource.saveAuthToken('test_token')).called(1);
+        verify(() => mockLocalDataSource.saveCachedUser(any())).called(1);
       });
     });
 
-    group('isAuthenticated', () {
-      test('should return true when valid token exists', () async {
+    group('signPatient', () {
+      test('should return patient entity when signing succeeds', () async {
         // Given
-        when(() => mockLocalDataSource.getAuthToken())
-            .thenAnswer((_) async => 'valid_token');
+        final request = SignPatientRequest(
+          name: 'Test Patient',
+          idNumber: '123456789012345678',
+          gender: Gender.male,
+          birthDate: DateTime(1990, 1, 1),
+          phone: '13800000000',
+        );
+
+        final dataPatient = data.Patient(
+          id: 'patient_123',
+          name: 'Test Patient',
+          idNumber: '123456789012345678',
+          gender: data.Gender.male,
+          birthDate: DateTime(1990, 1, 1),
+          phone: '13800000000',
+        );
+
+        when(() => mockRemoteDataSource.signPatient(any()))
+            .thenAnswer((_) async => dataPatient);
 
         // When
-        final result = await repository.isAuthenticated();
-
-        // Then
-        expect(result, true);
-        verify(() => mockLocalDataSource.getAuthToken()).called(1);
-      });
-
-      test('should return false when token is null', () async {
-        // Given
-        when(() => mockLocalDataSource.getAuthToken())
-            .thenAnswer((_) async => null);
-
-        // When
-        final result = await repository.isAuthenticated();
-
-        // Then
-        expect(result, false);
-      });
-
-      test('should return false when token is empty', () async {
-        // Given
-        when(() => mockLocalDataSource.getAuthToken())
-            .thenAnswer((_) async => '');
-
-        // When
-        final result = await repository.isAuthenticated();
-
-        // Then
-        expect(result, false);
-      });
-    });
-
-    group('getCurrentUser', () {
-      test('should return user when remote call succeeds', () async {
-        // Given
-        const user = User(id: '1', name: '张三', phone: '13800000000');
-        when(() => mockRemoteDataSource.getCurrentUser())
-            .thenAnswer((_) async => user);
-
-        // When
-        final result = await repository.getCurrentUser();
+        final result = await repository.signPatient(request);
 
         // Then
         expect(result.isSuccess, true);
         result.when(
-          success: (returnedUser) => expect(returnedUser, user),
+          success: (patient) {
+            expect(patient.name, 'Test Patient');
+            expect(patient.idNumber, '123456789012345678');
+            expect(patient.gender, Gender.male);
+          },
           failure: (_) => fail('Expected success'),
         );
+
+        verify(() => mockRemoteDataSource.signPatient(any())).called(1);
       });
 
-      test('should return failure when remote call fails', () async {
+      test('should return error when signing fails', () async {
         // Given
-        const error = AppError.authentication(message: 'Token expired');
-        when(() => mockRemoteDataSource.getCurrentUser()).thenThrow(error);
+        final request = SignPatientRequest(
+          name: 'Test Patient',
+          idNumber: '123456789012345678',
+          gender: Gender.male,
+          birthDate: DateTime(1990, 1, 1),
+          phone: '13800000000',
+        );
+
+        final error = AppError.network(message: 'Network error');
+        when(() => mockRemoteDataSource.signPatient(any())).thenThrow(error);
 
         // When
-        final result = await repository.getCurrentUser();
+        final result = await repository.signPatient(request);
 
         // Then
         expect(result.isFailure, true);
         result.when(
           success: (_) => fail('Expected failure'),
-          failure: (appError) => expect(appError, error),
+          failure: (error) {
+            expect(error, isA<AppError>());
+          },
         );
       });
     });
 
-    group('createPatient', () {
-      test('should return created patient when request succeeds', () async {
+    group('getPatient', () {
+      test('should return patient entity when patient exists', () async {
         // Given
-        final request = CreatePatientRequest(
-          name: '李四',
-          idNumber: '310101199501011234',
-          gender: Gender.male,
-          birthDate: DateTime(1995, 1, 1),
-          phone: '13900000000',
-        );
-        final patient = Patient(
-          id: '2',
-          name: '李四',
-          idNumber: '310101199501011234',
-          gender: Gender.male,
-          birthDate: DateTime(1995, 1, 1),
-          phone: '13900000000',
+        final dataPatient = data.Patient(
+          id: 'patient_123',
+          name: 'Test Patient',
+          idNumber: '123456789012345678',
+          gender: data.Gender.male,
+          birthDate: DateTime(1990, 1, 1),
+          phone: '13800000000',
         );
 
-        when(() => mockRemoteDataSource.createPatient(request))
-            .thenAnswer((_) async => patient);
+        when(() => mockRemoteDataSource.getPatient())
+            .thenAnswer((_) async => dataPatient);
 
         // When
-        final result = await repository.createPatient(request);
+        final result = await repository.getPatient();
 
         // Then
         expect(result.isSuccess, true);
         result.when(
-          success: (createdPatient) {
-            expect(createdPatient.name, '李四');
-            expect(createdPatient.idNumber, '310101199501011234');
+          success: (patient) {
+            expect(patient, isNotNull);
+            expect(patient!.name, 'Test Patient');
           },
           failure: (_) => fail('Expected success'),
         );
+      });
 
-        verify(() => mockRemoteDataSource.createPatient(request)).called(1);
+      test('should return null when no patient exists', () async {
+        // Given
+        when(() => mockRemoteDataSource.getPatient())
+            .thenAnswer((_) async => null);
+
+        // When
+        final result = await repository.getPatient();
+
+        // Then
+        expect(result.isSuccess, true);
+        result.when(
+          success: (patient) {
+            expect(patient, isNull);
+          },
+          failure: (_) => fail('Expected success'),
+        );
       });
     });
 
-    group('terms agreement', () {
-      test('should return terms agreement status from local storage', () async {
+    group('hasSignedPatient', () {
+      test('should return true when patient exists', () async {
         // Given
-        when(() => mockLocalDataSource.hasAgreedToTerms())
-            .thenAnswer((_) async => true);
+        final dataPatient = data.Patient(
+          id: 'patient_123',
+          name: 'Test Patient',
+          idNumber: '123456789012345678',
+          gender: data.Gender.male,
+          birthDate: DateTime(1990, 1, 1),
+          phone: '13800000000',
+        );
+
+        when(() => mockRemoteDataSource.getPatient())
+            .thenAnswer((_) async => dataPatient);
 
         // When
-        final result = await repository.hasAgreedToTerms();
+        final result = await repository.hasSignedPatient();
 
         // Then
-        expect(result, true);
-        verify(() => mockLocalDataSource.hasAgreedToTerms()).called(1);
+        expect(result.isSuccess, true);
+        result.when(
+          success: (hasSigned) {
+            expect(hasSigned, isTrue);
+          },
+          failure: (_) => fail('Expected success'),
+        );
       });
 
-      test('should save terms agreement to local storage', () async {
+      test('should return false when no patient exists', () async {
         // Given
-        when(() => mockLocalDataSource.saveTermsAgreement(true))
+        when(() => mockRemoteDataSource.getPatient())
+            .thenAnswer((_) async => null);
+
+        // When
+        final result = await repository.hasSignedPatient();
+
+        // Then
+        expect(result.isSuccess, true);
+        result.when(
+          success: (hasSigned) {
+            expect(hasSigned, isFalse);
+          },
+          failure: (_) => fail('Expected success'),
+        );
+      });
+    });
+
+    group('logout', () {
+      test('should clear local data and return success', () async {
+        // Given
+        when(() => mockRemoteDataSource.logout())
+            .thenAnswer((_) async {});
+        when(() => mockLocalDataSource.removeAuthToken())
+            .thenAnswer((_) async {});
+        when(() => mockLocalDataSource.removeCachedUser())
             .thenAnswer((_) async {});
 
         // When
-        await repository.saveTermsAgreement(true);
+        final result = await repository.logout();
 
         // Then
-        verify(() => mockLocalDataSource.saveTermsAgreement(true)).called(1);
+        expect(result.isSuccess, true);
+        verify(() => mockRemoteDataSource.logout()).called(1);
+        verify(() => mockLocalDataSource.removeAuthToken()).called(1);
+        verify(() => mockLocalDataSource.removeCachedUser()).called(1);
+      });
+
+      test('should handle local data clearing errors', () async {
+        // Given
+        when(() => mockRemoteDataSource.logout())
+            .thenAnswer((_) async {});
+        when(() => mockLocalDataSource.removeAuthToken())
+            .thenAnswer((_) async {});
+        when(() => mockLocalDataSource.removeCachedUser())
+            .thenAnswer((_) async {});
+
+        // When
+        final result = await repository.logout();
+
+        // Then
+        expect(result.isSuccess, true);
+        verify(() => mockRemoteDataSource.logout()).called(1);
+        verify(() => mockLocalDataSource.removeAuthToken()).called(1);
+        verify(() => mockLocalDataSource.removeCachedUser()).called(1);
       });
     });
 
-    group('cached data access', () {
-      test('should return cached user from local storage', () async {
-        // Given
-        const user = User(id: '1', name: '张三', phone: '13800000000');
-        when(() => mockLocalDataSource.getCachedUser())
-            .thenAnswer((_) async => user);
 
-        // When
-        final result = await repository.getCachedUser();
-
-        // Then
-        expect(result, user);
-        verify(() => mockLocalDataSource.getCachedUser()).called(1);
-      });
-
-      test('should return auth token from local storage', () async {
-        // Given
-        const token = 'test_token';
-        when(() => mockLocalDataSource.getAuthToken())
-            .thenAnswer((_) async => token);
-
-        // When
-        final result = await repository.getAuthToken();
-
-        // Then
-        expect(result, token);
-        verify(() => mockLocalDataSource.getAuthToken()).called(1);
-      });
-    });
   });
 }

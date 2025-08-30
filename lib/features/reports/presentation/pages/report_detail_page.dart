@@ -262,9 +262,8 @@ class ReportDetailPage extends HookConsumerWidget {
 
   void _markAsRead(BuildContext context) {
     // TODO: 实现标记已读功能，需要访问ref
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('已标记为已读')),
-    );
+    // 显示确认信息，应该在UI中显示而不是使用SnackBar
+    // 这里需要通过状态管理来处理标记已读的反馈
   }
 
   void _showShareDialog(BuildContext context, WidgetRef ref, HealthReport report) {
@@ -285,9 +284,8 @@ class ReportDetailPage extends HookConsumerWidget {
                   ShareMethod.wechat,
                 );
                 if (shareLink != null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('分享链接已生成')),
-                  );
+                  // TODO: 通过状态管理显示成功信息，不使用SnackBar
+                  // 应该在页面中添加成功状态显示
                 }
               },
             ),
@@ -301,9 +299,8 @@ class ReportDetailPage extends HookConsumerWidget {
                   ShareMethod.email,
                 );
                 if (shareLink != null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('分享链接已生成')),
-                  );
+                  // TODO: 通过状态管理显示成功信息，不使用SnackBar
+                  // 应该在页面中添加成功状态显示
                 }
               },
             ),
@@ -317,9 +314,8 @@ class ReportDetailPage extends HookConsumerWidget {
                   ShareMethod.link,
                 );
                 if (shareLink != null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('链接已复制到剪贴板')),
-                  );
+                  // TODO: 通过状态管理显示成功信息，不使用SnackBar
+                  // 应该在页面中添加成功状态显示
                 }
               },
             ),

@@ -1,26 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../data/models/patient.dart';
-import '../providers/patient_form_provider.dart';
+import '../../../../app/router/app_router.dart';
+import '../../domain/entities/patient_entity.dart';
+import '../providers/patient_sign_form_provider.dart';
+import '../providers/auth_provider.dart';
 
-/// 新签约患者页面
-/// 创建新患者的表单页面
-class CreatePatientScreen extends ConsumerStatefulWidget {
-  const CreatePatientScreen({super.key});
+/// 患者签约页面
+/// 用户必须完成患者签约才能使用系统
+class PatientSignScreen extends ConsumerStatefulWidget {
+  const PatientSignScreen({super.key});
 
   @override
-  ConsumerState<CreatePatientScreen> createState() => _CreatePatientScreenState();
+  ConsumerState<PatientSignScreen> createState() => _PatientSignScreenState();
 }
 
-class _CreatePatientScreenState extends ConsumerState<CreatePatientScreen> {
+class _PatientSignScreenState extends ConsumerState<PatientSignScreen> {
   final _formKey = GlobalKey<FormState>();
   final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkUserState();
+    });
+  }
 
   @override
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  /// 检查用户状态，如果不满足条件则重定向
+  void _checkUserState() {
+    final authState = ref.read(authNotifierProvider);
+
+    // 如果用户未登录，重定向到登录页面
+    if (!authState.isAuthenticated) {
+      context.go(AppRoutes.login);
+      return;
+    }
+
+    // 如果用户已经有患者，重定向到首页
+    if (authState.hasSignedPatient) {
+      context.go(AppRoutes.dashboard);
+      return;
+    }
   }
 
   String _formatGender(Gender? gender) {
@@ -57,21 +84,21 @@ class _CreatePatientScreenState extends ConsumerState<CreatePatientScreen> {
                   ListTile(
                     title: const Text('男'),
                     onTap: () {
-                      ref.read(patientFormNotifierProvider.notifier).updateGender(Gender.male);
+                      ref.read(patientSignFormNotifierProvider.notifier).updateGender(Gender.male);
                       Navigator.pop(context);
                     },
                   ),
                   ListTile(
                     title: const Text('女'),
                     onTap: () {
-                      ref.read(patientFormNotifierProvider.notifier).updateGender(Gender.female);
+                      ref.read(patientSignFormNotifierProvider.notifier).updateGender(Gender.female);
                       Navigator.pop(context);
                     },
                   ),
                   ListTile(
                     title: const Text('其他'),
                     onTap: () {
-                      ref.read(patientFormNotifierProvider.notifier).updateGender(Gender.other);
+                      ref.read(patientSignFormNotifierProvider.notifier).updateGender(Gender.other);
                       Navigator.pop(context);
                     },
                   ),
@@ -94,18 +121,18 @@ class _CreatePatientScreenState extends ConsumerState<CreatePatientScreen> {
     );
 
     if (date != null) {
-      ref.read(patientFormNotifierProvider.notifier).updateBirthDate(date);
+      ref.read(patientSignFormNotifierProvider.notifier).updateBirthDate(date);
     }
   }
 
   void _handleSubmit() async {
     if (_formKey.currentState?.validate() != true) return;
 
-    final success = await ref.read(patientFormNotifierProvider.notifier).createPatient();
+    final success = await ref.read(patientSignFormNotifierProvider.notifier).signPatient();
 
     if (success && mounted) {
-              // 创建成功，导航到成功页面
-        context.go('/patients/create/success');
+      // 签约成功，导航到成功页面
+      context.go(AppRoutes.patientSignSuccess);
     }
   }
 
@@ -156,7 +183,7 @@ class _CreatePatientScreenState extends ConsumerState<CreatePatientScreen> {
     int maxLength = 50,
     String? Function(String?)? validator,
   }) {
-    final formState = ref.watch(patientFormNotifierProvider);
+    final formState = ref.watch(patientSignFormNotifierProvider);
     final errorText = formState.validationState.errors[key];
 
     return Column(
@@ -265,7 +292,7 @@ class _CreatePatientScreenState extends ConsumerState<CreatePatientScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final formState = ref.watch(patientFormNotifierProvider);
+    final formState = ref.watch(patientSignFormNotifierProvider);
     final theme = Theme.of(context);
 
     return Scaffold(
@@ -273,12 +300,9 @@ class _CreatePatientScreenState extends ConsumerState<CreatePatientScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black87),
-          onPressed: () => context.pop(),
-        ),
+        automaticallyImplyLeading: false,  // 不允许返回
         title: const Text(
-          '新签约患者',
+          '患者签约',
           style: TextStyle(
             color: Colors.black87,
             fontSize: 18,
@@ -298,12 +322,38 @@ class _CreatePatientScreenState extends ConsumerState<CreatePatientScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // 添加说明文字
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      margin: const EdgeInsets.only(bottom: 24),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.surfaceVariant,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '完成患者签约',
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            '为了为您提供个性化的健康服务，请完成患者信息签约。',
+                            style: theme.textTheme.bodyMedium,
+                          ),
+                        ],
+                      ),
+                    ),
+
                     // 姓名
                     _buildTextFormField(
                       key: 'name',
                       label: '真实姓名',
                       isRequired: true,
-                      onChanged: (value) => ref.read(patientFormNotifierProvider.notifier).updateName(value),
+                      onChanged: (value) => ref.read(patientSignFormNotifierProvider.notifier).updateName(value),
                       initialValue: formState.name,
                       hintText: '王高南',
                     ),
@@ -315,7 +365,7 @@ class _CreatePatientScreenState extends ConsumerState<CreatePatientScreen> {
                       key: 'id_number',
                       label: '身份证号',
                       isRequired: true,
-                      onChanged: (value) => ref.read(patientFormNotifierProvider.notifier).updateIdNumber(value),
+                      onChanged: (value) => ref.read(patientSignFormNotifierProvider.notifier).updateIdNumber(value),
                       initialValue: formState.idNumber,
                       hintText: '请填写您的身份证号',
                       keyboardType: TextInputType.text,
@@ -384,7 +434,7 @@ class _CreatePatientScreenState extends ConsumerState<CreatePatientScreen> {
                       key: 'emergency_contact',
                       label: '紧急联系人',
                       isRequired: false,
-                      onChanged: (value) => ref.read(patientFormNotifierProvider.notifier).updateEmergencyContact(value),
+                      onChanged: (value) => ref.read(patientSignFormNotifierProvider.notifier).updateEmergencyContact(value),
                       initialValue: formState.emergencyContact,
                       hintText: '填写联系人姓名',
                     ),
@@ -396,7 +446,7 @@ class _CreatePatientScreenState extends ConsumerState<CreatePatientScreen> {
                       key: 'emergency_phone',
                       label: '紧急联系人电话',
                       isRequired: false,
-                      onChanged: (value) => ref.read(patientFormNotifierProvider.notifier).updateEmergencyContactPhone(value),
+                      onChanged: (value) => ref.read(patientSignFormNotifierProvider.notifier).updateEmergencyContactPhone(value),
                       initialValue: formState.emergencyContactPhone,
                       hintText: '填写联系人电话',
                       keyboardType: TextInputType.phone,
@@ -435,7 +485,7 @@ class _CreatePatientScreenState extends ConsumerState<CreatePatientScreen> {
                           ),
                         )
                       : const Text(
-                          '确定',
+                          '完成签约',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
@@ -474,7 +524,7 @@ class _CreatePatientScreenState extends ConsumerState<CreatePatientScreen> {
                   ),
                   TextButton(
                     onPressed: () {
-                      ref.read(patientFormNotifierProvider.notifier).clearGeneralError();
+                      ref.read(patientSignFormNotifierProvider.notifier).clearGeneralError();
                     },
                     child: Text(
                       '关闭',

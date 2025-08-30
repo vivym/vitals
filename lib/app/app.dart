@@ -16,7 +16,7 @@ class VitalsApp extends ConsumerWidget {
       title: AppConstants.appName,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.getTheme(AppThemeMode.light),
-      routerConfig: AppRouter.createRouter(),
+      routerConfig: AppRouter.createRouter(ProviderScope.containerOf(context)),
 
       // 本地化配置
       locale: const Locale('zh', 'CN'),

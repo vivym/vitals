@@ -1,6 +1,6 @@
 import 'package:vitals/core/errors/app_error.dart';
-import '../../data/repositories/auth_repository.dart';
-import '../../data/models/auth_models.dart';
+import '../repositories/auth_repository.dart';
+import '../entities/user_entity.dart';
 import 'login_usecase.dart';
 
 /// 登录用例实现
@@ -11,7 +11,7 @@ class LoginUseCaseImpl implements LoginUseCase {
   LoginUseCaseImpl(this._repository);
 
   @override
-  Future<Result<LoginResponse, AppError>> execute(
+  Future<Result<LoginResult, AppError>> execute(
     String phone, {
     bool agreedToTerms = false,
   }) async {
@@ -25,7 +25,7 @@ class LoginUseCaseImpl implements LoginUseCase {
       );
     }
 
-    if (!_isValidPhone(phone)) {
+    if (!UserEntity.isValidPhone(phone)) {
       return const Result.failure(
         AppError.validation(
           field: 'phone',
@@ -34,12 +34,7 @@ class LoginUseCaseImpl implements LoginUseCase {
       );
     }
 
-    final request = LoginRequest(phone: phone, agreedToTerms: agreedToTerms);
-    return await _repository.login(request);
+    return await _repository.login(phone, agreedToTerms: agreedToTerms);
   }
 
-  bool _isValidPhone(String phone) {
-    final regex = RegExp(r'^1[3-9]\d{9}$');
-    return regex.hasMatch(phone);
-  }
 }

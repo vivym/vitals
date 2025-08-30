@@ -3,8 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_constants.dart';
 import '../../features/auth/presentation/pages/login_screen.dart' as auth_pages;
-import '../../features/auth/presentation/pages/create_patient_screen.dart' as auth_pages;
-import '../../features/auth/presentation/pages/success_screen.dart' as auth_pages;
+import '../../features/auth/presentation/pages/patient_sign_screen.dart' as auth_pages;
+import '../../features/auth/presentation/pages/patient_sign_success_screen.dart' as auth_pages;
 import '../../features/auth/presentation/providers/auth_provider.dart';
 import '../../features/dashboard/presentation/screens/dashboard_screen.dart';
 import '../../features/profile/presentation/screens/profile_screen.dart';
@@ -18,8 +18,8 @@ class AppRoutes {
   static const healthData = '/health-data';
   static const reports = '/reports';
   static const patients = '/patients';
-  static const createPatient = '/patients/create';
-  static const patientCreateSuccess = '/patients/create/success';
+  static const patientSign = '/patient/sign';           // 改名：患者签约
+  static const patientSignSuccess = '/patient/sign/success';  // 改名：签约成功
 
   // 认证相关路由
   static const auth = '/auth';
@@ -28,14 +28,53 @@ class AppRoutes {
 
 /// 应用路由配置
 class AppRouter {
-  static GoRouter createRouter() {
+  /// 公开路由列表（不需要认证）
+  static const List<String> publicRoutes = [
+    AppRoutes.splash,
+    AppRoutes.login,
+    AppRoutes.authSuccess,
+  ];
+
+  static GoRouter createRouter([ProviderContainer? container]) {
     return GoRouter(
-      initialLocation: AppRoutes.dashboard,
+      initialLocation: AppRoutes.splash,
       debugLogDiagnostics: true,
       redirect: (context, state) {
-        // 临时禁用重定向以调试路由问题
-        // TODO: 重新启用认证重定向
-        return null;
+        // 如果没有提供container，跳过重定向
+        if (container == null) return null;
+
+        final authState = container.read(authNotifierProvider);
+        final currentLocation = state.matchedLocation;
+
+        // 如果正在加载，显示启动页
+        if (authState.isLoading) {
+          return currentLocation == AppRoutes.splash ? null : AppRoutes.splash;
+        }
+
+        // 检查是否为公开路由
+        final isPublicRoute = publicRoutes.contains(currentLocation);
+
+        if (authState.isAuthenticated) {
+          // 已认证但未签约患者 - 强制跳转到签约页面
+          if (authState.requiresPatientSign &&
+              currentLocation != AppRoutes.patientSign &&
+              currentLocation != AppRoutes.patientSignSuccess) {
+            return AppRoutes.patientSign;
+          }
+
+          // 已认证用户访问登录页，重定向到首页
+          if (currentLocation == AppRoutes.login) {
+            return AppRoutes.dashboard;
+          }
+
+          return null;
+        } else {
+          // 未认证用户只能访问公开路由
+          if (!isPublicRoute) {
+            return AppRoutes.login;
+          }
+          return null;
+        }
       },
       routes: [
         // 启动页
@@ -80,16 +119,26 @@ class AppRouter {
           builder: (context, state) => const PatientsScreen(),
         ),
 
-        // 创建就诊人
+        // 患者签约页面
         GoRoute(
-          path: AppRoutes.createPatient,
-          builder: (context, state) => const auth_pages.CreatePatientScreen(),
+          path: AppRoutes.patientSign,
+          builder: (context, state) => const auth_pages.PatientSignScreen(),
+          redirect: (context, state) {
+            // 防止已经有患者的用户访问签约页面
+            if (container != null) {
+              final authState = container.read(authNotifierProvider);
+              if (authState.hasSignedPatient) {
+                return AppRoutes.dashboard;
+              }
+            }
+            return null;
+          },
         ),
 
-        // 就诊人创建成功
+        // 签约成功页面
         GoRoute(
-          path: AppRoutes.patientCreateSuccess,
-          builder: (context, state) => const auth_pages.SuccessScreen(),
+          path: AppRoutes.patientSignSuccess,
+          builder: (context, state) => const auth_pages.PatientSignSuccessScreen(),
         ),
       ],
     );

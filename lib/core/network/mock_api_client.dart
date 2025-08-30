@@ -298,16 +298,14 @@ class MockDataConfig {
           'phone': '13800000000',
           'email': 'zhangsan@example.com',
         },
-        'patients': [
-          {
-            'id': 'patient_1',
-            'name': '张三',
-            'id_number': '310101199001011234',
-            'gender': 1,
-            'birth_date': '1990-01-01',
-            'phone': '13800000000',
-          },
-        ],
+        'patient': {
+          'id': 'patient_1',
+          'name': '张三',
+          'id_number': '310101199001011234',
+          'gender': 1,
+          'birth_date': '1990-01-01',
+          'phone': '13800000000',
+        },
       },
       'message': '登录成功',
     },
@@ -324,20 +322,18 @@ class MockDataConfig {
       'message': '获取用户信息成功',
     },
 
-    // 获取患者列表
-    '/auth/patients': {
+    // 获取患者信息
+    '/auth/patient': {
       'success': true,
-      'data': [
-        {
-          'id': 'patient_1',
-          'name': '张三',
-          'id_number': '310101199001011234',
-          'gender': 1,
-          'birth_date': '1990-01-01',
-          'phone': '13800000000',
-        },
-      ],
-      'message': '获取患者列表成功',
+      'data': {
+        'id': 'patient_1',
+        'name': '张三',
+        'id_number': '310101199001011234',
+        'gender': 1,
+        'birth_date': '1990-01-01',
+        'phone': '13800000000',
+      },
+      'message': '获取患者信息成功',
     },
   };
 

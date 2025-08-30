@@ -40,28 +40,26 @@ Map<String, dynamic> _$PatientToJson(_Patient instance) => <String, dynamic>{
 
 const _$GenderEnumMap = {Gender.male: 1, Gender.female: 2, Gender.other: 3};
 
-_CreatePatientRequest _$CreatePatientRequestFromJson(
-  Map<String, dynamic> json,
-) => _CreatePatientRequest(
-  name: json['name'] as String,
-  idNumber: json['id_number'] as String,
-  gender: $enumDecode(_$GenderEnumMap, json['gender']),
-  birthDate: DateTime.parse(json['birth_date'] as String),
-  phone: json['phone'] as String,
-  medicalRecordNumber: json['medical_record_number'] as String?,
-  emergencyContact: json['emergency_contact'] as String?,
-  emergencyContactPhone: json['emergency_contact_phone'] as String?,
-);
+_SignPatientRequest _$SignPatientRequestFromJson(Map<String, dynamic> json) =>
+    _SignPatientRequest(
+      name: json['name'] as String,
+      idNumber: json['id_number'] as String,
+      gender: $enumDecode(_$GenderEnumMap, json['gender']),
+      birthDate: DateTime.parse(json['birth_date'] as String),
+      phone: json['phone'] as String,
+      medicalRecordNumber: json['medical_record_number'] as String?,
+      emergencyContact: json['emergency_contact'] as String?,
+      emergencyContactPhone: json['emergency_contact_phone'] as String?,
+    );
 
-Map<String, dynamic> _$CreatePatientRequestToJson(
-  _CreatePatientRequest instance,
-) => <String, dynamic>{
-  'name': instance.name,
-  'id_number': instance.idNumber,
-  'gender': _$GenderEnumMap[instance.gender]!,
-  'birth_date': instance.birthDate.toIso8601String(),
-  'phone': instance.phone,
-  'medical_record_number': instance.medicalRecordNumber,
-  'emergency_contact': instance.emergencyContact,
-  'emergency_contact_phone': instance.emergencyContactPhone,
-};
+Map<String, dynamic> _$SignPatientRequestToJson(_SignPatientRequest instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'id_number': instance.idNumber,
+      'gender': _$GenderEnumMap[instance.gender]!,
+      'birth_date': instance.birthDate.toIso8601String(),
+      'phone': instance.phone,
+      'medical_record_number': instance.medicalRecordNumber,
+      'emergency_contact': instance.emergencyContact,
+      'emergency_contact_phone': instance.emergencyContactPhone,
+    };
