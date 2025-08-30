@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:vitals/features/health_data/presentation/providers/blood_pressure_notifier.dart';
-import 'package:vitals/features/health_data/presentation/widgets/blood_pressure_chart.dart';
+import 'package:vitals/features/health_data/presentation/models/health_data_states.dart';
+import 'package:vitals/features/health_data/presentation/models/chart_models.dart' as presentation;
+
 import 'package:vitals/features/health_data/presentation/widgets/blood_pressure_input_dialog.dart';
 import 'package:vitals/features/health_data/presentation/widgets/blood_pressure_records_list.dart';
 import 'package:vitals/features/health_data/presentation/widgets/time_range_selector.dart';
+import 'package:vitals/features/health_data/presentation/widgets/blood_pressure_chart.dart';
 
 // 血压详情页面
 class BloodPressureScreen extends ConsumerWidget {
@@ -18,7 +21,6 @@ class BloodPressureScreen extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('血压详情'),
         actions: [
-          const TimeRangeSelector(),
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () => ref.read(bloodPressureNotifierProvider.notifier).refresh(),
@@ -35,7 +37,7 @@ class BloodPressureScreen extends ConsumerWidget {
           child: SelectableText.rich(
             TextSpan(
               text: '加载失败: $error',
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
+              style: const TextStyle(color: Colors.red),
             ),
           ),
         ),
@@ -57,110 +59,196 @@ class BloodPressureScreen extends ConsumerWidget {
 class _BloodPressureContent extends StatelessWidget {
   const _BloodPressureContent({required this.state});
 
-  final dynamic state; // 临时使用dynamic，等状态类生成后修复
+  final BloodPressureState state;
 
   @override
   Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: () async {
-        // 刷新逻辑
-      },
-      child: ListView(
+    return Column(
+      children: [
+        // 时间范围选择器
+        Container(
+          padding: const EdgeInsets.all(16),
+          child: const TimeRangeSelector(),
+        ),
+
+        // 可滚动内容
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: () async {
+              // 刷新逻辑
+            },
+            child: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              children: [
+                // 趋势图表
+                _ChartContent(
+                  chartData: state.chartData,
+                  isLoading: state.isLoading,
+                ),
+                const SizedBox(height: 16),
+
+                // 历史记录标题
+                Text(
+                  '历史记录',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: 12),
+
+                // 历史记录列表
+                BloodPressureRecordsList(records: state.filteredRecords),
+
+                // 底部间距，避免被FAB遮挡
+                const SizedBox(height: 80),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+
+
+// 图表内容
+class _ChartContent extends StatelessWidget {
+  const _ChartContent({
+    required this.chartData,
+    this.isLoading = false,
+  });
+
+  final presentation.ChartData? chartData;
+  final bool isLoading;
+
+  @override
+  Widget build(BuildContext context) {
+    return _buildContent(context);
+  }
+
+  Widget _buildContent(BuildContext context) {
+    if (isLoading || chartData == null) {
+      return _buildLoadingPlaceholder(context);
+    }
+    return _buildChart(context);
+  }
+
+  Widget _buildChart(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+        ),
+      ),
+      child: Padding(
         padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            // 真正的图表内容
+            SizedBox(
+              height: 220,
+              child: _buildRealChart(context),
+            ),
+            const SizedBox(height: 12),
+            _buildStatistics(context),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildRealChart(BuildContext context) {
+    // 使用真正的图表组件
+    return BloodPressureChart(chartData: chartData!);
+  }
+
+  Widget _buildStatistics(BuildContext context) {
+    final min = chartData?.minValue?.toInt() ?? 0;
+    final avg = chartData?.averageValue?.toInt() ?? 0;
+    final max = chartData?.maxValue?.toInt() ?? 0;
+    final trend = _trendText(chartData?.trend);
+    final trendColor = _trendColor(chartData?.trend);
+
+    Widget item(String label, String value, Color color) => Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(label, style: Theme.of(context).textTheme.bodySmall),
+            const SizedBox(height: 4),
+            Text(
+              value,
+              style: Theme.of(context)
+                  .textTheme
+                  .titleMedium
+                  ?.copyWith(color: color, fontWeight: FontWeight.bold),
+            ),
+          ],
+        );
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        item('最低', '$min', Colors.blue),
+        item('平均', '$avg', Colors.orange),
+        item('最高', '$max', Colors.red),
+        item('趋势', trend, trendColor),
+      ],
+    );
+  }
+
+  String _trendText(String? trend) {
+    switch (trend) {
+      case 'rising':
+        return '上升';
+      case 'falling':
+        return '下降';
+      case 'stable':
+        return '稳定';
+      default:
+        return '未知';
+    }
+  }
+
+  Color _trendColor(String? trend) {
+    switch (trend) {
+      case 'rising':
+        return Colors.red;
+      case 'falling':
+        return Colors.green;
+      case 'stable':
+        return Colors.blue;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  Widget _buildLoadingPlaceholder(BuildContext context) {
+    return Container(
+      height: 250,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.2),
+        ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // 最新数据卡片
-          if (state.latestRecord != null)
-            _LatestRecordCard(record: state.latestRecord),
-
+          CircularProgressIndicator(
+            color: Theme.of(context).colorScheme.primary,
+          ),
           const SizedBox(height: 16),
-
-          // 趋势图表
-          if (state.chartData != null)
-            BloodPressureChart(chartData: state.chartData),
-
-          const SizedBox(height: 16),
-
-          // 历史记录列表
-          BloodPressureRecordsList(records: state.filteredRecords),
+          Text(
+            '正在加载图表数据...',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+            ),
+          ),
         ],
       ),
     );
   }
 }
 
-// 最新记录卡片
-class _LatestRecordCard extends StatelessWidget {
-  const _LatestRecordCard({required this.record});
-
-  final dynamic record; // 临时使用dynamic
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '最新记录',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Icon(
-                  Icons.favorite,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '${record.systolic}/${record.diastolic} mmHg',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '记录时间: ${_formatDateTime(record.recordedAt)}',
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  String _formatDateTime(DateTime dateTime) {
-    return '${dateTime.month.toString().padLeft(2, '0')}月${dateTime.day.toString().padLeft(2, '0')}日 ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
-  }
-}
-
-// 时间范围选择器
-class _TimeRangeSelector extends ConsumerWidget {
-  const _TimeRangeSelector();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return PopupMenuButton<String>(
-      onSelected: (value) {
-        // 处理时间范围选择
-      },
-      itemBuilder: (context) => [
-        const PopupMenuItem(value: 'week', child: Text('近一周')),
-        const PopupMenuItem(value: 'month', child: Text('近一月')),
-        const PopupMenuItem(value: 'all', child: Text('全部')),
-      ],
-      child: const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('近一月'),
-            Icon(Icons.arrow_drop_down),
-          ],
-        ),
-      ),
-    );
-  }
-}
+// 统计数据项已移除（图表组件内部不再显示重复统计）

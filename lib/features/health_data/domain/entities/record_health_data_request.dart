@@ -1,7 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'record_health_data_request.freezed.dart';
-part 'record_health_data_request.g.dart';
 
 // 数据录入请求
 @freezed
@@ -26,6 +25,5 @@ abstract class RecordHealthDataRequest with _$RecordHealthDataRequest {
     String? notes,
   }) = _WeightRequest;
 
-  factory RecordHealthDataRequest.fromJson(Map<String, dynamic> json) =>
-      _$RecordHealthDataRequestFromJson(json);
+
 }

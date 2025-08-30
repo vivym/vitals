@@ -6,7 +6,7 @@ part of 'data_entry_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$dataEntryNotifierHash() => r'bee01900bda325aaf70c8e87e549971d79270346';
+String _$dataEntryNotifierHash() => r'55d7e0d3df918c66f1934b5c56e8989e98923b0b';
 
 /// See also [DataEntryNotifier].
 @ProviderFor(DataEntryNotifier)

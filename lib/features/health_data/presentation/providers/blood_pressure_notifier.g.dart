@@ -7,9 +7,11 @@ part of 'blood_pressure_notifier.dart';
 // **************************************************************************
 
 String _$bloodPressureNotifierHash() =>
-    r'ce6669d13fd43c929428567a0021fb7e9152ba56';
+    r'cb00c062f5e0151fa264e58d239b4c7cc483bd2b';
 
-/// See also [BloodPressureNotifier].
+/// 血压状态管理 - 参考Dashboard模块架构
+///
+/// Copied from [BloodPressureNotifier].
 @ProviderFor(BloodPressureNotifier)
 final bloodPressureNotifierProvider =
     AutoDisposeNotifierProvider<

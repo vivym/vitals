@@ -1,25 +1,22 @@
-import 'package:vitals/features/health_data/domain/entities/blood_pressure_record.dart';
-import 'package:vitals/features/health_data/domain/entities/chart_data.dart';
-import 'package:vitals/features/health_data/domain/entities/record_health_data_request.dart';
-import 'package:vitals/features/health_data/domain/entities/time_range.dart';
+import '../models/health_data_models.dart';
 
-// 健康数据远程数据源
+// 健康数据远程数据源接口
 abstract class HealthDataRemoteDataSource {
   // 获取血压记录
-  Future<List<BloodPressureRecord>> getBloodPressureRecords(
+  Future<List<BloodPressureRecordModel>> getBloodPressureRecords(
     String patientId, {
-    TimeRange? range,
+    TimeRangeModel? range,
   });
 
   // 添加血压记录
-  Future<BloodPressureRecord> addBloodPressureRecord(
+  Future<BloodPressureRecordModel> addBloodPressureRecord(
     String patientId,
-    RecordHealthDataRequest request,
+    RecordHealthDataRequestModel request,
   );
 
   // 获取图表数据
-  Future<ChartData> getBloodPressureChartData(
+  Future<ChartDataModel> getBloodPressureChartData(
     String patientId,
-    TimeRange range,
+    TimeRangeModel range,
   );
 }

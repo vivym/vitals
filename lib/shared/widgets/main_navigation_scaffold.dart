@@ -168,16 +168,6 @@ class _DashboardPageContent extends ConsumerWidget {
       appBar: AppBar(
         title: const Text('王高南'),
         centerTitle: true,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        titleTextStyle: const TextStyle(
-          color: Colors.black,
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-        ),
-        iconTheme: const IconThemeData(
-          color: Colors.black,
-        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -234,8 +224,6 @@ class _ProfilePageContent extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('个人中心'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
@@ -263,7 +251,6 @@ class _HealthDataAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       title: const Text('健康数据'),
-      backgroundColor: Theme.of(context).colorScheme.inversePrimary,
     );
   }
 

@@ -150,10 +150,10 @@ class DashboardRepositoryImpl implements DashboardRepository {
       final dashboardResult = await getDashboardData(patientId);
 
       if (dashboardResult.isFailure) {
-        return Result.failure(dashboardResult.error!);
+        return Result.failure(dashboardResult.error);
       }
 
-      final dashboard = dashboardResult.data!;
+      final dashboard = dashboardResult.data;
       if (dashboard.healthScore == null) {
         return Result.failure(AppError.unknown(message: '健康评分数据不存在'));
       }
@@ -170,7 +170,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
     return getDashboardData(patientId, forceRefresh: true)
         .then((result) => result.isSuccess
             ? const Result.success(null)
-            : Result.failure(result.error!));
+            : Result.failure(result.error));
   }
 
   /// 合并本地教育内容阅读状态

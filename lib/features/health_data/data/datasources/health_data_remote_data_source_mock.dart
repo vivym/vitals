@@ -1,127 +1,164 @@
 import 'dart:math' as math;
 import 'package:vitals/features/health_data/data/datasources/health_data_remote_data_source.dart';
-import 'package:vitals/features/health_data/domain/entities/blood_pressure_record.dart';
-import 'package:vitals/features/health_data/domain/entities/chart_data.dart';
-import 'package:vitals/features/health_data/domain/entities/record_health_data_request.dart';
-import 'package:vitals/features/health_data/domain/entities/time_range.dart';
+import 'package:vitals/features/health_data/data/models/health_data_models.dart';
 
 // Mock 实现 - 生成测试数据
 class HealthDataRemoteDataSourceMock implements HealthDataRemoteDataSource {
   @override
-  Future<List<BloodPressureRecord>> getBloodPressureRecords(
+  Future<List<BloodPressureRecordModel>> getBloodPressureRecords(
     String patientId, {
-    TimeRange? range,
+    TimeRangeModel? range,
   }) async {
     await Future.delayed(const Duration(milliseconds: 800));
 
     // 生成模拟数据
-    return _generateMockBloodPressureData(range ?? TimeRange.month);
+    return _generateMockBloodPressureData(range ?? TimeRangeModel.month);
   }
 
   @override
-  Future<BloodPressureRecord> addBloodPressureRecord(
+  Future<BloodPressureRecordModel> addBloodPressureRecord(
     String patientId,
-    RecordHealthDataRequest request,
+    RecordHealthDataRequestModel request,
   ) async {
     await Future.delayed(const Duration(milliseconds: 500));
 
-    return request.when(
-      bloodPressure: (systolic, diastolic, heartRate, recordedAt, notes) {
-        return BloodPressureRecord(
-          id: 'bp_${DateTime.now().millisecondsSinceEpoch}',
-          patientId: patientId,
-          systolic: systolic,
-          diastolic: diastolic,
-          recordedAt: recordedAt ?? DateTime.now(),
-          heartRate: heartRate,
-          notes: notes,
-          source: MeasurementSource.manual,
-        );
-      },
-      heartRate: (bpm, recordedAt, notes) {
-        throw UnimplementedError('心率记录功能待实现');
-      },
-      weight: (weight, recordedAt, notes) {
-        throw UnimplementedError('体重记录功能待实现');
-      },
+    return BloodPressureRecordModel(
+      id: 'bp_${DateTime.now().millisecondsSinceEpoch}',
+      patientId: patientId,
+      systolic: request.systolic ?? 0,
+      diastolic: request.diastolic ?? 0,
+      recordedAt: request.recordedAt ?? DateTime.now(),
+      heartRate: request.heartRate,
+      notes: request.notes,
+      source: request.source ?? MeasurementSourceModel.manual,
+      level: _calculateBloodPressureLevel(
+        request.systolic ?? 0,
+        request.diastolic ?? 0,
+      ),
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
     );
   }
 
   @override
-  Future<ChartData> getBloodPressureChartData(
+  Future<ChartDataModel> getBloodPressureChartData(
     String patientId,
-    TimeRange range,
+    TimeRangeModel range,
   ) async {
-    await Future.delayed(const Duration(milliseconds: 300));
+    await Future.delayed(const Duration(milliseconds: 600));
 
     final records = await getBloodPressureRecords(patientId, range: range);
     return _generateChartData(records, range);
   }
 
-  List<BloodPressureRecord> _generateMockBloodPressureData(TimeRange range) {
-    final records = <BloodPressureRecord>[];
+  // =============================================================================
+  // 私有辅助方法
+  // =============================================================================
+
+  List<BloodPressureRecordModel> _generateMockBloodPressureData(TimeRangeModel range) {
+    final random = math.Random();
     final now = DateTime.now();
-    final days = range == TimeRange.all ? 90 : range.days;
+    final records = <BloodPressureRecordModel>[];
 
-    for (int i = 0; i < days; i += 2) {
-      final date = now.subtract(Duration(days: i));
+    int daysToGenerate = _getDaysForRange(range);
 
-      // 模拟血压波动
-      final baseSystolic = 125 + (math.Random().nextDouble() - 0.5) * 20;
-      final baseDiastolic = 80 + (math.Random().nextDouble() - 0.5) * 15;
+    for (int i = 0; i < daysToGenerate; i++) {
+      final recordDate = now.subtract(Duration(days: i));
 
-      records.add(BloodPressureRecord(
-        id: 'bp_${date.millisecondsSinceEpoch}',
+      // 生成随机血压值（有些现实性）
+      final baseSystolic = 120 + random.nextInt(40); // 120-160
+      final baseDiastolic = 80 + random.nextInt(25);  // 80-105
+
+      // 添加一些变化
+      final systolic = baseSystolic + random.nextInt(10) - 5;
+      final diastolic = baseDiastolic + random.nextInt(8) - 4;
+
+      records.add(BloodPressureRecordModel(
+        id: 'bp_${recordDate.millisecondsSinceEpoch}_$i',
         patientId: 'patient_1',
-        systolic: baseSystolic.round(),
-        diastolic: baseDiastolic.round(),
-        recordedAt: date,
-        heartRate: (70 + (math.Random().nextDouble() - 0.5) * 20).round(),
-        source: MeasurementSource.manual,
+        systolic: systolic.clamp(90, 180),
+        diastolic: diastolic.clamp(60, 120),
+        recordedAt: recordDate,
+        heartRate: 60 + random.nextInt(40), // 60-100
+        notes: i % 3 == 0 ? '早晨测量' : null,
+        source: MeasurementSourceModel.manual,
+        level: _calculateBloodPressureLevel(systolic, diastolic),
+        createdAt: recordDate,
+        updatedAt: recordDate,
       ));
     }
 
     return records..sort((a, b) => b.recordedAt.compareTo(a.recordedAt));
   }
 
-  ChartData _generateChartData(List<BloodPressureRecord> records, TimeRange range) {
-    if (records.isEmpty) {
-      return ChartData(dataPoints: [], timeRange: range);
+  ChartDataModel _generateChartData(
+    List<BloodPressureRecordModel> records,
+    TimeRangeModel range,
+  ) {
+    final dataPoints = records.map((record) {
+      return DataPointModel(
+        timestamp: record.recordedAt,
+        value: record.systolic.toDouble(),
+        secondaryValue: record.diastolic.toDouble(),
+        metadata: {
+          'heartRate': record.heartRate?.toString(),
+          'level': record.level?.name,
+        },
+      );
+    }).toList();
+
+    // 计算统计数据
+    final systolicValues = records.map((r) => r.systolic.toDouble()).toList();
+    final minValue = systolicValues.isEmpty ? 0.0 : systolicValues.reduce(math.min);
+    final maxValue = systolicValues.isEmpty ? 0.0 : systolicValues.reduce(math.max);
+    final averageValue = systolicValues.isEmpty
+        ? 0.0
+        : systolicValues.reduce((a, b) => a + b) / systolicValues.length;
+
+    // 简单趋势分析
+    String? trend;
+    if (systolicValues.length >= 3) {
+      final recent = systolicValues.take(3).toList();
+      final older = systolicValues.skip(3).take(3).toList();
+      if (older.isNotEmpty) {
+        final recentAvg = recent.reduce((a, b) => a + b) / recent.length;
+        final olderAvg = older.reduce((a, b) => a + b) / older.length;
+        if (recentAvg > olderAvg + 5) {
+          trend = 'rising';
+        } else if (recentAvg < olderAvg - 5) {
+          trend = 'falling';
+        } else {
+          trend = 'stable';
+        }
+      }
     }
 
-    final dataPoints = records.map((record) => DataPoint(
-      timestamp: record.recordedAt,
-      value: record.systolic.toDouble(),
-      secondaryValue: record.diastolic.toDouble(),
-    )).toList();
-
-    // 计算统计信息
-    final systolicValues = dataPoints.map((p) => p.value).toList();
-    final avgSystolic = systolicValues.reduce((a, b) => a + b) / systolicValues.length;
-
-    // 分析趋势
-    final trend = _analyzeTrend(dataPoints);
-
-    return ChartData(
+    return ChartDataModel(
       dataPoints: dataPoints,
       timeRange: range,
-      minValue: systolicValues.reduce(math.min),
-      maxValue: systolicValues.reduce(math.max),
-      averageValue: avgSystolic,
+      minValue: minValue,
+      maxValue: maxValue,
+      averageValue: averageValue,
       trend: trend,
     );
   }
 
-  String _analyzeTrend(List<DataPoint> points) {
-    if (points.length < 2) return 'stable';
+  BloodPressureLevelModel _calculateBloodPressureLevel(int systolic, int diastolic) {
+    if (systolic >= 180 || diastolic >= 110) return BloodPressureLevelModel.crisis;
+    if (systolic >= 140 || diastolic >= 90) return BloodPressureLevelModel.stage2;
+    if (systolic >= 130 || diastolic >= 80) return BloodPressureLevelModel.stage1;
+    if (systolic >= 120) return BloodPressureLevelModel.elevated;
+    return BloodPressureLevelModel.normal;
+  }
 
-    // 简单的线性趋势分析
-    final first = points.last.value;
-    final last = points.first.value;
-    final difference = last - first;
-
-    if (difference > 5) return 'rising';
-    if (difference < -5) return 'falling';
-    return 'stable';
+  int _getDaysForRange(TimeRangeModel range) {
+    switch (range) {
+      case TimeRangeModel.week:
+        return 7;
+      case TimeRangeModel.month:
+        return 30;
+      case TimeRangeModel.all:
+        return 180; // 限制为6个月的数据
+    }
   }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../../../core/errors/app_error.dart';
 
 /// 错误状态视图
 class ErrorView extends StatelessWidget {

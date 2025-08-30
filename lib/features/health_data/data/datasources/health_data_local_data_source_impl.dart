@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vitals/features/health_data/data/datasources/health_data_local_data_source.dart';
-import 'package:vitals/features/health_data/domain/entities/blood_pressure_record.dart';
+import 'package:vitals/features/health_data/data/models/health_data_models.dart';
 
 // 本地数据源 - 缓存和离线支持
 class HealthDataLocalDataSourceImpl implements HealthDataLocalDataSource {
@@ -10,7 +10,7 @@ class HealthDataLocalDataSourceImpl implements HealthDataLocalDataSource {
   HealthDataLocalDataSourceImpl(this._prefs);
 
   @override
-  Future<List<BloodPressureRecord>> getCachedBloodPressureRecords(
+  Future<List<BloodPressureRecordModel>> getCachedBloodPressureRecords(
     String patientId,
   ) async {
     final key = 'bp_records_$patientId';
@@ -19,7 +19,7 @@ class HealthDataLocalDataSourceImpl implements HealthDataLocalDataSource {
     if (jsonString != null) {
       try {
         final List<dynamic> jsonList = jsonDecode(jsonString);
-        return jsonList.map((json) => BloodPressureRecord.fromJson(json)).toList();
+        return jsonList.map((json) => BloodPressureRecordModel.fromJson(json)).toList();
       } catch (e) {
         // 如果解析失败，清除缓存
         await _prefs.remove(key);
@@ -33,7 +33,7 @@ class HealthDataLocalDataSourceImpl implements HealthDataLocalDataSource {
   @override
   Future<void> cacheBloodPressureRecords(
     String patientId,
-    List<BloodPressureRecord> records,
+    List<BloodPressureRecordModel> records,
   ) async {
     final key = 'bp_records_$patientId';
     final jsonString = jsonEncode(records.map((r) => r.toJson()).toList());

@@ -76,14 +76,19 @@ class BloodPressureInputDialog extends ConsumerWidget {
     final entryState = ref.read(dataEntryNotifierProvider);
 
     if (entryState.hasBloodPressureData) {
-      await ref.read(bloodPressureNotifierProvider.notifier).addRecord(
-        entryState.systolic!,
-        entryState.diastolic!,
+      await ref.read(bloodPressureNotifierProvider.notifier).recordBloodPressure(
+        patientId: 'patient_1', // 临时硬编码，实际应从auth状态获取
+        systolic: entryState.systolic!,
+        diastolic: entryState.diastolic!,
         heartRate: entryState.heartRate,
+        notes: null,
+        recordedAt: DateTime.now(),
       );
 
-      ref.read(dataEntryNotifierProvider.notifier).reset();
-      Navigator.of(context).pop();
+      ref.read(dataEntryNotifierProvider.notifier).clearForm();
+      if (context.mounted) {
+        Navigator.of(context).pop();
+      }
     }
   }
 }

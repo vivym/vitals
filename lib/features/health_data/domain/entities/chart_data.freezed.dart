@@ -11,7 +11,6 @@ part of 'chart_data.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
-
 /// @nodoc
 mixin _$ChartData {
 
@@ -22,8 +21,6 @@ mixin _$ChartData {
 @pragma('vm:prefer-inline')
 $ChartDataCopyWith<ChartData> get copyWith => _$ChartDataCopyWithImpl<ChartData>(this as ChartData, _$identity);
 
-  /// Serializes this ChartData to a JSON map.
-  Map<String, dynamic> toJson();
 
 
 @override
@@ -31,7 +28,7 @@ bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is ChartData&&const DeepCollectionEquality().equals(other.dataPoints, dataPoints)&&(identical(other.timeRange, timeRange) || other.timeRange == timeRange)&&(identical(other.minValue, minValue) || other.minValue == minValue)&&(identical(other.maxValue, maxValue) || other.maxValue == maxValue)&&(identical(other.averageValue, averageValue) || other.averageValue == averageValue)&&(identical(other.trend, trend) || other.trend == trend));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
 int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(dataPoints),timeRange,minValue,maxValue,averageValue,trend);
 
@@ -211,11 +208,11 @@ return $default(_that.dataPoints,_that.timeRange,_that.minValue,_that.maxValue,_
 }
 
 /// @nodoc
-@JsonSerializable()
+
 
 class _ChartData implements ChartData {
   const _ChartData({required final  List<DataPoint> dataPoints, required this.timeRange, this.minValue, this.maxValue, this.averageValue, this.trend}): _dataPoints = dataPoints;
-  factory _ChartData.fromJson(Map<String, dynamic> json) => _$ChartDataFromJson(json);
+  
 
  final  List<DataPoint> _dataPoints;
 @override List<DataPoint> get dataPoints {
@@ -236,17 +233,14 @@ class _ChartData implements ChartData {
 @pragma('vm:prefer-inline')
 _$ChartDataCopyWith<_ChartData> get copyWith => __$ChartDataCopyWithImpl<_ChartData>(this, _$identity);
 
-@override
-Map<String, dynamic> toJson() {
-  return _$ChartDataToJson(this, );
-}
+
 
 @override
 bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is _ChartData&&const DeepCollectionEquality().equals(other._dataPoints, _dataPoints)&&(identical(other.timeRange, timeRange) || other.timeRange == timeRange)&&(identical(other.minValue, minValue) || other.minValue == minValue)&&(identical(other.maxValue, maxValue) || other.maxValue == maxValue)&&(identical(other.averageValue, averageValue) || other.averageValue == averageValue)&&(identical(other.trend, trend) || other.trend == trend));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
 int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_dataPoints),timeRange,minValue,maxValue,averageValue,trend);
 
@@ -295,7 +289,6 @@ as String?,
 
 }
 
-
 /// @nodoc
 mixin _$DataPoint {
 
@@ -307,8 +300,6 @@ mixin _$DataPoint {
 @pragma('vm:prefer-inline')
 $DataPointCopyWith<DataPoint> get copyWith => _$DataPointCopyWithImpl<DataPoint>(this as DataPoint, _$identity);
 
-  /// Serializes this DataPoint to a JSON map.
-  Map<String, dynamic> toJson();
 
 
 @override
@@ -316,7 +307,7 @@ bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is DataPoint&&(identical(other.timestamp, timestamp) || other.timestamp == timestamp)&&(identical(other.value, value) || other.value == value)&&(identical(other.secondaryValue, secondaryValue) || other.secondaryValue == secondaryValue)&&const DeepCollectionEquality().equals(other.metadata, metadata));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
 int get hashCode => Object.hash(runtimeType,timestamp,value,secondaryValue,const DeepCollectionEquality().hash(metadata));
 
@@ -494,11 +485,11 @@ return $default(_that.timestamp,_that.value,_that.secondaryValue,_that.metadata)
 }
 
 /// @nodoc
-@JsonSerializable()
+
 
 class _DataPoint implements DataPoint {
   const _DataPoint({required this.timestamp, required this.value, this.secondaryValue, final  Map<String, dynamic>? metadata}): _metadata = metadata;
-  factory _DataPoint.fromJson(Map<String, dynamic> json) => _$DataPointFromJson(json);
+  
 
 @override final  DateTime timestamp;
 @override final  double value;
@@ -521,17 +512,14 @@ class _DataPoint implements DataPoint {
 @pragma('vm:prefer-inline')
 _$DataPointCopyWith<_DataPoint> get copyWith => __$DataPointCopyWithImpl<_DataPoint>(this, _$identity);
 
-@override
-Map<String, dynamic> toJson() {
-  return _$DataPointToJson(this, );
-}
+
 
 @override
 bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is _DataPoint&&(identical(other.timestamp, timestamp) || other.timestamp == timestamp)&&(identical(other.value, value) || other.value == value)&&(identical(other.secondaryValue, secondaryValue) || other.secondaryValue == secondaryValue)&&const DeepCollectionEquality().equals(other._metadata, _metadata));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
 int get hashCode => Object.hash(runtimeType,timestamp,value,secondaryValue,const DeepCollectionEquality().hash(_metadata));
 

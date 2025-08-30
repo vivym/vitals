@@ -11,34 +11,6 @@ part of 'record_health_data_request.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
-RecordHealthDataRequest _$RecordHealthDataRequestFromJson(
-  Map<String, dynamic> json
-) {
-        switch (json['runtimeType']) {
-                  case 'bloodPressure':
-          return _BloodPressureRequest.fromJson(
-            json
-          );
-                case 'heartRate':
-          return _HeartRateRequest.fromJson(
-            json
-          );
-                case 'weight':
-          return _WeightRequest.fromJson(
-            json
-          );
-        
-          default:
-            throw CheckedFromJsonException(
-  json,
-  'runtimeType',
-  'RecordHealthDataRequest',
-  'Invalid union type "${json['runtimeType']}"!'
-);
-        }
-      
-}
-
 /// @nodoc
 mixin _$RecordHealthDataRequest {
 
@@ -49,8 +21,6 @@ mixin _$RecordHealthDataRequest {
 @pragma('vm:prefer-inline')
 $RecordHealthDataRequestCopyWith<RecordHealthDataRequest> get copyWith => _$RecordHealthDataRequestCopyWithImpl<RecordHealthDataRequest>(this as RecordHealthDataRequest, _$identity);
 
-  /// Serializes this RecordHealthDataRequest to a JSON map.
-  Map<String, dynamic> toJson();
 
 
 @override
@@ -58,7 +28,7 @@ bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is RecordHealthDataRequest&&(identical(other.recordedAt, recordedAt) || other.recordedAt == recordedAt)&&(identical(other.notes, notes) || other.notes == notes));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
 int get hashCode => Object.hash(runtimeType,recordedAt,notes);
 
@@ -246,11 +216,11 @@ return weight(_that.weight,_that.recordedAt,_that.notes);case _:
 }
 
 /// @nodoc
-@JsonSerializable()
+
 
 class _BloodPressureRequest implements RecordHealthDataRequest {
-  const _BloodPressureRequest({required this.systolic, required this.diastolic, this.heartRate, this.recordedAt, this.notes, final  String? $type}): $type = $type ?? 'bloodPressure';
-  factory _BloodPressureRequest.fromJson(Map<String, dynamic> json) => _$BloodPressureRequestFromJson(json);
+  const _BloodPressureRequest({required this.systolic, required this.diastolic, this.heartRate, this.recordedAt, this.notes});
+  
 
  final  int systolic;
  final  int diastolic;
@@ -258,27 +228,20 @@ class _BloodPressureRequest implements RecordHealthDataRequest {
 @override final  DateTime? recordedAt;
 @override final  String? notes;
 
-@JsonKey(name: 'runtimeType')
-final String $type;
-
-
 /// Create a copy of RecordHealthDataRequest
 /// with the given fields replaced by the non-null parameter values.
 @override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
 _$BloodPressureRequestCopyWith<_BloodPressureRequest> get copyWith => __$BloodPressureRequestCopyWithImpl<_BloodPressureRequest>(this, _$identity);
 
-@override
-Map<String, dynamic> toJson() {
-  return _$BloodPressureRequestToJson(this, );
-}
+
 
 @override
 bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is _BloodPressureRequest&&(identical(other.systolic, systolic) || other.systolic == systolic)&&(identical(other.diastolic, diastolic) || other.diastolic == diastolic)&&(identical(other.heartRate, heartRate) || other.heartRate == heartRate)&&(identical(other.recordedAt, recordedAt) || other.recordedAt == recordedAt)&&(identical(other.notes, notes) || other.notes == notes));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
 int get hashCode => Object.hash(runtimeType,systolic,diastolic,heartRate,recordedAt,notes);
 
@@ -327,19 +290,15 @@ as String?,
 }
 
 /// @nodoc
-@JsonSerializable()
+
 
 class _HeartRateRequest implements RecordHealthDataRequest {
-  const _HeartRateRequest({required this.bpm, this.recordedAt, this.notes, final  String? $type}): $type = $type ?? 'heartRate';
-  factory _HeartRateRequest.fromJson(Map<String, dynamic> json) => _$HeartRateRequestFromJson(json);
+  const _HeartRateRequest({required this.bpm, this.recordedAt, this.notes});
+  
 
  final  int bpm;
 @override final  DateTime? recordedAt;
 @override final  String? notes;
-
-@JsonKey(name: 'runtimeType')
-final String $type;
-
 
 /// Create a copy of RecordHealthDataRequest
 /// with the given fields replaced by the non-null parameter values.
@@ -347,17 +306,14 @@ final String $type;
 @pragma('vm:prefer-inline')
 _$HeartRateRequestCopyWith<_HeartRateRequest> get copyWith => __$HeartRateRequestCopyWithImpl<_HeartRateRequest>(this, _$identity);
 
-@override
-Map<String, dynamic> toJson() {
-  return _$HeartRateRequestToJson(this, );
-}
+
 
 @override
 bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is _HeartRateRequest&&(identical(other.bpm, bpm) || other.bpm == bpm)&&(identical(other.recordedAt, recordedAt) || other.recordedAt == recordedAt)&&(identical(other.notes, notes) || other.notes == notes));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
 int get hashCode => Object.hash(runtimeType,bpm,recordedAt,notes);
 
@@ -404,19 +360,15 @@ as String?,
 }
 
 /// @nodoc
-@JsonSerializable()
+
 
 class _WeightRequest implements RecordHealthDataRequest {
-  const _WeightRequest({required this.weight, this.recordedAt, this.notes, final  String? $type}): $type = $type ?? 'weight';
-  factory _WeightRequest.fromJson(Map<String, dynamic> json) => _$WeightRequestFromJson(json);
+  const _WeightRequest({required this.weight, this.recordedAt, this.notes});
+  
 
  final  double weight;
 @override final  DateTime? recordedAt;
 @override final  String? notes;
-
-@JsonKey(name: 'runtimeType')
-final String $type;
-
 
 /// Create a copy of RecordHealthDataRequest
 /// with the given fields replaced by the non-null parameter values.
@@ -424,17 +376,14 @@ final String $type;
 @pragma('vm:prefer-inline')
 _$WeightRequestCopyWith<_WeightRequest> get copyWith => __$WeightRequestCopyWithImpl<_WeightRequest>(this, _$identity);
 
-@override
-Map<String, dynamic> toJson() {
-  return _$WeightRequestToJson(this, );
-}
+
 
 @override
 bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is _WeightRequest&&(identical(other.weight, weight) || other.weight == weight)&&(identical(other.recordedAt, recordedAt) || other.recordedAt == recordedAt)&&(identical(other.notes, notes) || other.notes == notes));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
 int get hashCode => Object.hash(runtimeType,weight,recordedAt,notes);
 

@@ -11,7 +11,6 @@ part of 'blood_pressure_record.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
-
 /// @nodoc
 mixin _$BloodPressureRecord {
 
@@ -22,8 +21,6 @@ mixin _$BloodPressureRecord {
 @pragma('vm:prefer-inline')
 $BloodPressureRecordCopyWith<BloodPressureRecord> get copyWith => _$BloodPressureRecordCopyWithImpl<BloodPressureRecord>(this as BloodPressureRecord, _$identity);
 
-  /// Serializes this BloodPressureRecord to a JSON map.
-  Map<String, dynamic> toJson();
 
 
 @override
@@ -31,7 +28,7 @@ bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is BloodPressureRecord&&(identical(other.id, id) || other.id == id)&&(identical(other.patientId, patientId) || other.patientId == patientId)&&(identical(other.systolic, systolic) || other.systolic == systolic)&&(identical(other.diastolic, diastolic) || other.diastolic == diastolic)&&(identical(other.recordedAt, recordedAt) || other.recordedAt == recordedAt)&&(identical(other.heartRate, heartRate) || other.heartRate == heartRate)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.level, level) || other.level == level)&&(identical(other.source, source) || other.source == source));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
 int get hashCode => Object.hash(runtimeType,id,patientId,systolic,diastolic,recordedAt,heartRate,notes,level,source);
 
@@ -214,11 +211,11 @@ return $default(_that.id,_that.patientId,_that.systolic,_that.diastolic,_that.re
 }
 
 /// @nodoc
-@JsonSerializable()
+
 
 class _BloodPressureRecord extends BloodPressureRecord {
   const _BloodPressureRecord({required this.id, required this.patientId, required this.systolic, required this.diastolic, required this.recordedAt, this.heartRate, this.notes, this.level, this.source}): super._();
-  factory _BloodPressureRecord.fromJson(Map<String, dynamic> json) => _$BloodPressureRecordFromJson(json);
+  
 
 @override final  String id;
 @override final  String patientId;
@@ -236,17 +233,14 @@ class _BloodPressureRecord extends BloodPressureRecord {
 @pragma('vm:prefer-inline')
 _$BloodPressureRecordCopyWith<_BloodPressureRecord> get copyWith => __$BloodPressureRecordCopyWithImpl<_BloodPressureRecord>(this, _$identity);
 
-@override
-Map<String, dynamic> toJson() {
-  return _$BloodPressureRecordToJson(this, );
-}
+
 
 @override
 bool operator ==(Object other) {
   return identical(this, other) || (other.runtimeType == runtimeType&&other is _BloodPressureRecord&&(identical(other.id, id) || other.id == id)&&(identical(other.patientId, patientId) || other.patientId == patientId)&&(identical(other.systolic, systolic) || other.systolic == systolic)&&(identical(other.diastolic, diastolic) || other.diastolic == diastolic)&&(identical(other.recordedAt, recordedAt) || other.recordedAt == recordedAt)&&(identical(other.heartRate, heartRate) || other.heartRate == heartRate)&&(identical(other.notes, notes) || other.notes == notes)&&(identical(other.level, level) || other.level == level)&&(identical(other.source, source) || other.source == source));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
 int get hashCode => Object.hash(runtimeType,id,patientId,systolic,diastolic,recordedAt,heartRate,notes,level,source);
 

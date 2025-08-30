@@ -1,7 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'blood_pressure_record.freezed.dart';
-part 'blood_pressure_record.g.dart';
 
 // 血压水平枚举
 enum BloodPressureLevel {
@@ -42,8 +41,7 @@ abstract class BloodPressureRecord with _$BloodPressureRecord {
     MeasurementSource? source,
   }) = _BloodPressureRecord;
 
-  factory BloodPressureRecord.fromJson(Map<String, dynamic> json) =>
-      _$BloodPressureRecordFromJson(json);
+
 
   const BloodPressureRecord._();
 

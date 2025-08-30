@@ -1,43 +1,68 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vitals/features/health_data/data/datasources/health_data_local_data_source_impl.dart';
-import 'package:vitals/features/health_data/data/datasources/health_data_remote_data_source.dart';
-import 'package:vitals/features/health_data/data/datasources/health_data_remote_data_source_mock.dart';
-import 'package:vitals/features/health_data/data/repositories/health_data_repository_impl.dart';
-import 'package:vitals/features/health_data/domain/repositories/health_data_repository.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../domain/repositories/health_data_repository.dart';
+import '../../domain/usecases/get_blood_pressure_data_usecase.dart';
+import '../../domain/usecases/record_blood_pressure_usecase.dart';
+import '../../domain/usecases/generate_chart_data_usecase.dart';
+import '../../data/repositories/health_data_repository_impl.dart';
+import '../../data/datasources/health_data_remote_data_source.dart';
+import '../../data/datasources/health_data_remote_data_source_mock.dart';
+import '../../data/datasources/health_data_local_data_source.dart';
+import '../../data/datasources/health_data_local_data_source_impl.dart';
+import '../../../../features/auth/presentation/providers/auth_providers.dart';
 
 part 'health_data_providers.g.dart';
 
-// 本地数据源提供者
-@riverpod
-Future<HealthDataLocalDataSourceImpl> healthDataLocalDataSource(
-  HealthDataLocalDataSourceRef ref,
-) async {
-  final prefs = await SharedPreferences.getInstance();
-  return HealthDataLocalDataSourceImpl(prefs);
-}
+// =============================================================================
+// 数据源层 Providers
+// =============================================================================
 
-// 远程数据源提供者
-@riverpod
-HealthDataRemoteDataSource healthDataRemoteDataSource(
-  HealthDataRemoteDataSourceRef ref,
-) {
+@Riverpod(keepAlive: true)
+HealthDataRemoteDataSource healthDataRemoteDataSource(Ref ref) {
+  // 开发环境使用Mock数据源
   return HealthDataRemoteDataSourceMock();
 }
 
-// 健康数据仓库提供者
-@riverpod
-HealthDataRepository healthDataRepository(
-  HealthDataRepositoryRef ref,
-) {
-  final remoteDataSource = ref.watch(healthDataRemoteDataSourceProvider);
-  final localDataSource = ref.watch(healthDataLocalDataSourceProvider).value;
-
-  if (localDataSource == null) {
-    throw Exception('本地数据源未初始化');
-  }
-
-  return HealthDataRepositoryImpl(remoteDataSource, localDataSource);
+@Riverpod(keepAlive: true)
+HealthDataLocalDataSource healthDataLocalDataSource(Ref ref) {
+  return HealthDataLocalDataSourceImpl(
+    ref.read(sharedPreferencesProvider),
+  );
 }
 
+// =============================================================================
+// 仓库层 Providers
+// =============================================================================
 
+@Riverpod(keepAlive: true)
+HealthDataRepository healthDataRepository(Ref ref) {
+  return HealthDataRepositoryImpl(
+    ref.read(healthDataRemoteDataSourceProvider),
+    ref.read(healthDataLocalDataSourceProvider),
+  );
+}
+
+// =============================================================================
+// 用例层 Providers
+// =============================================================================
+
+@Riverpod(keepAlive: true)
+GetBloodPressureDataUseCase getBloodPressureDataUseCase(Ref ref) {
+  return GetBloodPressureDataUseCaseImpl(
+    ref.read(healthDataRepositoryProvider),
+  );
+}
+
+@Riverpod(keepAlive: true)
+RecordBloodPressureUseCase recordBloodPressureUseCase(Ref ref) {
+  return RecordBloodPressureUseCaseImpl(
+    ref.read(healthDataRepositoryProvider),
+  );
+}
+
+@Riverpod(keepAlive: true)
+GenerateChartDataUseCase generateChartDataUseCase(Ref ref) {
+  return GenerateChartDataUseCaseImpl(
+    ref.read(healthDataRepositoryProvider),
+  );
+}

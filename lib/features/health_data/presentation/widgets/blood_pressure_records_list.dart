@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:vitals/features/health_data/domain/entities/blood_pressure_record.dart';
+import 'package:vitals/features/health_data/presentation/models/chart_models.dart';
 
 // 血压记录列表
 class BloodPressureRecordsList extends StatelessWidget {
   const BloodPressureRecordsList({super.key, required this.records});
 
-  final List<dynamic> records; // 临时使用dynamic
+  final List<BloodPressureRecord> records;
 
   @override
   Widget build(BuildContext context) {
@@ -20,29 +20,14 @@ class BloodPressureRecordsList extends StatelessWidget {
       );
     }
 
-    return Card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Text(
-              '历史记录',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-          ),
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: records.length,
-            separatorBuilder: (context, index) => const Divider(height: 1),
-            itemBuilder: (context, index) {
-              final record = records[index];
-              return _RecordItem(record: record);
-            },
-          ),
-        ],
-      ),
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: records.length,
+      itemBuilder: (context, index) {
+        final record = records[index];
+        return _RecordItem(record: record);
+      },
     );
   }
 }
@@ -51,42 +36,90 @@ class BloodPressureRecordsList extends StatelessWidget {
 class _RecordItem extends StatelessWidget {
   const _RecordItem({required this.record});
 
-  final dynamic record; // 临时使用dynamic
+  final BloodPressureRecord record;
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: CircleAvatar(
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        child: Icon(
-          Icons.calendar_today,
-          color: Theme.of(context).colorScheme.onPrimaryContainer,
+    return Card(
+      margin: const EdgeInsets.only(bottom: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            // 左侧日期部分
+            Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    Icons.calendar_today,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  _formatDate(record.recordedAt),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(width: 16),
+
+            // 中间内容部分
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${record.systolic}/${record.diastolic}',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '记录时间: ${_formatDetailTime(record.recordedAt)}',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // 右侧等级标签
+            _BloodPressureLevelChip(level: record.calculatedLevel ?? '未知'),
+          ],
         ),
       ),
-      title: Text(
-        '${record.systolic}/${record.diastolic} mmHg',
-        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      subtitle: Text(
-        '记录时间: ${_formatTime(record.recordedAt)}',
-        style: Theme.of(context).textTheme.bodySmall,
-      ),
-      trailing: _BloodPressureLevelChip(level: record.calculatedLevel),
     );
   }
 
-  String _formatTime(DateTime dateTime) {
-    return '${dateTime.month.toString().padLeft(2, '0')}月${dateTime.day.toString().padLeft(2, '0')}日 ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+  String _formatDate(DateTime dateTime) {
+    return '${dateTime.month.toString().padLeft(2, '0')}月${dateTime.day.toString().padLeft(2, '0')}日';
   }
+
+  String _formatDetailTime(DateTime dateTime) {
+    return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+  }
+
+
 }
 
 // 血压水平标签
 class _BloodPressureLevelChip extends StatelessWidget {
   const _BloodPressureLevelChip({required this.level});
 
-  final dynamic level; // 临时使用dynamic
+  final String level;
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +128,7 @@ class _BloodPressureLevelChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: color),
       ),
