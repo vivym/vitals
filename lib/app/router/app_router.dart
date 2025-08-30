@@ -6,6 +6,7 @@ import '../../features/auth/presentation/screens/patient_sign_screen.dart' as au
 import '../../features/auth/presentation/screens/patient_sign_success_screen.dart' as auth_pages;
 import '../../features/auth/presentation/providers/auth_provider.dart';
 import '../../features/health_data/presentation/screens/blood_pressure_screen.dart';
+import '../../features/reports/presentation/screens/reports_list_page.dart';
 
 import '../../shared/widgets/main_navigation_scaffold.dart';
 
@@ -173,6 +174,12 @@ class AppRouter {
           path: AppRoutes.patientSignSuccess,
           builder: (context, state) => const auth_pages.PatientSignSuccessScreen(),
         ),
+
+        // 阶段报告页面
+        GoRoute(
+          path: '/profile/stage-reports',
+          builder: (context, state) => const ReportsListPage(),
+        ),
       ],
     );
   }
@@ -203,6 +210,25 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     final authNotifier = ref.read(authNotifierProvider.notifier);
     await authNotifier.autoLogin();
     print('✅ 自动登录检查完成');
+
+    // 检查最终的认证状态
+    if (mounted) {
+      final authState = ref.read(authNotifierProvider);
+      print('🎯 检查自动登录结果: isAuthenticated=${authState.isAuthenticated}, isLoading=${authState.isLoading}');
+
+      if (!authState.isLoading) {
+        if (authState.isAuthenticated) {
+          // 用户已认证，GoRouter会自动重定向到dashboard
+          print('✅ 用户已认证，等待路由重定向');
+        } else {
+          // 用户未认证，跳转到登录页面
+          print('❌ 用户未认证，跳转到登录页面');
+          if (mounted) {
+            context.go(AppRoutes.login);
+          }
+        }
+      }
+    }
   }
 
   @override

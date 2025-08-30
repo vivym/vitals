@@ -31,7 +31,10 @@ class ReportsListPage extends HookConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('健康报告'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: Column(
         children: [

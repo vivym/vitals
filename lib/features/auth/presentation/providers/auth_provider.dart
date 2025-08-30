@@ -150,9 +150,13 @@ class AuthNotifier extends _$AuthNotifier {
         failure: (error) async {
           print('❌ 自动登录失败: ${error.message}');
           print('📝 更新认证状态: isAuthenticated=false, isLoading=false');
+
+          // "未找到有效的登录凭证"不是错误，是正常状态，不显示错误信息， TODO: 这里需要优化
+          final shouldShowError = error.message != '未找到有效的登录凭证';
+
           state = state.copyWith(
             isLoading: false,
-            error: error,
+            error: shouldShowError ? error : null,
             isAuthenticated: false,
           );
         },

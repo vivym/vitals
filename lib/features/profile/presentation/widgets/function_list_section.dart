@@ -62,7 +62,7 @@ class FunctionListSection extends StatelessWidget {
                 context,
                 icon: Icons.assessment,
                 title: '阶段报告',
-                onTap: () => context.go('/profile/stage-reports'),
+                onTap: () => context.push('/profile/stage-reports'),
               ),
               _buildListItem(
                 context,
