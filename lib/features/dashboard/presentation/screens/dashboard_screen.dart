@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:vitals/shared/widgets/app_scaffold.dart';
-import 'package:vitals/core/constants/navigation_constants.dart';
 import '../providers/dashboard_notifier.dart';
-import '../../data/models/dashboard_models.dart';
 import '../widgets/health_score_card.dart';
 import '../widgets/health_data_overview_section.dart';
 import '../widgets/recovery_goals_section.dart';
@@ -14,7 +10,7 @@ import '../widgets/loading_view.dart';
 import '../widgets/error_view.dart';
 import '../widgets/empty_state_view.dart';
 
-/// 首页主屏幕
+/// 首页内容组件 - 不包含AppBar和BottomNavigationBar
 class DashboardScreen extends ConsumerWidget {
   const DashboardScreen({super.key});
 
@@ -22,38 +18,15 @@ class DashboardScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final dashboardState = ref.watch(dashboardNotifierProvider);
 
-    return AppPage(
-      currentIndex: NavigationIndices.dashboard,
-      appBar: AppBar(
-        title: const Text('王高南'),
-        centerTitle: true, // 标题居中
-        backgroundColor: Colors.white, // 白色header
-        foregroundColor: Colors.black, // 黑色文字
-        titleTextStyle: const TextStyle(
-          color: Colors.black,
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
+    return RefreshIndicator(
+      onRefresh: () => ref.read(dashboardNotifierProvider.notifier).refresh(),
+      child: dashboardState.when(
+        loading: () => const LoadingView(),
+        error: (error, stackTrace) => ErrorView(
+          error: error,
+          onRetry: () => ref.read(dashboardNotifierProvider.notifier).refresh(),
         ),
-        iconTheme: const IconThemeData(
-          color: Colors.black, // 刷新图标也设为黑色
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () => ref.read(dashboardNotifierProvider.notifier).refresh(),
-          ),
-        ],
-      ),
-      body: RefreshIndicator(
-        onRefresh: () => ref.read(dashboardNotifierProvider.notifier).refresh(),
-        child: dashboardState.when(
-          loading: () => const LoadingView(),
-          error: (error, stackTrace) => ErrorView(
-            error: error,
-            onRetry: () => ref.read(dashboardNotifierProvider.notifier).refresh(),
-          ),
-          data: (state) => DashboardContent(state: state),
-        ),
+        data: (state) => DashboardContent(state: state),
       ),
     );
   }
@@ -67,7 +40,7 @@ class DashboardContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (state.isEmpty) {
+    if (state.healthData == null && state.recoveryGoals.isEmpty && state.educationItems.isEmpty) {
       return const EmptyStateView();
     }
 
@@ -86,8 +59,8 @@ class DashboardContent extends ConsumerWidget {
         ],
 
         // 康复目标
-        if (state.activeGoals.isNotEmpty) ...[
-          RecoveryGoalsSection(goals: state.activeGoals),
+        if (state.recoveryGoals.isNotEmpty) ...[
+          RecoveryGoalsSection(goals: state.recoveryGoals),
           const SizedBox(height: 16),
         ],
 

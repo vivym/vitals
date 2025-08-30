@@ -12,13 +12,26 @@ class AutoLoginUseCaseImpl implements AutoLoginUseCase {
 
   @override
   Future<Result<UserEntity, AppError>> execute() async {
+    print('🔍 自动登录用例：开始执行');
+
     final isAuthenticated = await _repository.isAuthenticated();
+    print('🔍 自动登录用例：认证检查结果 = $isAuthenticated');
+
     if (!isAuthenticated) {
+      print('❌ 自动登录用例：未找到有效登录凭证');
       return const Result.failure(
         AppError.authentication(message: '未找到有效的登录凭证'),
       );
     }
 
-    return await _repository.getCurrentUser();
+    print('✅ 自动登录用例：发现有效凭证，获取用户信息');
+    final result = await _repository.getCurrentUser();
+
+    result.when(
+      success: (user) => print('✅ 自动登录用例：成功获取用户 ${user.name}'),
+      failure: (error) => print('❌ 自动登录用例：获取用户失败 ${error.message}'),
+    );
+
+    return result;
   }
 }

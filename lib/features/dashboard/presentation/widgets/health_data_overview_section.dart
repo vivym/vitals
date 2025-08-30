@@ -104,8 +104,8 @@ class WeightCard extends StatelessWidget {
       title: '体重',
       value: '${data.weight.toStringAsFixed(1)}',
       unit: 'kg',
-      subtitle: data.bmiCategory?.label ?? '',
-      color: data.bmiCategory?.color ?? Theme.of(context).primaryColor,
+      subtitle: data.category?.label ?? '',
+      color: data.category?.color ?? Theme.of(context).primaryColor,
       onTap: () => context.go('/health-data/weight'),
     );
   }

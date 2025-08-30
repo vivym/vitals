@@ -112,7 +112,7 @@ class HealthEducationCard extends ConsumerWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          '${item.readingTime}分钟阅读',
+                          '${item.readingTimeMinutes}分钟阅读',
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),

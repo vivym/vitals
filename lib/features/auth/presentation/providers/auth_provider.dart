@@ -80,29 +80,73 @@ class AuthNotifier extends _$AuthNotifier {
 
   /// 自动登录
   Future<void> autoLogin({bool silent = false}) async {
+    print('🔑 开始自动登录流程');
+
     if (!silent) {
+      print('📝 设置 isLoading = true');
       state = state.copyWith(isLoading: true, error: null);
     }
 
-    final autoLoginUseCase = ref.read(autoLoginUseCaseProvider);
-    final result = await autoLoginUseCase.execute();
+    try {
+      print('🔍 执行自动登录用例');
+      final autoLoginUseCase = ref.read(autoLoginUseCaseProvider);
+      final userResult = await autoLoginUseCase.execute();
 
-    result.when(
-      success: (user) {
-        state = state.copyWith(
-          isLoading: false,
-          user: user,
-          isAuthenticated: true,
-        );
-      },
-      failure: (error) {
-        state = state.copyWith(
-          isLoading: false,
-          error: error,
-          isAuthenticated: false,
-        );
-      },
-    );
+      await userResult.when(
+        success: (user) async {
+          print('✅ 自动登录成功，用户: ${user.name} (${user.phone})');
+
+          // 获取患者信息
+          print('🔍 获取患者信息');
+          final authRepository = ref.read(authRepositoryProvider);
+          final patientResult = await authRepository.getPatient();
+
+          PatientEntity? patient;
+          bool hasSignedPatient = false;
+
+          patientResult.when(
+            success: (patientData) {
+              patient = patientData;
+              hasSignedPatient = patientData != null;
+              print('🏥 患者信息: ${patientData != null ? '已签约 - ${patientData.name}' : '未签约'}');
+            },
+            failure: (error) {
+              // 患者信息获取失败，可能还没有签约患者
+              patient = null;
+              hasSignedPatient = false;
+              print('⚠️ 获取患者信息失败: ${error.message}');
+            },
+          );
+
+          print('📝 更新认证状态: isAuthenticated=true, hasSignedPatient=$hasSignedPatient, isLoading=false');
+          state = state.copyWith(
+            isLoading: false,
+            user: user,
+            patient: patient,
+            isAuthenticated: true,
+            hasSignedPatient: hasSignedPatient,
+          );
+        },
+        failure: (error) async {
+          print('❌ 自动登录失败: ${error.message}');
+          print('📝 更新认证状态: isAuthenticated=false, isLoading=false');
+          state = state.copyWith(
+            isLoading: false,
+            error: error,
+            isAuthenticated: false,
+          );
+        },
+      );
+    } catch (e) {
+      print('💥 自动登录异常: $e');
+      state = state.copyWith(
+        isLoading: false,
+        error: AppError.unknown(message: '自动登录失败: $e'),
+        isAuthenticated: false,
+      );
+    }
+
+    print('🏁 自动登录流程完成，最终状态: $state');
   }
 
   /// 用户登出

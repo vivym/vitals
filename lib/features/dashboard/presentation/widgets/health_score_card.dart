@@ -20,10 +20,10 @@ class HealthScoreCard extends ConsumerWidget {
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 16),
-            CircularScoreIndicator(score: score),
+            CircularScoreIndicator(score: score?.totalScore ?? 0),
             const SizedBox(height: 12),
             Text(
-              _getScoreDescription(score),
+              _getScoreDescription(score?.totalScore ?? 0),
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),

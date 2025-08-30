@@ -71,9 +71,10 @@ abstract class HeartRateSummary with _$HeartRateSummary {
 @JsonEnum(valueField: 'value')
 enum HeartRateZone {
   resting(1, '静息', Color(0xFF2196F3)),
-  fat_burn(2, '燃脂', Color(0xFF4CAF50)),
-  cardio(3, '有氧', Color(0xFFFF9800)),
-  peak(4, '无氧', Color(0xFFFF5722));
+  light(2, '轻度活动', Color(0xFF4CAF50)),
+  moderate(3, '中度活动', Color(0xFFFF9800)),
+  vigorous(4, '剧烈活动', Color(0xFFFF5722)),
+  maximum(5, '最大心率', Color(0xFFF44336));
 
   const HeartRateZone(this.value, this.label, this.color);
   final int value;
@@ -88,7 +89,7 @@ abstract class WeightSummary with _$WeightSummary {
     required double weight,     // 单位：kg
     required DateTime recordedAt,
     double? bmi,
-    BMICategory? bmiCategory,
+    BMICategory? category,
     String? trend,
   }) = _WeightSummary;
 
@@ -115,7 +116,7 @@ enum BMICategory {
 abstract class StepsSummary with _$StepsSummary {
   const factory StepsSummary({
     required int steps,
-    required DateTime date,
+    required DateTime recordedAt,
     int? goal,
     double? calories,
     double? distance,    // 单位：km
@@ -145,10 +146,10 @@ abstract class RecoveryGoal with _$RecoveryGoal {
     required double targetValue,
     required double currentValue,
     required String unit,
-    @JsonKey(name: 'start_date') required DateTime startDate,
-    @JsonKey(name: 'end_date') required DateTime endDate,
+    required DateTime deadline,
     @Default(GoalStatus.active) GoalStatus status,
     @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'updated_at') DateTime? updatedAt,
   }) = _RecoveryGoal;
 
   factory RecoveryGoal.fromJson(Map<String, dynamic> json) =>
@@ -158,23 +159,25 @@ abstract class RecoveryGoal with _$RecoveryGoal {
 
   double get progress => targetValue > 0 ? currentValue / targetValue : 0.0;
   bool get isCompleted => progress >= 1.0;
-  bool get isExpired => DateTime.now().isAfter(endDate);
+  bool get isExpired => DateTime.now().isAfter(deadline);
 
   int get daysRemaining {
     final now = DateTime.now();
-    if (now.isAfter(endDate)) return 0;
-    return endDate.difference(now).inDays;
+    if (now.isAfter(deadline)) return 0;
+    return deadline.difference(now).inDays;
   }
 }
 
 /// 目标类型
 @JsonEnum(valueField: 'value')
 enum GoalType {
-  blood_pressure(1, '血压控制', Icons.favorite, Color(0xFFE91E63)),
+  bloodPressure(1, '血压控制', Icons.favorite, Color(0xFFE91E63)),
   cholesterol(2, '胆固醇', Icons.water_drop, Color(0xFF2196F3)),
   exercise(3, '运动目标', Icons.directions_run, Color(0xFF4CAF50)),
   medication(4, '用药依从性', Icons.medication, Color(0xFFFF9800)),
-  weight(5, '体重管理', Icons.monitor_weight, Color(0xFF9C27B0));
+  weight(5, '体重管理', Icons.monitor_weight, Color(0xFF9C27B0)),
+  smoking(6, '戒烟目标', Icons.smoke_free, Color(0xFF795548)),
+  diet(7, '饮食控制', Icons.restaurant, Color(0xFF8BC34A));
 
   const GoalType(this.value, this.label, this.icon, this.color);
   final int value;
@@ -187,9 +190,9 @@ enum GoalType {
 @JsonEnum(valueField: 'value')
 enum GoalStatus {
   active(1, '进行中'),
-  completed(2, '已完成'),
-  paused(3, '已暂停'),
-  cancelled(4, '已取消');
+  paused(2, '已暂停'),
+  completed(3, '已完成'),
+  failed(4, '未达成');
 
   const GoalStatus(this.value, this.label);
   final int value;
@@ -211,11 +214,16 @@ abstract class HealthEducationItem with _$HealthEducationItem {
     required EducationType type,
     String? imageUrl,
     String? videoUrl,
-    required int readingTime,    // 预计阅读时间（分钟）
+    required int readingTimeMinutes,    // 预计阅读时间（分钟）
     @Default([]) List<String> tags,
     @JsonKey(name: 'published_at') required DateTime publishedAt,
     @Default(false) bool isRead,
     @Default(false) bool isFavorited,
+    String? category,
+    String? authorName,
+    String? thumbnailUrl,
+    @Default([]) List<String> imageUrls,
+    DateTime? readAt,
   }) = _HealthEducationItem;
 
   factory HealthEducationItem.fromJson(Map<String, dynamic> json) =>
@@ -227,7 +235,8 @@ abstract class HealthEducationItem with _$HealthEducationItem {
 enum EducationType {
   article(1, '文章', Icons.article),
   video(2, '视频', Icons.play_circle),
-  infographic(3, '图解', Icons.image);
+  infographic(3, '图解', Icons.image),
+  audio(4, '音频', Icons.headphones);
 
   const EducationType(this.value, this.label, this.icon);
   final int value;
@@ -246,17 +255,17 @@ abstract class DashboardState with _$DashboardState {
     HealthDataOverview? healthData,
     @Default([]) List<RecoveryGoal> recoveryGoals,
     @Default([]) List<HealthEducationItem> educationItems,
-    @Default(false) bool isLoading,
+    HealthScore? healthScore,
+    DateTime? lastUpdated,
     @Default(false) bool isRefreshing,
     String? error,
-    @JsonKey(name: 'last_updated') DateTime? lastUpdated,
   }) = _DashboardState;
 
   const DashboardState._();
 
   bool get hasError => error != null;
   bool get hasData => healthData != null || recoveryGoals.isNotEmpty;
-  bool get isEmpty => !hasData && !isLoading;
+  bool get isEmpty => !hasData;
 
   List<RecoveryGoal> get activeGoals => recoveryGoals
       .where((goal) => goal.status == GoalStatus.active)
@@ -279,6 +288,7 @@ abstract class DashboardResponse with _$DashboardResponse {
     required List<RecoveryGoal> recoveryGoals,
     required List<HealthEducationItem> educationItems,
     @JsonKey(name: 'last_updated') DateTime? lastUpdated,
+    HealthScore? healthScore,
   }) = _DashboardResponse;
 
   factory DashboardResponse.fromJson(Map<String, dynamic> json) =>
@@ -296,4 +306,24 @@ abstract class UpdateEducationStatusRequest with _$UpdateEducationStatusRequest 
 
   factory UpdateEducationStatusRequest.fromJson(Map<String, dynamic> json) =>
       _$UpdateEducationStatusRequestFromJson(json);
+}
+
+// =============================================================================
+// 健康评分模型
+// =============================================================================
+
+/// 健康评分
+@freezed
+abstract class HealthScore with _$HealthScore {
+  const factory HealthScore({
+    required int totalScore,
+    required Map<String, int> categoryScores,
+    required String level,
+    required String description,
+    required List<String> recommendations,
+    @JsonKey(name: 'calculated_at') DateTime? calculatedAt,
+  }) = _HealthScore;
+
+  factory HealthScore.fromJson(Map<String, dynamic> json) =>
+      _$HealthScoreFromJson(json);
 }

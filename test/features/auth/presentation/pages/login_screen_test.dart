@@ -9,7 +9,7 @@ import 'package:vitals/features/auth/domain/repositories/auth_repository.dart';
 import 'package:vitals/features/auth/domain/usecases/login_usecase.dart';
 import 'package:vitals/features/auth/domain/usecases/auto_login_usecase.dart';
 import 'package:vitals/features/auth/presentation/providers/auth_provider.dart';
-import 'package:vitals/features/auth/presentation/pages/login_screen.dart';
+import 'package:vitals/features/auth/presentation/screens/login_screen.dart';
 
 // Mock classes
 class MockLoginUseCase extends Mock implements LoginUseCase {}

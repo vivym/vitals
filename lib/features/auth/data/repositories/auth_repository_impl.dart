@@ -180,7 +180,9 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<bool> isAuthenticated() async {
     final token = await _localDataSource.getAuthToken();
-    return token != null && token.isNotEmpty;
+    final result = token != null && token.isNotEmpty;
+    print('🔐 检查认证状态: token=${token != null ? '存在' : '不存在'}, isAuthenticated=$result');
+    return result;
   }
 
   /// 私有方法：保存认证状态

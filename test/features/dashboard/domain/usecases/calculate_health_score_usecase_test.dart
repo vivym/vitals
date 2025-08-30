@@ -1,93 +1,99 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:vitals/features/dashboard/data/models/dashboard_models.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:vitals/features/dashboard/domain/usecases/calculate_health_score_usecase.dart';
+import 'package:vitals/features/dashboard/domain/entities/dashboard_entity.dart';
+import 'package:vitals/features/dashboard/domain/repositories/dashboard_repository.dart';
+import 'package:vitals/core/errors/app_error.dart';
+
+// Mock repository
+class MockDashboardRepository extends Mock implements DashboardRepository {}
 
 void main() {
   group('CalculateHealthScoreUseCase', () {
-    late CalculateHealthScoreUseCase useCase;
+    late CalculateHealthScoreUseCaseImpl useCase;
+    late MockDashboardRepository mockRepository;
 
     setUp(() {
-      useCase = CalculateHealthScoreUseCase();
+      mockRepository = MockDashboardRepository();
+      useCase = CalculateHealthScoreUseCaseImpl(mockRepository);
     });
 
-    test('should return perfect score for optimal health data', () {
+    test('should return success when repository succeeds', () async {
       // Given
-      final healthData = HealthDataOverview(
-        bloodPressure: BloodPressureSummary(
-          systolic: 120,
-          diastolic: 80,
-          recordedAt: DateTime.now(),
-          level: BloodPressureLevel.normal,
-        ),
-        heartRate: HeartRateSummary(
-          bpm: 70,
-          recordedAt: DateTime.now(),
-          zone: HeartRateZone.resting,
-        ),
-        weight: WeightSummary(
-          weight: 70.0,
-          recordedAt: DateTime.now(),
-          bmi: 22.0,
-          bmiCategory: BMICategory.normal,
-        ),
-        steps: StepsSummary(
-          steps: 10000,
-          date: DateTime.now(),
-          goal: 10000,
-        ),
+      const patientId = 'patient_1';
+      final healthScore = HealthScoreEntity(
+        totalScore: 85,
+        categoryScores: {'overall': 85},
+        level: HealthScoreLevel.good,
+        description: '健康状况良好',
+        recommendations: ['继续保持当前生活方式'],
       );
 
+      when(() => mockRepository.calculateHealthScore(patientId))
+          .thenAnswer((_) async => Result.success(healthScore));
+
       // When
-      final score = useCase.execute(healthData);
+      final result = await useCase.execute(patientId);
 
       // Then
-      expect(score, 100);
+      expect(result.isSuccess, true);
+      expect(result.data, healthScore);
+      verify(() => mockRepository.calculateHealthScore(patientId)).called(1);
     });
 
-    test('should return lower score for suboptimal health data', () {
+    test('should return error when patientId is empty', () async {
       // Given
-      final healthData = HealthDataOverview(
-        bloodPressure: BloodPressureSummary(
-          systolic: 140,
-          diastolic: 90,
-          recordedAt: DateTime.now(),
-          level: BloodPressureLevel.stage1,
-        ),
-        heartRate: HeartRateSummary(
-          bpm: 100,
-          recordedAt: DateTime.now(),
-          zone: HeartRateZone.cardio,
-        ),
-        weight: WeightSummary(
-          weight: 85.0,
-          recordedAt: DateTime.now(),
-          bmi: 28.0,
-          bmiCategory: BMICategory.overweight,
-        ),
-        steps: StepsSummary(
-          steps: 5000,
-          date: DateTime.now(),
-          goal: 10000,
-        ),
+      const patientId = '';
+
+      // When
+      final result = await useCase.execute(patientId);
+
+      // Then
+      expect(result.isFailure, true);
+      result.when(
+        success: (data) => fail('Should not succeed'),
+        failure: (error) {
+          expect(error.message, contains('患者ID不能为空'));
+        },
       );
-
-      // When
-      final score = useCase.execute(healthData);
-
-      // Then
-      expect(score, lessThan(80));
-      expect(score, greaterThan(40));
     });
 
-    test('should return 0 when no health data available', () {
+    test('should return error when repository fails', () async {
       // Given
-      const healthData = HealthDataOverview();
+      const patientId = 'patient_1';
+      final appError = AppError.network(message: '网络错误');
+
+      when(() => mockRepository.calculateHealthScore(patientId))
+          .thenAnswer((_) async => Result.failure(appError));
 
       // When
-      final score = useCase.execute(healthData);
+      final result = await useCase.execute(patientId);
 
       // Then
-      expect(score, 0);
+      expect(result.isFailure, true);
+      expect(result.error, appError);
+      verify(() => mockRepository.calculateHealthScore(patientId)).called(1);
+    });
+
+    test('should return error when repository throws exception', () async {
+      // Given
+      const patientId = 'patient_1';
+
+      when(() => mockRepository.calculateHealthScore(patientId))
+          .thenThrow(Exception('Repository error'));
+
+      // When
+      final result = await useCase.execute(patientId);
+
+      // Then
+      expect(result.isFailure, true);
+      result.when(
+        success: (data) => fail('Should not succeed'),
+        failure: (error) {
+          expect(error.message, contains('Repository error'));
+        },
+      );
+      verify(() => mockRepository.calculateHealthScore(patientId)).called(1);
     });
   });
 }

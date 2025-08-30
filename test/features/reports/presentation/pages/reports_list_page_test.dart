@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:vitals/features/reports/presentation/pages/reports_list_page.dart';
+import 'package:vitals/features/reports/presentation/screens/reports_list_page.dart';
 
 void main() {
   group('ReportsListPage', () {

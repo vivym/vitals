@@ -84,9 +84,10 @@ Map<String, dynamic> _$HeartRateSummaryToJson(_HeartRateSummary instance) =>
 
 const _$HeartRateZoneEnumMap = {
   HeartRateZone.resting: 1,
-  HeartRateZone.fat_burn: 2,
-  HeartRateZone.cardio: 3,
-  HeartRateZone.peak: 4,
+  HeartRateZone.light: 2,
+  HeartRateZone.moderate: 3,
+  HeartRateZone.vigorous: 4,
+  HeartRateZone.maximum: 5,
 };
 
 _WeightSummary _$WeightSummaryFromJson(Map<String, dynamic> json) =>
@@ -94,10 +95,7 @@ _WeightSummary _$WeightSummaryFromJson(Map<String, dynamic> json) =>
       weight: (json['weight'] as num).toDouble(),
       recordedAt: DateTime.parse(json['recordedAt'] as String),
       bmi: (json['bmi'] as num?)?.toDouble(),
-      bmiCategory: $enumDecodeNullable(
-        _$BMICategoryEnumMap,
-        json['bmiCategory'],
-      ),
+      category: $enumDecodeNullable(_$BMICategoryEnumMap, json['category']),
       trend: json['trend'] as String?,
     );
 
@@ -106,7 +104,7 @@ Map<String, dynamic> _$WeightSummaryToJson(_WeightSummary instance) =>
       'weight': instance.weight,
       'recordedAt': instance.recordedAt.toIso8601String(),
       'bmi': instance.bmi,
-      'bmiCategory': _$BMICategoryEnumMap[instance.bmiCategory],
+      'category': _$BMICategoryEnumMap[instance.category],
       'trend': instance.trend,
     };
 
@@ -120,7 +118,7 @@ const _$BMICategoryEnumMap = {
 _StepsSummary _$StepsSummaryFromJson(Map<String, dynamic> json) =>
     _StepsSummary(
       steps: (json['steps'] as num).toInt(),
-      date: DateTime.parse(json['date'] as String),
+      recordedAt: DateTime.parse(json['recordedAt'] as String),
       goal: (json['goal'] as num?)?.toInt(),
       calories: (json['calories'] as num?)?.toDouble(),
       distance: (json['distance'] as num?)?.toDouble(),
@@ -129,7 +127,7 @@ _StepsSummary _$StepsSummaryFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$StepsSummaryToJson(_StepsSummary instance) =>
     <String, dynamic>{
       'steps': instance.steps,
-      'date': instance.date.toIso8601String(),
+      'recordedAt': instance.recordedAt.toIso8601String(),
       'goal': instance.goal,
       'calories': instance.calories,
       'distance': instance.distance,
@@ -144,14 +142,16 @@ _RecoveryGoal _$RecoveryGoalFromJson(Map<String, dynamic> json) =>
       targetValue: (json['targetValue'] as num).toDouble(),
       currentValue: (json['currentValue'] as num).toDouble(),
       unit: json['unit'] as String,
-      startDate: DateTime.parse(json['start_date'] as String),
-      endDate: DateTime.parse(json['end_date'] as String),
+      deadline: DateTime.parse(json['deadline'] as String),
       status:
           $enumDecodeNullable(_$GoalStatusEnumMap, json['status']) ??
           GoalStatus.active,
       createdAt: json['created_at'] == null
           ? null
           : DateTime.parse(json['created_at'] as String),
+      updatedAt: json['updated_at'] == null
+          ? null
+          : DateTime.parse(json['updated_at'] as String),
     );
 
 Map<String, dynamic> _$RecoveryGoalToJson(_RecoveryGoal instance) =>
@@ -163,25 +163,27 @@ Map<String, dynamic> _$RecoveryGoalToJson(_RecoveryGoal instance) =>
       'targetValue': instance.targetValue,
       'currentValue': instance.currentValue,
       'unit': instance.unit,
-      'start_date': instance.startDate.toIso8601String(),
-      'end_date': instance.endDate.toIso8601String(),
+      'deadline': instance.deadline.toIso8601String(),
       'status': _$GoalStatusEnumMap[instance.status]!,
       'created_at': instance.createdAt?.toIso8601String(),
+      'updated_at': instance.updatedAt?.toIso8601String(),
     };
 
 const _$GoalTypeEnumMap = {
-  GoalType.blood_pressure: 1,
+  GoalType.bloodPressure: 1,
   GoalType.cholesterol: 2,
   GoalType.exercise: 3,
   GoalType.medication: 4,
   GoalType.weight: 5,
+  GoalType.smoking: 6,
+  GoalType.diet: 7,
 };
 
 const _$GoalStatusEnumMap = {
   GoalStatus.active: 1,
-  GoalStatus.completed: 2,
-  GoalStatus.paused: 3,
-  GoalStatus.cancelled: 4,
+  GoalStatus.paused: 2,
+  GoalStatus.completed: 3,
+  GoalStatus.failed: 4,
 };
 
 _HealthEducationItem _$HealthEducationItemFromJson(Map<String, dynamic> json) =>
@@ -193,13 +195,24 @@ _HealthEducationItem _$HealthEducationItemFromJson(Map<String, dynamic> json) =>
       type: $enumDecode(_$EducationTypeEnumMap, json['type']),
       imageUrl: json['imageUrl'] as String?,
       videoUrl: json['videoUrl'] as String?,
-      readingTime: (json['readingTime'] as num).toInt(),
+      readingTimeMinutes: (json['readingTimeMinutes'] as num).toInt(),
       tags:
           (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList() ??
           const [],
       publishedAt: DateTime.parse(json['published_at'] as String),
       isRead: json['isRead'] as bool? ?? false,
       isFavorited: json['isFavorited'] as bool? ?? false,
+      category: json['category'] as String?,
+      authorName: json['authorName'] as String?,
+      thumbnailUrl: json['thumbnailUrl'] as String?,
+      imageUrls:
+          (json['imageUrls'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
+      readAt: json['readAt'] == null
+          ? null
+          : DateTime.parse(json['readAt'] as String),
     );
 
 Map<String, dynamic> _$HealthEducationItemToJson(
@@ -212,17 +225,23 @@ Map<String, dynamic> _$HealthEducationItemToJson(
   'type': _$EducationTypeEnumMap[instance.type]!,
   'imageUrl': instance.imageUrl,
   'videoUrl': instance.videoUrl,
-  'readingTime': instance.readingTime,
+  'readingTimeMinutes': instance.readingTimeMinutes,
   'tags': instance.tags,
   'published_at': instance.publishedAt.toIso8601String(),
   'isRead': instance.isRead,
   'isFavorited': instance.isFavorited,
+  'category': instance.category,
+  'authorName': instance.authorName,
+  'thumbnailUrl': instance.thumbnailUrl,
+  'imageUrls': instance.imageUrls,
+  'readAt': instance.readAt?.toIso8601String(),
 };
 
 const _$EducationTypeEnumMap = {
   EducationType.article: 1,
   EducationType.video: 2,
   EducationType.infographic: 3,
+  EducationType.audio: 4,
 };
 
 _DashboardResponse _$DashboardResponseFromJson(Map<String, dynamic> json) =>
@@ -239,6 +258,9 @@ _DashboardResponse _$DashboardResponseFromJson(Map<String, dynamic> json) =>
       lastUpdated: json['last_updated'] == null
           ? null
           : DateTime.parse(json['last_updated'] as String),
+      healthScore: json['healthScore'] == null
+          ? null
+          : HealthScore.fromJson(json['healthScore'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$DashboardResponseToJson(_DashboardResponse instance) =>
@@ -247,6 +269,7 @@ Map<String, dynamic> _$DashboardResponseToJson(_DashboardResponse instance) =>
       'recoveryGoals': instance.recoveryGoals,
       'educationItems': instance.educationItems,
       'last_updated': instance.lastUpdated?.toIso8601String(),
+      'healthScore': instance.healthScore,
     };
 
 _UpdateEducationStatusRequest _$UpdateEducationStatusRequestFromJson(
@@ -264,3 +287,26 @@ Map<String, dynamic> _$UpdateEducationStatusRequestToJson(
   'isRead': instance.isRead,
   'isFavorited': instance.isFavorited,
 };
+
+_HealthScore _$HealthScoreFromJson(Map<String, dynamic> json) => _HealthScore(
+  totalScore: (json['totalScore'] as num).toInt(),
+  categoryScores: Map<String, int>.from(json['categoryScores'] as Map),
+  level: json['level'] as String,
+  description: json['description'] as String,
+  recommendations: (json['recommendations'] as List<dynamic>)
+      .map((e) => e as String)
+      .toList(),
+  calculatedAt: json['calculated_at'] == null
+      ? null
+      : DateTime.parse(json['calculated_at'] as String),
+);
+
+Map<String, dynamic> _$HealthScoreToJson(_HealthScore instance) =>
+    <String, dynamic>{
+      'totalScore': instance.totalScore,
+      'categoryScores': instance.categoryScores,
+      'level': instance.level,
+      'description': instance.description,
+      'recommendations': instance.recommendations,
+      'calculated_at': instance.calculatedAt?.toIso8601String(),
+    };

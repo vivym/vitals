@@ -1,26 +1,33 @@
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../core/errors/app_error.dart';
-import '../../data/models/dashboard_models.dart';
-import '../../data/repositories/dashboard_repository.dart';
-import '../../data/providers/dashboard_providers.dart';
-
-part 'get_dashboard_data_usecase.g.dart';
+import '../entities/dashboard_entity.dart';
+import '../repositories/dashboard_repository.dart';
 
 /// 获取首页数据用例
-@riverpod
-class GetDashboardDataUseCase extends _$GetDashboardDataUseCase {
-  @override
-  void build() {}
+abstract class GetDashboardDataUseCase {
+  Future<Result<DashboardEntity, AppError>> execute(
+    String patientId, {
+    bool forceRefresh = false,
+  });
+}
 
-  /// 执行获取首页数据
-  Future<Result<DashboardResponse, AppError>> execute(
+/// 获取首页数据用例实现
+class GetDashboardDataUseCaseImpl implements GetDashboardDataUseCase {
+  final DashboardRepository _repository;
+
+  const GetDashboardDataUseCaseImpl(this._repository);
+
+  @override
+  Future<Result<DashboardEntity, AppError>> execute(
     String patientId, {
     bool forceRefresh = false,
   }) async {
-    final repository = ref.read(dashboardRepositoryProvider);
-    return await repository.getDashboardData(
-      patientId,
-      forceRefresh: forceRefresh,
-    );
+    try {
+      return await _repository.getDashboardData(
+        patientId,
+        forceRefresh: forceRefresh,
+      );
+    } catch (e) {
+      return Result.failure(AppError.unknown(message: e.toString()));
+    }
   }
 }

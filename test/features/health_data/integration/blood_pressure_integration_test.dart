@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:vitals/features/health_data/presentation/pages/blood_pressure_screen.dart';
+import 'package:vitals/features/health_data/presentation/screens/blood_pressure_screen.dart';
 
 void main() {
   group('BloodPressureScreen Integration Tests', () {

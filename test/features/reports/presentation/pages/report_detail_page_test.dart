@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:vitals/features/reports/domain/entities/health_report.dart';
 import 'package:vitals/features/reports/domain/entities/reports_state.dart';
-import 'package:vitals/features/reports/presentation/pages/report_detail_page.dart';
+import 'package:vitals/features/reports/presentation/screens/report_detail_page.dart';
 import 'package:vitals/features/reports/presentation/providers/reports_page_providers.dart';
 
 void main() {

@@ -6,7 +6,7 @@ import 'package:vitals/features/reports/domain/entities/reports_state.dart';
 import 'package:vitals/features/reports/presentation/providers/reports_page_providers.dart';
 import 'package:vitals/features/reports/presentation/widgets/report_card.dart';
 import 'package:vitals/features/reports/presentation/widgets/report_filter_chip.dart';
-import 'package:vitals/features/reports/presentation/pages/report_detail_page.dart';
+import 'package:vitals/features/reports/presentation/screens/report_detail_page.dart';
 
 /// 健康报告列表页面
 class ReportsListPage extends HookConsumerWidget {

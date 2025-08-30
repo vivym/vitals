@@ -6,13 +6,13 @@ part of 'dashboard_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$healthScoreHash() => r'e53d9cc237b44f3e373db1a793917f8b6b577d86';
+String _$healthScoreHash() => r'abe6d10165b1294623f6c6d6f034af238435b9bf';
 
-/// 健康评分计算
+/// 健康评分提供者
 ///
 /// Copied from [healthScore].
 @ProviderFor(healthScore)
-final healthScoreProvider = AutoDisposeProvider<int>.internal(
+final healthScoreProvider = AutoDisposeProvider<data.HealthScore?>.internal(
   healthScore,
   name: r'healthScoreProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -24,33 +24,36 @@ final healthScoreProvider = AutoDisposeProvider<int>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef HealthScoreRef = AutoDisposeProviderRef<int>;
-String _$urgentGoalsHash() => r'12662c3ff5e46883ade7c86e7adc752e1ca9a4cc';
+typedef HealthScoreRef = AutoDisposeProviderRef<data.HealthScore?>;
+String _$urgentGoalsHash() => r'72d2f57f4a7a140b24d04dc9bb9341c968577a8a';
 
-/// 便利的派生状态
+/// 紧急目标提供者
 ///
 /// Copied from [urgentGoals].
 @ProviderFor(urgentGoals)
-final urgentGoalsProvider = AutoDisposeProvider<List<RecoveryGoal>>.internal(
-  urgentGoals,
-  name: r'urgentGoalsProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$urgentGoalsHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+final urgentGoalsProvider =
+    AutoDisposeProvider<List<data.RecoveryGoal>>.internal(
+      urgentGoals,
+      name: r'urgentGoalsProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$urgentGoalsHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef UrgentGoalsRef = AutoDisposeProviderRef<List<RecoveryGoal>>;
+typedef UrgentGoalsRef = AutoDisposeProviderRef<List<data.RecoveryGoal>>;
 String _$recommendedEducationHash() =>
-    r'6711e1f5a13fb1bf1752b230c4b710d98f238722';
+    r'3b286de0c070e4461ff9ed70775fab0ba898c4c1';
 
-/// See also [recommendedEducation].
+/// 推荐教育内容提供者
+///
+/// Copied from [recommendedEducation].
 @ProviderFor(recommendedEducation)
 final recommendedEducationProvider =
-    AutoDisposeProvider<List<HealthEducationItem>>.internal(
+    AutoDisposeProvider<List<data.HealthEducationItem>>.internal(
       recommendedEducation,
       name: r'recommendedEducationProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -63,8 +66,8 @@ final recommendedEducationProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef RecommendedEducationRef =
-    AutoDisposeProviderRef<List<HealthEducationItem>>;
-String _$dashboardNotifierHash() => r'9fbd89726e67ca8d3b99473ae0baf49f9fe443ef';
+    AutoDisposeProviderRef<List<data.HealthEducationItem>>;
+String _$dashboardNotifierHash() => r'4f853f06caca46aa26db1bc047d8ca0fd187eb9c';
 
 /// 首页状态管理
 ///

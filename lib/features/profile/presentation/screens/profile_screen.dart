@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vitals/shared/widgets/app_scaffold.dart';
-import 'package:vitals/core/constants/navigation_constants.dart';
 import '../providers/profile_notifier.dart';
 import '../../data/models/profile_state.dart';
 import '../widgets/user_info_section.dart';
@@ -11,7 +9,7 @@ import '../widgets/function_list_section.dart';
 import '../widgets/loading_view.dart';
 import '../widgets/error_view.dart';
 
-/// 个人中心主页面
+/// 个人中心内容组件 - 不包含AppBar和BottomNavigationBar
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
@@ -19,24 +17,10 @@ class ProfileScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final profileState = ref.watch(profileNotifierProvider);
 
-    return AppPage(
-      currentIndex: NavigationIndices.profile,
-      appBar: AppBar(
-        title: const Text('个人中心'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () => context.go('/profile/settings'),
-          ),
-        ],
-      ),
-      body: profileState.when(
-        loading: () => const LoadingView(),
-        error: (error, _) => ErrorView(error: error),
-        data: (state) => _ProfileContent(state: state),
-      ),
+    return profileState.when(
+      loading: () => const LoadingView(),
+      error: (error, _) => ErrorView(error: error),
+      data: (state) => _ProfileContent(state: state),
     );
   }
 }

@@ -6,30 +6,26 @@
 
 ## 组件列表
 
-### 1. AppBottomNavigationBar
+### 1. MainNavigationScaffold
 
-应用底部导航栏组件，提供统一的导航体验。
+主导航脚手架组件，提供统一的底部导航栏和页面切换体验。
 
 #### 特性
-- 固定的4个导航项：首页、健康数据、报告、我的
+- 固定的底部导航栏，包含4个导航项：首页、健康数据、报告、我的
 - 支持当前页面高亮显示
-- 自动路由导航
+- 页面内容左右滑动切换，300ms平滑动画
+- 自动路由同步，保持URL与页面状态一致
+- 禁用手势滑动，只允许通过底部导航栏切换
 
 #### 使用方法
 
 ```dart
-import 'package:vitals/shared/widgets/app_bottom_navigation_bar.dart';
+import 'package:vitals/shared/widgets/main_navigation_scaffold.dart';
 
-// 在Scaffold中使用
-Scaffold(
-  body: YourContent(),
-  bottomNavigationBar: AppBottomNavigationBar(currentIndex: 0),
-)
-
-// 或者使用AppPage包装器
-AppPage(
-  currentIndex: 0,
-  body: YourContent(),
+// 在路由配置中使用
+GoRoute(
+  path: '/dashboard',
+  builder: (context, state) => const MainNavigationScaffold(currentIndex: 0),
 )
 ```
 
@@ -39,55 +35,13 @@ AppPage(
 - `2`: 报告 (`/reports`)
 - `3`: 我的 (`/profile`)
 
-### 2. AppScaffold
+#### 工作原理
+1. 所有底部导航页面共享同一个 `MainNavigationScaffold` 实例
+2. 使用 `PageView` 和 `PageController` 实现页面内容切换
+3. 底部导航栏点击时立即切换页面，然后更新路由URL
+4. 路由变化时自动切换到对应的页面索引
 
-应用脚手架组件，自动处理底部导航栏的显示。
-
-#### 特性
-- 可选的底部导航栏
-- 支持所有Scaffold的标准属性
-- 自动处理导航栏状态
-
-#### 使用方法
-
-```dart
-import 'package:vitals/shared/widgets/app_scaffold.dart';
-
-AppScaffold(
-  currentIndex: 0, // 显示底部导航栏并高亮首页
-  appBar: AppBar(title: Text('页面标题')),
-  body: YourContent(),
-  // 其他Scaffold属性...
-)
-```
-
-### 3. AppPage
-
-带底部导航栏的页面基类，简化页面创建。
-
-#### 特性
-- 自动包含底部导航栏
-- 必须指定当前页面索引
-- 继承所有Scaffold功能
-
-#### 使用方法
-
-```dart
-import 'package:vitals/shared/widgets/app_page.dart';
-
-class YourPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return AppPage(
-      currentIndex: 1, // 健康数据页面
-      appBar: AppBar(title: Text('健康数据')),
-      body: YourContent(),
-    );
-  }
-}
-```
-
-### 4. LoadingView
+### 2. LoadingView
 
 加载状态视图组件。
 
@@ -111,32 +65,25 @@ if (isLoading) {
 
 ### 1. 页面结构
 
-对于需要底部导航栏的页面，推荐使用以下结构：
+对于需要底部导航栏的页面，现在统一使用 `MainNavigationScaffold`：
 
 ```dart
-class YourPage extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return AppPage(
-      currentIndex: 2, // 根据实际页面设置
-      appBar: AppBar(title: Text('页面标题')),
-      body: YourContent(),
-    );
-  }
-}
+// 在路由配置中
+GoRoute(
+  path: '/dashboard',
+  builder: (context, state) => const MainNavigationScaffold(currentIndex: 0),
+)
 ```
 
 ### 2. 导航栏索引管理
 
-建议在常量文件中定义导航栏索引：
+使用常量文件中定义的导航栏索引：
 
 ```dart
-class NavigationIndices {
-  static const dashboard = 0;
-  static const healthData = 1;
-  static const reports = 2;
-  static const profile = 3;
-}
+import 'package:vitals/core/constants/navigation_constants.dart';
+
+// 使用预定义的索引
+MainNavigationScaffold(currentIndex: NavigationIndices.dashboard)
 ```
 
 ### 3. 路由一致性
@@ -155,14 +102,16 @@ static const profile = '/profile';
 
 ### 添加新的导航项
 
-1. 更新 `AppBottomNavigationBar` 的 `items` 列表
-2. 在 `onTap` 方法中添加新的路由处理
-3. 更新路由配置
-4. 更新所有使用导航栏的页面索引
+1. 在 `NavigationIndices` 中添加新的索引常量
+2. 在 `NavigationLabels` 中添加新的标签文本
+3. 在 `NavigationIcons` 中添加新的图标
+4. 更新 `_MainBottomNavigationBar` 的 `items` 列表
+5. 在 `_onBottomNavTap` 方法中添加新的路由处理
+6. 更新路由配置和重定向逻辑
 
 ### 自定义导航栏样式
 
-可以通过修改 `AppBottomNavigationBar` 的 `build` 方法来自定义样式：
+可以通过修改 `_MainBottomNavigationBar` 的 `build` 方法来自定义样式：
 
 ```dart
 @override
@@ -188,23 +137,33 @@ Widget build(BuildContext context) {
 flutter test test/shared/widgets/
 
 # 运行特定测试
-flutter test test/shared/widgets/app_bottom_navigation_bar_test.dart
+flutter test test/shared/widgets/main_navigation_scaffold_test.dart
 ```
 
 ### 测试注意事项
 
 - 在测试环境中，GoRouter的导航可能不会实际执行
-- 使用 `tester.pumpAndSettle()` 等待动画完成
-- 验证组件的显示状态和交互行为
+- 需要模拟路由状态来测试页面切换逻辑
+- 测试页面内容组件的独立渲染
 
-## 依赖
+## 架构优势
 
-- `flutter/material.dart`: Flutter基础组件
-- `go_router`: 路由管理
+### 1. 代码复用
+- 底部导航栏逻辑集中管理
+- 减少重复代码
+- 统一的维护入口
 
-## 注意事项
+### 2. UI一致性
+- 所有页面使用相同的导航栏样式
+- 统一的交互体验
+- 便于主题和样式调整
 
-1. **路由上下文**: 确保在使用导航功能的组件中有正确的GoRouter上下文
-2. **索引一致性**: 保持页面索引与路由配置的一致性
-3. **性能优化**: 使用const构造函数优化重建性能
-4. **主题适配**: 组件会自动适配当前主题的颜色和样式
+### 3. 维护性
+- 导航逻辑集中管理
+- 常量统一管理
+- 便于功能扩展
+
+### 4. 性能优化
+- 页面内容在同一个 `PageView` 中切换
+- 避免重复创建导航栏组件
+- 直接切换，无动画延迟，响应更快
